@@ -14,108 +14,140 @@
     body {
         margin: 0;
         min-height: 100vh;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #ffffff;
-        background:
-            radial-gradient(circle at 20% 20%, #273b80 0%, transparent 35%),
-            radial-gradient(circle at 80% 80%, #54266f 0%, transparent 35%),
-            linear-gradient(135deg, #0b1020, #111936, #171125);
-
-        display: flex;
-        justify-content: center;
-        padding: 40px 15px;
+        font-family: "Trebuchet MS", Arial, sans-serif;
+        background: #111;
+        color: #eee;
+        padding: 25px 15px 40px;
     }
 
-    .container {
-        width: 100%;
-        max-width: 900px;
+    .page {
+        max-width: 850px;
+        margin: auto;
     }
+
+    /* CABECERA */
 
     header {
         text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .logo {
-        font-size: 60px;
-        margin-bottom: 5px;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 42px;
-    }
-
-    .subtitle {
-        color: #b9c2e8;
-        font-size: 17px;
-        margin-top: 10px;
-    }
-
-    .card {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.15);
-        backdrop-filter: blur(15px);
-        border-radius: 24px;
-        padding: 30px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.35);
         margin-bottom: 25px;
     }
 
-    .main-card {
+    .logo {
+        font-size: 58px;
+        transform: rotate(-3deg);
+        display: inline-block;
+    }
+
+    h1 {
+        margin: 5px 0 4px;
+        font-family: Impact, "Arial Black", sans-serif;
+        font-size: 46px;
+        letter-spacing: 1px;
+        color: #fff;
+        text-shadow: 4px 4px 0 #6c4cff;
+    }
+
+    .subtitle {
+        color: #aaa;
+        font-size: 15px;
+    }
+
+    /* BOTÓN IDIOMA */
+
+    .language {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        background: #222;
+        border: 2px solid #444;
+        color: #fff;
+        padding: 7px 11px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .language:hover {
+        background: #333;
+    }
+
+    /* CAJA PRINCIPAL */
+
+    .random-box {
+        background: #191919;
+        border: 2px solid #3b3b3b;
+        border-radius: 10px;
+        padding: 28px;
+        box-shadow: 8px 8px 0 #050505;
         text-align: center;
     }
 
-    button {
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.2s;
-    }
-
     .random-button {
-        background: linear-gradient(135deg, #5865f2, #8b5cf6);
+        display: block;
+        width: 100%;
+        padding: 22px 15px;
+
+        background: #6c4cff;
         color: white;
-        font-size: 23px;
-        padding: 18px 35px;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(88,101,242,0.35);
+
+        border: 0;
+        border-bottom: 7px solid #4025b3;
+
+        border-radius: 8px;
+
+        font-family: Impact, "Arial Black", sans-serif;
+        font-size: 30px;
+        letter-spacing: 1px;
+
+        cursor: pointer;
+
+        transition: transform 0.1s;
     }
 
     .random-button:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 12px 35px rgba(88,101,242,0.5);
+        background: #795cff;
     }
 
     .random-button:active {
-        transform: scale(0.97);
+        transform: translateY(5px);
+        border-bottom-width: 2px;
     }
 
+    /* RESULTADO */
+
     .result {
-        min-height: 150px;
         margin-top: 25px;
+        min-height: 180px;
+
+        background: #0c0c0c;
+        border: 2px dashed #444;
+        border-radius: 7px;
+
         padding: 25px;
-        border-radius: 18px;
-        background: rgba(0,0,0,0.25);
+
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
 
-    .result-placeholder {
-        color: #9da7d1;
-        font-size: 18px;
+    .waiting {
+        color: #777;
+        font-family: monospace;
+        font-size: 16px;
     }
 
     .category {
         display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        background: rgba(139,92,246,0.25);
-        color: #d9c7ff;
+        background: #252525;
+        border: 1px solid #555;
+        padding: 5px 9px;
+        border-radius: 4px;
+
+        font-family: monospace;
         font-size: 13px;
+
         margin-bottom: 12px;
+        color: #bbb;
     }
 
     .result-text {
@@ -125,148 +157,205 @@
     }
 
     .result a {
-        color: #8ab4ff;
-        text-decoration: none;
-    }
-
-    .result a:hover {
+        color: #9d8aff;
         text-decoration: underline;
     }
 
+    .result a:hover {
+        color: #c0b5ff;
+    }
+
+    /* BOTONES SECUNDARIOS */
+
     .actions {
-        margin-top: 18px;
+        margin-top: 15px;
+
         display: flex;
-        gap: 10px;
         justify-content: center;
+        gap: 8px;
+
         flex-wrap: wrap;
     }
 
     .small-button {
-        background: rgba(255,255,255,0.1);
-        color: white;
-        padding: 10px 16px;
-        border-radius: 10px;
+        background: #222;
+        color: #ddd;
+
+        border: 1px solid #444;
+        border-radius: 5px;
+
+        padding: 8px 13px;
+
+        cursor: pointer;
     }
 
     .small-button:hover {
-        background: rgba(255,255,255,0.18);
+        background: #303030;
     }
 
-    .stats {
-        margin-top: 18px;
-        color: #9da7d1;
-        font-size: 14px;
+    .counter {
+        margin-top: 15px;
+        color: #666;
+        font-family: monospace;
+        font-size: 13px;
     }
 
-    .section-title {
+    /* SECCIÓN CURIOSIDADES */
+
+    .section {
+        margin-top: 25px;
+
+        background: #191919;
+        border: 2px solid #333;
+
+        border-radius: 10px;
+
+        padding: 22px;
+
+        box-shadow: 5px 5px 0 #050505;
+    }
+
+    .section h2 {
         margin-top: 0;
+
+        font-family: Impact, "Arial Black", sans-serif;
         font-size: 25px;
+
+        color: #fff;
     }
 
     .facts {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 15px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
     .fact {
-        background: rgba(255,255,255,0.06);
-        padding: 18px;
-        border-radius: 15px;
-        border: 1px solid rgba(255,255,255,0.08);
+        background: #111;
+        border: 1px solid #333;
+        padding: 15px;
+
+        border-radius: 5px;
     }
 
-    .fact-icon {
-        font-size: 28px;
+    .fact strong {
+        display: block;
+        color: #9d8aff;
+        margin-bottom: 7px;
     }
 
-    .fact-title {
-        font-weight: bold;
-        margin: 8px 0;
-    }
-
-    .fact-text {
-        color: #c0c7e5;
-        line-height: 1.45;
+    .fact p {
+        margin: 0;
+        color: #aaa;
         font-size: 14px;
+        line-height: 1.4;
     }
 
-    .top-buttons {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        display: flex;
-        gap: 8px;
+    /* TERMINAL */
+
+    .terminal {
+        margin-top: 25px;
+
+        background: #050505;
+        border: 1px solid #333;
+
+        padding: 15px;
+
+        border-radius: 5px;
+
+        font-family: monospace;
+        font-size: 13px;
+
+        color: #777;
     }
 
-    .language-button {
-        background: rgba(0,0,0,0.4);
-        color: white;
-        padding: 9px 13px;
-        border-radius: 10px;
+    .terminal span {
+        color: #9d8aff;
     }
 
     footer {
         text-align: center;
-        color: #777fa7;
-        font-size: 13px;
-        padding: 10px;
+        margin-top: 25px;
+
+        color: #555;
+        font-family: monospace;
+        font-size: 12px;
     }
 
+    /* MÓVIL */
+
     @media (max-width: 600px) {
+
         h1 {
-            font-size: 32px;
+            font-size: 34px;
         }
 
         .logo {
             font-size: 45px;
         }
 
-        .card {
-            padding: 20px;
+        .random-box {
+            padding: 18px;
         }
 
         .random-button {
-            width: 100%;
-            font-size: 20px;
+            font-size: 23px;
+        }
+
+        .facts {
+            grid-template-columns: 1fr;
+        }
+
+        .result-text {
+            font-size: 18px;
         }
     }
 </style>
 </head>
 
+
 <body>
 
-<div class="top-buttons">
-    <button class="language-button" onclick="cambiarIdioma()" id="languageButton">
-        🇬🇧 English
-    </button>
-</div>
+<button class="language" onclick="cambiarIdioma()" id="languageButton">
+    🇬🇧 English
+</button>
 
-<div class="container">
+
+<div class="page">
 
 <header>
+
     <div class="logo">🌐🎲</div>
 
-    <h1>Internet Randomizer</h1>
+    <h1>INTERNET RANDOMIZER</h1>
 
     <div class="subtitle" id="subtitle">
-        Nunca sabes qué vas a encontrar en Internet.
+        No sabes qué va a salir. Ni yo tampoco.
     </div>
+
 </header>
 
-<div class="card main-card">
+
+<!-- RANDOMIZADOR -->
+
+<div class="random-box">
 
     <button class="random-button" onclick="sorprendeme()">
         🎲 SORPRÉNDEME
     </button>
 
+
     <div class="result" id="result">
-        <div class="result-placeholder" id="placeholder">
-            Pulsa el botón y deja que Internet decida...
+
+        <div class="waiting" id="placeholder">
+            > pulsa el botón...
         </div>
+
     </div>
 
+
     <div class="actions">
+
         <button class="small-button" onclick="copiarResultado()">
             📋 Copiar
         </button>
@@ -274,79 +363,123 @@
         <button class="small-button" onclick="sorprendeme()">
             🔄 Otra vez
         </button>
+
     </div>
 
-    <div class="stats">
-        🎲 Randomizaciones: <span id="counter">0</span>
+
+    <div class="counter">
+
+        randomizaciones:
+        <span id="counter">0</span>
+
     </div>
 
 </div>
 
-<div class="card">
 
-    <h2 class="section-title" id="factsTitle">
-        🧠 Datos curiosos de Internet
+<!-- CURIOSIDADES -->
+
+<div class="section">
+
+    <h2 id="factsTitle">
+        🧠 COSAS QUE QUIZÁ NO SABÍAS
     </h2>
+
 
     <div class="facts">
 
         <div class="fact">
-            <div class="fact-icon">🌐</div>
-            <div class="fact-title">El primer sitio web</div>
-            <div class="fact-text">
-                El primer sitio web de la historia fue creado por Tim Berners-Lee
-                en 1991 y explicaba qué era la World Wide Web.
-            </div>
+
+            <strong>🌐 EL PRIMER SITIO WEB</strong>
+
+            <p>
+                El primer sitio web fue creado por Tim Berners-Lee
+                en 1991. Era bastante menos bonito que este.
+            </p>
+
         </div>
 
-        <div class="fact">
-            <div class="fact-icon">🐱</div>
-            <div class="fact-title">Los gatos dominan Internet</div>
-            <div class="fact-text">
-                Los gatos llevan décadas siendo uno de los protagonistas
-                más reconocibles de la cultura de Internet.
-            </div>
-        </div>
 
         <div class="fact">
-            <div class="fact-icon">📦</div>
-            <div class="fact-title">Wayback Machine</div>
-            <div class="fact-text">
-                Internet Archive conserva copias de millones de páginas web
-                de diferentes épocas.
-            </div>
+
+            <strong>🐙 TRES CORAZONES</strong>
+
+            <p>
+                Los pulpos tienen tres corazones.
+                Internet probablemente tiene bastantes más.
+            </p>
+
         </div>
 
+
         <div class="fact">
-            <div class="fact-icon">💾</div>
-            <div class="fact-title">Internet es enorme</div>
-            <div class="fact-text">
-                Existen cantidades gigantescas de páginas, archivos, imágenes,
-                vídeos y servicios conectados a Internet.
-            </div>
+
+            <strong>🦈 ANTES QUE LOS DINOSAURIOS</strong>
+
+            <p>
+                Los tiburones existen desde hace cientos de millones
+                de años, mucho antes que los dinosaurios.
+            </p>
+
+        </div>
+
+
+        <div class="fact">
+
+            <strong>💾 INTERNET ANTIGUO</strong>
+
+            <p>
+                Algunas páginas web creadas hace décadas todavía
+                pueden encontrarse funcionando.
+            </p>
+
         </div>
 
     </div>
 
 </div>
 
-<footer>
-    Internet Randomizer • Hecho para perderse por Internet 🌐
-</footer>
+
+<!-- TERMINAL -->
+
+<div class="terminal">
+
+    <span>internet@randomizer:~$</span>
+    searching_for_something_useful...
+
+    <br><br>
+
+    result: probably not useful
 
 </div>
+
+
+<footer>
+
+    Internet Randomizer © 2026
+    <br>
+    hecho porque sí
+
+</footer>
+
+
+</div>
+
 
 <script>
 
 let ingles = false;
+
 let contador = 0;
+
 let ultimoResultado = "";
+
 
 const cosas = [
 
     {
         tipo: "enlace",
-        categoria: "🌐 Internet",
+        categoria: "🌐 INTERNET",
         es: "🌍 Explora Internet Archive",
         en: "🌍 Explore Internet Archive",
         url: "https://archive.org/"
@@ -354,15 +487,15 @@ const cosas = [
 
     {
         tipo: "enlace",
-        categoria: "🎲 Random",
-        es: "🤷 The Useless Web: una web inútil al azar",
-        en: "🤷 The Useless Web: a random useless website",
+        categoria: "🤷 RANDOM",
+        es: "🤷 The Useless Web — una web inútil al azar",
+        en: "🤷 The Useless Web — a random useless website",
         url: "https://theuselessweb.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🔍 Detective Conan",
+        categoria: "🔍 DETECTIVE CONAN",
         es: "🔍 ¿Te gusta Detective Conan? Échale un vistazo a MundoConan.",
         en: "🔍 Do you like Detective Conan? Check out MundoConan.",
         url: "https://mundoconan.com/"
@@ -370,7 +503,7 @@ const cosas = [
 
     {
         tipo: "enlace",
-        categoria: "🔎 Detective Conan",
+        categoria: "🔎 DETECTIVE CONAN",
         es: "🕵️‍♂️ ¿Necesitas más Conan en tu vida? Descubre MundoConan.",
         en: "🕵️‍♂️ Need more Conan in your life? Discover MundoConan.",
         url: "https://mundoconan.com/"
@@ -378,217 +511,223 @@ const cosas = [
 
     {
         tipo: "enlace",
-        categoria: "🔎 Detective Conan",
-        es: "🎩 ¿Detective Conan, misterios y más? Pásate por MundoConan.",
-        en: "🎩 Detective Conan, mysteries and more? Visit MundoConan.",
+        categoria: "🎩 DETECTIVE CONAN",
+        es: "🎩 Conan, misterios y más. Pásate por MundoConan.",
+        en: "🎩 Conan, mysteries and more. Visit MundoConan.",
         url: "https://mundoconan.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🚀 Ciencia",
-        es: "🚀 Mira imágenes y contenido de NASA.",
-        en: "🚀 Explore NASA images and content.",
+        categoria: "🚀 CIENCIA",
+        es: "🚀 Entra en la web de NASA.",
+        en: "🚀 Visit NASA.",
         url: "https://www.nasa.gov/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🎨 Arte",
-        es: "🎨 Explora obras de arte de todo el mundo.",
-        en: "🎨 Explore artwork from around the world.",
+        categoria: "🎨 ARTE",
+        es: "🎨 Explora arte de todo el mundo.",
+        en: "🎨 Explore art from around the world.",
         url: "https://artsandculture.google.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "📚 Libros",
-        es: "📚 Busca libros clásicos gratuitos en Project Gutenberg.",
-        en: "📚 Find free classic books on Project Gutenberg.",
+        categoria: "📚 LIBROS",
+        es: "📚 Busca libros clásicos gratuitos.",
+        en: "📚 Find free classic books.",
         url: "https://www.gutenberg.org/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🗺️ Mapas",
-        es: "🗺️ Explora el mundo con OpenStreetMap.",
-        en: "🗺️ Explore the world with OpenStreetMap.",
+        categoria: "🗺️ MAPAS",
+        es: "🗺️ Explora el planeta con OpenStreetMap.",
+        en: "🗺️ Explore the planet with OpenStreetMap.",
         url: "https://www.openstreetmap.org/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🎮 Juegos",
-        es: "🎮 Descubre juegos independientes en itch.io.",
-        en: "🎮 Discover indie games on itch.io.",
+        categoria: "🎮 JUEGOS",
+        es: "🎮 Mira juegos independientes en itch.io.",
+        en: "🎮 Check out indie games on itch.io.",
         url: "https://itch.io/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🎵 Música",
-        es: "🎵 Descubre música independiente en Bandcamp.",
-        en: "🎵 Discover independent music on Bandcamp.",
+        categoria: "🎵 MÚSICA",
+        es: "🎵 Descubre música independiente.",
+        en: "🎵 Discover independent music.",
         url: "https://bandcamp.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "💻 Tecnología",
-        es: "💻 Explora proyectos y código en GitHub.",
-        en: "💻 Explore projects and code on GitHub.",
+        categoria: "💻 CÓDIGO",
+        es: "💻 Piérdete por GitHub.",
+        en: "💻 Get lost on GitHub.",
         url: "https://github.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🧠 Aprendizaje",
-        es: "🧠 Aprende algo nuevo en Khan Academy.",
-        en: "🧠 Learn something new on Khan Academy.",
+        categoria: "🧠 APRENDER",
+        es: "🧠 Aprende algo en Khan Academy.",
+        en: "🧠 Learn something on Khan Academy.",
         url: "https://www.khanacademy.org/"
     },
 
     {
         tipo: "enlace",
-        categoria: "📸 Fotografía",
-        es: "📸 Explora fotografías en Flickr.",
-        en: "📸 Explore photographs on Flickr.",
+        categoria: "📸 FOTOS",
+        es: "📸 Mira fotografías en Flickr.",
+        en: "📸 Browse photographs on Flickr.",
         url: "https://www.flickr.com/"
     },
 
     {
         tipo: "enlace",
-        categoria: "🌍 Ciencia",
-        es: "🌎 Mira imágenes de nuestro planeta en NASA Earth Observatory.",
-        en: "🌎 Explore images of our planet at NASA Earth Observatory.",
-        url: "https://earthobservatory.nasa.gov/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎲 Random",
-        es: "🎲 Genera un número completamente aleatorio.",
-        en: "🎲 Generate a completely random number.",
+        categoria: "🎲 RANDOM",
+        es: "🎲 Genera un número aleatorio.",
+        en: "🎲 Generate a random number.",
         url: "https://www.random.org/"
     },
 
     {
         tipo: "enlace",
-        categoria: "📖 Historia",
-        es: "📖 Viaja por la historia con Britannica.",
-        en: "📖 Explore history with Britannica.",
-        url: "https://www.britannica.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🌐 Wikipedia",
-        es: "🎲 Ve a un artículo aleatorio de Wikipedia.",
-        en: "🎲 Go to a random Wikipedia article.",
+        categoria: "📖 WIKIPEDIA",
+        es: "🎲 Abre un artículo aleatorio de Wikipedia.",
+        en: "🎲 Open a random Wikipedia article.",
         url: "https://es.wikipedia.org/wiki/Especial:Aleatoria"
     },
 
-    {
-        tipo: "texto",
-        categoria: "🧠 Curiosidad",
-        es: "🧠 El símbolo @ se utilizaba mucho antes de Internet, especialmente en textos comerciales.",
-        en: "🧠 The @ symbol was widely used before the Internet, especially in commercial writing."
-    },
+
+    /* CURIOSIDADES */
 
     {
         tipo: "texto",
-        categoria: "🌐 Internet",
-        es: "🌐 La palabra 'Internet' procede de 'interconnected network', aunque su historia lingüística es más compleja.",
-        en: "🌐 The word 'Internet' relates to 'interconnected network', although its linguistic history is more complex."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "💻 Tecnología",
-        es: "💻 El primer ordenador electrónico de propósito general ocupaba una habitación enorme.",
-        en: "💻 Some of the earliest general-purpose electronic computers filled entire rooms."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🐙 Random",
+        categoria: "🐙 CURIOSIDAD",
         es: "🐙 Los pulpos tienen tres corazones.",
         en: "🐙 Octopuses have three hearts."
     },
 
     {
         tipo: "texto",
-        categoria: "🚀 Espacio",
-        es: "🚀 En el espacio, los astronautas pueden experimentar una sensación de 'altura' diferente porque no están bajo la gravedad terrestre normal.",
-        en: "🚀 In space, astronauts experience a very different sense of body position because they are not under Earth's normal gravity."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🦈 Animales",
-        es: "🦈 Los tiburones existen desde mucho antes que los dinosaurios.",
-        en: "🦈 Sharks existed long before dinosaurs."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🌍 Tierra",
-        es: "🌍 La Tierra no es una esfera perfecta: está ligeramente achatada por los polos.",
-        en: "🌍 Earth is not a perfect sphere: it is slightly flattened at the poles."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🧬 Ciencia",
-        es: "🧬 El ADN de una célula humana contiene una cantidad enorme de información comprimida en una estructura microscópica.",
-        en: "🧬 Human DNA stores an enormous amount of information inside a microscopic structure."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🦇 Animales",
+        categoria: "🦇 CURIOSIDAD",
         es: "🦇 Los murciélagos son los únicos mamíferos capaces de realizar un vuelo verdaderamente sostenido.",
         en: "🦇 Bats are the only mammals capable of sustained powered flight."
     },
 
     {
         tipo: "texto",
-        categoria: "🎮 Videojuegos",
-        es: "🎮 Muchos videojuegos esconden pequeños detalles que pueden tardar años en descubrirse.",
-        en: "🎮 Many video games contain tiny details that can take years to discover."
+        categoria: "🌍 CURIOSIDAD",
+        es: "🌍 La Tierra está ligeramente achatada por los polos.",
+        en: "🌍 Earth is slightly flattened at the poles."
     },
 
     {
         tipo: "texto",
-        categoria: "🕵️ Misterio",
-        es: "🕵️ Internet está lleno de páginas antiguas que todavía siguen funcionando décadas después de ser creadas.",
-        en: "🕵️ The Internet is full of old websites that still work decades after they were created."
+        categoria: "🦈 CURIOSIDAD",
+        es: "🦈 Los tiburones son muchísimo más antiguos que los dinosaurios.",
+        en: "🦈 Sharks are much older than dinosaurs."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🧠 CURIOSIDAD",
+        es: "🧠 Tu cerebro consume una cantidad considerable de energía incluso cuando estás descansando.",
+        en: "🧠 Your brain uses a significant amount of energy even while resting."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "💻 INTERNET",
+        es: "💻 Algunas páginas web antiguísimas todavía funcionan hoy.",
+        en: "💻 Some extremely old websites are still online today."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🤨 RANDOM",
+        es: "🤨 Has llegado hasta aquí. Eso significa que Internet te ha atrapado.",
+        en: "🤨 You made it this far. Internet has trapped you."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🚨 ERROR",
+        es: "🚨 Error 404: no se ha encontrado ninguna explicación para esto.",
+        en: "🚨 Error 404: no explanation was found for this."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🦆 IMPORTANTE",
+        es: "🦆 El pato ha sido localizado. Repetimos: el pato ha sido localizado.",
+        en: "🦆 The duck has been located. Repeat: the duck has been located."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🎲 RANDOM",
+        es: "🎲 Probablemente no necesitabas saber esto.",
+        en: "🎲 You probably didn't need to know this."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🌐 INTERNET",
+        es: "🌐 Internet es básicamente una cantidad absurda de ordenadores hablando entre ellos.",
+        en: "🌐 The Internet is basically a ridiculous number of computers talking to each other."
+    },
+
+    {
+        tipo: "texto",
+        categoria: "🕵️ MISTERIO",
+        es: "🕵️ Existe una posibilidad razonable de que todavía no hayas encontrado las partes más raras de Internet.",
+        en: "🕵️ There is a good chance you still haven't found the strangest parts of the Internet."
     }
 
 ];
 
+
 function sorprendeme() {
 
-    const indice = Math.floor(Math.random() * cosas.length);
+    const indice =
+        Math.floor(Math.random() * cosas.length);
+
     const cosa = cosas[indice];
 
     contador++;
 
-    document.getElementById("counter").textContent = contador;
+    document.getElementById("counter").textContent =
+        contador;
 
-    const texto = ingles ? cosa.en : cosa.es;
+    const texto =
+        ingles ? cosa.en : cosa.es;
 
     ultimoResultado = texto;
 
+
     let html = "";
 
-    html += `<div class="category">${cosa.categoria}</div>`;
+    html +=
+        `<div class="category">${cosa.categoria}</div>`;
+
 
     if (cosa.tipo === "enlace") {
 
         html += `
             <div class="result-text">
-                <a href="${cosa.url}" target="_blank" rel="noopener noreferrer">
+                <a
+                    href="${cosa.url}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     ${texto}
                 </a>
             </div>
@@ -596,68 +735,109 @@ function sorprendeme() {
 
     } else {
 
-        html += `<div class="result-text">${texto}</div>`;
+        html += `
+            <div class="result-text">
+                ${texto}
+            </div>
+        `;
 
     }
 
-    document.getElementById("result").innerHTML = html;
+
+    document.getElementById("result").innerHTML =
+        html;
 }
+
 
 function copiarResultado() {
 
     if (!ultimoResultado) {
+
         return;
+
     }
 
-    navigator.clipboard.writeText(ultimoResultado);
 
-    alert(ingles
-        ? "Result copied! 📋"
-        : "¡Resultado copiado! 📋"
+    navigator.clipboard.writeText(
+        ultimoResultado
     );
+
+
+    alert(
+        ingles
+            ? "Result copied! 📋"
+            : "¡Resultado copiado! 📋"
+    );
+
 }
+
 
 function cambiarIdioma() {
 
     ingles = !ingles;
 
+
     if (ingles) {
 
-        document.getElementById("languageButton").textContent = "🇪🇸 Español";
+        document.getElementById(
+            "languageButton"
+        ).textContent = "🇪🇸 Español";
 
-        document.getElementById("subtitle").textContent =
-            "You never know what you are going to find on the Internet.";
 
-        document.getElementById("factsTitle").textContent =
-            "🧠 Interesting Internet facts";
+        document.getElementById(
+            "subtitle"
+        ).textContent =
+            "You don't know what's going to appear. Neither do I.";
 
-        document.getElementById("placeholder").textContent =
-            "Press the button and let the Internet decide...";
+
+        document.getElementById(
+            "factsTitle"
+        ).textContent =
+            "🧠 THINGS YOU MAY NOT KNOW";
+
+
+        document.getElementById(
+            "placeholder"
+        ).textContent =
+            "> press the button...";
 
     } else {
 
-        document.getElementById("languageButton").textContent =
+        document.getElementById(
+            "languageButton"
+        ).textContent =
             "🇬🇧 English";
 
-        document.getElementById("subtitle").textContent =
-            "Nunca sabes qué vas a encontrar en Internet.";
 
-        document.getElementById("factsTitle").textContent =
-            "🧠 Datos curiosos de Internet";
+        document.getElementById(
+            "subtitle"
+        ).textContent =
+            "No sabes qué va a salir. Ni yo tampoco.";
 
-        document.getElementById("placeholder").textContent =
-            "Pulsa el botón y deja que Internet decida...";
+
+        document.getElementById(
+            "factsTitle"
+        ).textContent =
+            "🧠 COSAS QUE QUIZÁ NO SABÍAS";
+
+
+        document.getElementById(
+            "placeholder"
+        ).textContent =
+            "> pulsa el botón...";
+
     }
+
 
     if (ultimoResultado) {
+
         sorprendeme();
+
     }
+
 }
 
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
