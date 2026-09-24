@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Internet Randomizer</title>
+
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding-top: 60px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        #randomButton {
+            background-color: blue;
+            color: white;
+            font-size: 24px;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #randomButton:hover {
+            background-color: darkblue;
+        }
+
+        #languageButton {
+            margin-top: 20px;
+            padding: 10px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #result a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        #result a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="titulo">🌐 Internet Randomizer</h1>
+
+    <button id="randomButton">🎲 SORPRÉNDEME</button>
+
+    <br>
+
+    <button id="languageButton">🇬🇧 English</button>
+
+    <div id="result"></div>
+
+
+    <script>
+
+        let ingles = false;
+
+
+        const cosas = [
+
+            /* =========================
+               TEXTOS
+               ========================= */
+
+            {
+                tipo: "texto",
+                es: "🐱 Has encontrado un gato.",
+                en: "🐱 You found a cat."
+            },
+
+            {
+                tipo: "texto",
+                es: "¿Qué haces aquí? ¿No tienes nada más que hacer?",
+                en: "What are you doing here? Don't you have anything better to do?"
+            },
+
+            {
+                tipo: "texto",
+                es: "🌐 Internet está funcionando.",
+                en: "🌐 The Internet is working."
+            },
+
+            {
+                tipo: "texto",
+                es: "Felicidades, has perdido 3 segundos.",
+                en: "Congratulations, you just wasted 3 seconds."
+            },
+
+            {
+                tipo: "texto",
+                es: "💀 Error 404: aburrimiento no encontrado.",
+                en: "💀 Error 404: boredom not found."
+            },
+
+            {
+                tipo: "texto",
+                es: "🗿 Has desbloqueado el modo piedra.",
+                en: "🗿 You have unlocked stone mode."
+            },
+
+            {
+                tipo: "texto",
+                es: "📡 Esta página ha detectado que estás aburrido.",
+                en: "📡 This website has detected that you're bored."
+            },
+
+            {
+                tipo: "texto",
+                es: "🥔 Has encontrado una patata imaginaria.",
+                en: "🥔 You found an imaginary potato."
+            },
+
+            {
+                tipo: "texto",
+                es: "👀 Alguien está mirando esta página. Probablemente tú.",
+                en: "👀 Someone is looking at this page. Probably you."
+            },
+
+            {
+                tipo: "texto",
+                es: "🚨 ALERTA: absolutamente nada está pasando.",
+                en: "🚨 ALERT: absolutely nothing is happening."
+            },
+
+            {
+                tipo: "texto",
+                es: "🧠 Tu cerebro ha solicitado un descanso.",
+                en: "🧠 Your brain has requested a break."
+            },
+
+            {
+                tipo: "texto",
+                es: "🍞 Has encontrado pan. No preguntes por qué.",
+                en: "🍞 You found bread. Don't ask why."
+            },
+
+            {
+                tipo: "texto",
+                es: "🦆 Un pato acaba de pasar por aquí.",
+                en: "🦆 A duck just walked past."
+            },
+
+            {
+                tipo: "texto",
+                es: "📦 Has abierto una caja que estaba vacía.",
+                en: "📦 You opened a box that was empty."
+            },
+
+            {
+                tipo: "texto",
+                es: "🎰 Has pulsado un botón para obtener algo aleatorio. Muy lógico.",
+                en: "🎰 You pressed a button to get something random. Very logical."
+            },
+
+            {
+                tipo: "texto",
+                es: "🌚 La Luna está ahí fuera. Probablemente.",
+                en: "🌚 The Moon is out there. Probably."
+            },
+
+            {
+                tipo: "texto",
+                es: "🤨 Esto parecía una buena idea hace 10 segundos.",
+                en: "🤨 This seemed like a good idea 10 seconds ago."
+            },
+
+            {
+                tipo: "texto",
+                es: "🧪 Experimento completado: has pulsado el botón.",
+                en: "🧪 Experiment completed: you pressed the button."
+            },
+
+            {
+                tipo: "texto",
+                es: "🕵️‍♂️ No hay ninguna conspiración aquí. Sigue adelante.",
+                en: "🕵️‍♂️ There is no conspiracy here. Move along."
+            },
+
+            {
+                tipo: "texto",
+                es: "💻 Tu ordenador acaba de ganar 0,0001 puntos de experiencia.",
+                en: "💻 Your computer just gained 0.0001 experience points."
+            },
+
+            {
+                tipo: "texto",
+                es: "🎲 El azar ha hablado.",
+                en: "🎲 Randomness has spoken."
+            },
+
+            {
+                tipo: "texto",
+                es: "🧃 Necesitas un zumo. No sé por qué.",
+                en: "🧃 You need some juice. I don't know why."
+            },
+
+            {
+                tipo: "texto",
+                es: "🚪 Hay una puerta. Nadie sabe adónde lleva.",
+                en: "🚪 There is a door. Nobody knows where it leads."
+            },
+
+            {
+                tipo: "texto",
+                es: "🦖 Un dinosaurio habría disfrutado de esta página.",
+                en: "🦖 A dinosaur would have enjoyed this website."
+            },
+
+            {
+                tipo: "texto",
+                es: "📢 IMPORTANTE: esto no era importante.",
+                en: "📢 IMPORTANT: this was not important."
+            },
+
+
+            /* =========================
+               MUNDOCONAN
+               ========================= */
+
+            {
+                tipo: "enlace",
+                es: "🔍 ¿Te gusta Detective Conan? Échale un vistazo a MundoConan.",
+                en: "🔍 Do you like Detective Conan? Check out MundoConan.",
+                url: "https://mundoconan.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🕵️‍♂️ ¿Necesitas más Conan en tu vida? Descubre MundoConan.",
+                en: "🕵️‍♂️ Need more Conan in your life? Discover MundoConan.",
+                url: "https://mundoconan.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🔎 ¿Eres fan de Conan? Puede que Internet quiera llevarte a MundoConan.",
+                en: "🔎 Are you a Conan fan? The Internet might want to take you to MundoConan.",
+                url: "https://mundoconan.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🎩 ¿Detective Conan, misterios y más? Pásate por MundoConan.",
+                en: "🎩 Detective Conan, mysteries and more? Check out MundoConan.",
+                url: "https://mundoconan.com/"
+            },
+
+
+            /* =========================
+               INTERNET RANDOM
+               ========================= */
+
+            {
+                tipo: "enlace",
+                es: "🦆 ¿Necesitas una dosis de Internet aleatoria? Visita The Useless Web.",
+                en: "🦆 Need a dose of random Internet? Visit The Useless Web.",
+                url: "https://theuselessweb.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🕰️ Mira cómo eran algunas páginas de Internet hace años con Internet Archive.",
+                en: "🕰️ See what some websites looked like years ago with the Internet Archive.",
+                url: "https://archive.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🌌 Viaja por el espacio con NASA.",
+                en: "🌌 Travel through space with NASA.",
+                url: "https://www.nasa.gov/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🎨 Explora arte de todo el mundo en Google Arts & Culture.",
+                en: "🎨 Explore art from around the world on Google Arts & Culture.",
+                url: "https://artsandculture.google.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🎮 Descubre videojuegos independientes en itch.io.",
+                en: "🎮 Discover indie games on itch.io.",
+                url: "https://itch.io/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "📚 Encuentra miles de libros gratuitos en Project Gutenberg.",
+                en: "📚 Find thousands of free books at Project Gutenberg.",
+                url: "https://www.gutenberg.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🗺️ Explora el mundo con OpenStreetMap.",
+                en: "🗺️ Explore the world with OpenStreetMap.",
+                url: "https://www.openstreetmap.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🎵 Descubre música independiente en Bandcamp.",
+                en: "🎵 Discover independent music on Bandcamp.",
+                url: "https://bandcamp.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🐧 Aprende sobre Linux.",
+                en: "🐧 Learn about Linux.",
+                url: "https://www.linux.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "💻 Explora proyectos de código en GitHub.",
+                en: "💻 Explore coding projects on GitHub.",
+                url: "https://github.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🧠 ¿Quieres aprender algo nuevo? Explora Khan Academy.",
+                en: "🧠 Want to learn something new? Explore Khan Academy.",
+                url: "https://www.khanacademy.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🔬 Explora ciencia y conocimiento en Britannica.",
+                en: "🔬 Explore science and knowledge on Britannica.",
+                url: "https://www.britannica.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "📸 Explora fotografías de todo el mundo en Flickr.",
+                en: "📸 Explore photographs from around the world on Flickr.",
+                url: "https://www.flickr.com/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🌍 Descubre cosas interesantes sobre nuestro planeta.",
+                en: "🌍 Discover interesting things about our planet.",
+                url: "https://earthobservatory.nasa.gov/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "🎲 ¿Quieres otra sorpresa? Deja que el azar decida.",
+                en: "🎲 Want another surprise? Let randomness decide.",
+                url: "https://random.org/"
+            },
+
+
+            /* =========================
+               WIKIPEDIA
+               SOLO 2 ENTRADAS
+               ========================= */
+
+            {
+                tipo: "enlace",
+                es: "🔎 ¿Te has preguntado de dónde viene algo? Búscalo en Wikipedia.",
+                en: "🔎 Wondering where something comes from? Search for it on Wikipedia.",
+                url: "https://es.wikipedia.org/"
+            },
+
+            {
+                tipo: "enlace",
+                es: "📖 ¿Te apetece aprender algo completamente aleatorio? Artículo aleatorio de Wikipedia.",
+                en: "📖 Want to learn something completely random? Random Wikipedia article.",
+                url: "https://es.wikipedia.org/wiki/Especial:Aleatoria"
+            }
+
+        ];
+
+
+        /* =========================
+           BOTÓN RANDOM
+           ========================= */
+
+        const boton = document.getElementById("randomButton");
+        const resultado = document.getElementById("result");
+        const languageButton = document.getElementById("languageButton");
+        const titulo = document.getElementById("titulo");
+
+
+        boton.addEventListener("click", function() {
+
+            const numero = Math.floor(Math.random() * cosas.length);
+
+            const cosa = cosas[numero];
+
+            const texto = ingles ? cosa.en : cosa.es;
+
+
+            if (cosa.tipo === "texto") {
+
+                resultado.textContent = texto;
+
+            }
+
+
+            if (cosa.tipo === "enlace") {
+
+                resultado.innerHTML =
+                    `<a href="${cosa.url}" target="_blank" rel="noopener noreferrer">${texto}</a>`;
+
+            }
+
+        });
+
+
+        /* =========================
+           CAMBIAR IDIOMA
+           ========================= */
+
+        languageButton.addEventListener("click", function() {
+
+            ingles = !ingles;
+
+            if (ingles) {
+
+                titulo.textContent = "🌐 Internet Randomizer";
+
+                boton.textContent = "🎲 SURPRISE ME";
+
+                languageButton.textContent = "🇪🇸 Español";
+
+            } else {
+
+                titulo.textContent = "🌐 Internet Randomizer";
+
+                boton.textContent = "🎲 SORPRÉNDEME";
+
+                languageButton.textContent = "🇬🇧 English";
+
+            }
+
+            resultado.textContent = "";
+
+        });
+
+    </script>
+
+</body>
+</html>
