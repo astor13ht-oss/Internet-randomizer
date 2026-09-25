@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -116,6 +117,11 @@ h1 {
     box-shadow: 0 0 20px rgba(103,232,165,.15);
 }
 
+#result.rare-result {
+    border-color: #ff4d8d;
+    box-shadow: 0 0 30px rgba(255,77,141,.2);
+}
+
 .category {
     color: #b66cff;
     font-size: 13px;
@@ -159,6 +165,15 @@ h1 {
 
 .small-button:hover {
     background: #292929;
+}
+
+#shareButton {
+    display: none;
+    border-color: #ff4d8d;
+}
+
+#shareButton:hover {
+    background: #321522;
 }
 
 #counter {
@@ -318,6 +333,10 @@ footer {
 
         <button class="small-button" id="copyButton" onclick="copiarResultado()">
             📋 Copiar
+        </button>
+
+        <button class="small-button" id="shareButton" onclick="compartirHallazgo()">
+            📤 Compartir hallazgo
         </button>
 
         <button class="small-button" id="againButton" onclick="sorprendeme()">
@@ -685,7 +704,9 @@ function toggleDuckMode() {
 
         secreto: true,
 
-        hito: false
+        hito: false,
+
+        compartible: false
 
     };
 
@@ -738,6 +759,8 @@ function resultadoPatito() {
 
         hito: false,
 
+        compartible: false,
+
         _patitoAnterior: cosa
 
     };
@@ -776,7 +799,9 @@ let resultadoActual = {
 
     secreto: false,
 
-    hito: false
+    hito: false,
+
+    compartible: false
 
 };
 
@@ -1207,7 +1232,8 @@ probabilidad: 1 / 50,
 categoriaEs: "🥚 SECRETO",
 categoriaEn: "🥚 SECRET",
 es: "HAS ENCONTRADO EL PATO LEGENDARIO. 🦆",
-en: "YOU FOUND THE LEGENDARY DUCK. 🦆"
+en: "YOU FOUND THE LEGENDARY DUCK. 🦆",
+compartible: false
 },
 
 {
@@ -1215,7 +1241,8 @@ probabilidad: 1 / 100,
 categoriaEs: "👁️ SECRETO",
 categoriaEn: "👁️ SECRET",
 es: "No deberías haber encontrado esto.",
-en: "You probably shouldn't have found this."
+en: "You probably shouldn't have found this.",
+compartible: false
 },
 
 {
@@ -1223,7 +1250,8 @@ probabilidad: 1 / 250,
 categoriaEs: "💾 INTERNET ANTIGUO",
 categoriaEn: "💾 OLD INTERNET",
 es: "Has encontrado una señal perdida de Internet antiguo.",
-en: "You found a lost signal from the old Internet."
+en: "You found a lost signal from the old Internet.",
+compartible: true
 },
 
 {
@@ -1231,7 +1259,8 @@ probabilidad: 1 / 500,
 categoriaEs: "💀 ERROR",
 categoriaEn: "💀 ERROR",
 es: "ERROR 000: no se encontró una explicación.",
-en: "ERROR 000: no explanation was found."
+en: "ERROR 000: no explanation was found.",
+compartible: true
 },
 
 {
@@ -1239,7 +1268,8 @@ probabilidad: 1 / 1000,
 categoriaEs: "🌐 IMPROBABLE",
 categoriaEn: "🌐 UNLIKELY",
 es: "El algoritmo te ha elegido a ti.",
-en: "The algorithm has chosen you."
+en: "The algorithm has chosen you.",
+compartible: true
 },
 
 {
@@ -1247,7 +1277,8 @@ probabilidad: 1 / 2000,
 categoriaEs: "👑 LEGENDARIO",
 categoriaEn: "👑 LEGENDARY",
 es: "Uno entre miles. Esto era extremadamente difícil de encontrar.",
-en: "One among thousands. This was extremely difficult to find."
+en: "One among thousands. This was extremely difficult to find.",
+compartible: true
 }
 
 ];
@@ -1381,6 +1412,158 @@ function renderResultado() {
         resultadoActual.hito
     );
 
+    caja.classList.toggle(
+        "rare-result",
+        resultadoActual.compartible
+    );
+
+
+    actualizarBotonCompartir();
+
+}
+
+
+/* =========================
+   BOTÓN COMPARTIR
+========================= */
+
+function actualizarBotonCompartir() {
+
+    const boton =
+        document.getElementById("shareButton");
+
+    if (!boton) return;
+
+
+    if (resultadoActual.compartible) {
+
+        boton.style.display = "inline-block";
+
+        boton.textContent =
+            ingles
+            ? "📤 Share rare find"
+            : "📤 Compartir hallazgo";
+
+    } else {
+
+        boton.style.display = "none";
+
+    }
+
+}
+
+
+function obtenerTextoCompartir() {
+
+    const texto =
+        ingles
+        ? resultadoActual.en
+        : resultadoActual.es;
+
+
+    const titulo =
+        ingles
+        ? "🎲 I found a VERY rare result on Internet Randomizer!"
+        : "🎲 ¡He encontrado un resultado MUY raro en Internet Randomizer!";
+
+
+    const llamada =
+        ingles
+        ? "Can you find it too? 👀"
+        : "¿Tú también puedes encontrarlo? 👀";
+
+
+    return (
+        titulo +
+        "\n\n" +
+        "🔎 " +
+        texto +
+        "\n\n" +
+        llamada +
+        "\n" +
+        "https://astor13ht-oss.github.io/Internet-randomizer/"
+    );
+
+}
+
+
+async function compartirHallazgo() {
+
+    if (!resultadoActual.compartible) return;
+
+
+    const texto =
+        obtenerTextoCompartir();
+
+
+    if (typeof gtag === "function") {
+
+        gtag(
+            "event",
+            "share_rare_result",
+            {
+                result_category:
+                    ingles
+                    ? resultadoActual.categoriaEn
+                    : resultadoActual.categoriaEs
+            }
+        );
+
+    }
+
+
+    if (
+        navigator.share &&
+        window.isSecureContext
+    ) {
+
+        try {
+
+            await navigator.share({
+
+                title:
+                    ingles
+                    ? "Internet Randomizer"
+                    : "Internet Randomizer",
+
+                text: texto
+
+            });
+
+            return;
+
+        } catch (error) {
+
+            if (
+                error &&
+                error.name === "AbortError"
+            ) {
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    try {
+
+        await navigator.clipboard.writeText(texto);
+
+        alert(
+            ingles
+            ? "📋 Share text copied to clipboard!"
+            : "📋 ¡Texto para compartir copiado al portapapeles!"
+        );
+
+    } catch (error) {
+
+        alert(texto);
+
+    }
+
 }
 
 
@@ -1437,7 +1620,9 @@ function resultadoNormal() {
 
         secreto: false,
 
-        hito: false
+        hito: false,
+
+        compartible: false
 
     };
 
@@ -1482,7 +1667,10 @@ function intentarSecreto() {
 
                 secreto: true,
 
-                hito: false
+                hito: false,
+
+                compartible:
+                    secreto.compartible === true
 
             };
 
@@ -1498,7 +1686,11 @@ function intentarSecreto() {
 
                 gtag(
                     "event",
-                    "rare_result"
+                    "rare_result",
+                    {
+                        rarity:
+                            secreto.probabilidad
+                    }
                 );
 
             }
@@ -1540,7 +1732,9 @@ function mostrarHito(numero) {
 
         secreto: false,
 
-        hito: true
+        hito: true,
+
+        compartible: false
 
     };
 
@@ -1794,6 +1988,8 @@ function cambiarIdioma() {
 
     actualizarModoPatito();
 
+    actualizarBotonCompartir();
+
 
     if (resultadoActual.hito) {
 
@@ -1862,3 +2058,4 @@ actualizarModoPatito();
 
 </body>
 </html>
+```
