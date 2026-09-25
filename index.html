@@ -326,9 +326,17 @@ footer {
 
     </div>
 
+    <div style="margin-top:15px;">
+        <button class="small-button" id="duckModeButton" onclick="toggleDuckMode()" style="display:none;">
+            🦆 MODO PATITO: OFF
+        </button>
+    </div>
+
     <div id="counter">
         Tiradas: 0
     </div>
+
+    <div id="rewardBox" style="display:none; margin-top:15px; padding:14px; border:1px dashed #67e8a5; color:#67e8a5; font-family:monospace;"></div>
 
 </section>
 
@@ -498,6 +506,249 @@ hecho porque sí
 <script>
 
 /* =========================
+   MODO PATITO
+========================= */
+
+let modoPatito =
+    localStorage.getItem("randomizerModoPatito") === "true";
+
+const recompensasHitos = {
+
+    100: {
+        es: "🦆 RECOMPENSA: Has desbloqueado el MODO PATITO.",
+        en: "🦆 REWARD: You have unlocked DUCK MODE."
+    },
+
+    500: {
+        es: "🏆 RECOMPENSA: EL PATO TE RECONOCE. +1 respeto del pato.",
+        en: "🏆 REWARD: THE DUCK RECOGNIZES YOU. +1 duck respect."
+    },
+
+    1000: {
+        es: "👑 RECOMPENSA: LICENCIA OFICIAL PARA INVESTIGAR PATOS.",
+        en: "👑 REWARD: OFFICIAL LICENSE TO INVESTIGATE DUCKS."
+    },
+
+    2000: {
+        es: "💎 RECOMPENSA: RANGO MAESTRO DEL PATO.",
+        en: "💎 REWARD: DUCK MASTER RANK."
+    },
+
+    3000: {
+        es: "🗿 RECOMPENSA FINAL: EL PATO LEGENDARIO TE HA ELEGIDO.",
+        en: "🗿 FINAL REWARD: THE LEGENDARY DUCK HAS CHOSEN YOU."
+    }
+
+};
+
+
+const resultadosPatito = [
+
+    {
+        tipo: "link",
+        categoriaEs: "🦆 PATOS",
+        categoriaEn: "🦆 DUCKS",
+        es: "DuckDuckGo: sí, hay un pato hasta en un buscador.",
+        en: "DuckDuckGo: yes, there is a duck even in a search engine.",
+        url: "https://duckduckgo.com/"
+    },
+
+    {
+        tipo: "link",
+        categoriaEs: "🦆 PATOS",
+        categoriaEn: "🦆 DUCKS",
+        es: "Duck Museum: una colección dedicada a los patos.",
+        en: "Duck Museum: a collection dedicated to ducks.",
+        url: "https://www.duckmuseum.com/"
+    },
+
+    {
+        tipo: "link",
+        categoriaEs: "🦆 PATOS",
+        categoriaEn: "🦆 DUCKS",
+        es: "A página de patos porque claramente Internet necesitaba una.",
+        en: "A duck website because clearly the Internet needed one.",
+        url: "https://www.duck.com/"
+    },
+
+    {
+        tipo: "texto",
+        categoriaEs: "🦆 CURIOSIDAD DE PATO",
+        categoriaEn: "🦆 DUCK FACT",
+        es: "Los patos tienen plumas impermeables gracias al aceite que distribuyen sobre ellas.",
+        en: "Ducks have waterproof feathers thanks to oil they spread over them."
+    },
+
+    {
+        tipo: "texto",
+        categoriaEs: "🦆 CURIOSIDAD DE PATO",
+        categoriaEn: "🦆 DUCK FACT",
+        es: "El pico de un pato puede tener muchas terminaciones nerviosas que le ayudan a encontrar comida.",
+        en: "A duck's bill can have many nerve endings that help it find food."
+    },
+
+    {
+        tipo: "texto",
+        categoriaEs: "🦆 CURIOSIDAD DE PATO",
+        categoriaEn: "🦆 DUCK FACT",
+        es: "Los patos pueden dormir con un ojo abierto para mantenerse atentos a su entorno.",
+        en: "Ducks can sleep with one eye open to stay alert to their surroundings."
+    },
+
+    {
+        tipo: "texto",
+        categoriaEs: "🦆 ABSURDO",
+        categoriaEn: "🦆 ABSURD",
+        es: "El pato ha sido localizado. Esta vez con documentación.",
+        en: "The duck has been located. This time with documentation."
+    },
+
+    {
+        tipo: "texto",
+        categoriaEs: "🦆 ABSURDO",
+        categoriaEn: "🦆 ABSURD",
+        es: "El pato exige saber por qué has activado este modo.",
+        en: "The duck demands to know why you activated this mode."
+    }
+
+];
+
+
+function actualizarModoPatito() {
+
+    const boton =
+        document.getElementById("duckModeButton");
+
+    if (!boton) return;
+
+    if (contador >= 100) {
+
+        boton.style.display = "inline-block";
+
+        boton.textContent =
+            modoPatito
+            ? (ingles
+                ? "🦆 DUCK MODE: ON"
+                : "🦆 MODO PATITO: ON")
+            : (ingles
+                ? "🦆 DUCK MODE: OFF"
+                : "🦆 MODO PATITO: OFF");
+
+    } else {
+
+        boton.style.display = "none";
+
+    }
+
+}
+
+
+function toggleDuckMode() {
+
+    if (contador < 100) return;
+
+    modoPatito = !modoPatito;
+
+    localStorage.setItem(
+        "randomizerModoPatito",
+        modoPatito
+    );
+
+    actualizarModoPatito();
+
+    if (typeof gtag === "function") {
+
+        gtag(
+            "event",
+            "duck_mode",
+            {
+                enabled: modoPatito
+            }
+        );
+
+    }
+
+    resultadoActual = {
+
+        es: modoPatito
+            ? "🦆 MODO PATITO ACTIVADO. El pato controla ahora el Randomizer."
+            : "🦆 MODO PATITO DESACTIVADO. El pato vuelve a su hábitat natural.",
+
+        en: modoPatito
+            ? "🦆 DUCK MODE ACTIVATED. The duck now controls the Randomizer."
+            : "🦆 DUCK MODE DEACTIVATED. The duck returns to its natural habitat.",
+
+        categoriaEs: "🦆 MODO PATITO",
+        categoriaEn: "🦆 DUCK MODE",
+
+        url: null,
+
+        secreto: true,
+
+        hito: false
+
+    };
+
+    renderResultado();
+
+}
+
+
+function resultadoPatito() {
+
+    let indice;
+
+    do {
+
+        indice =
+            Math.floor(
+                Math.random() *
+                resultadosPatito.length
+            );
+
+    } while (
+        resultadosPatito.length > 1 &&
+        resultadosPatito[indice] ===
+        resultadoActual._patitoAnterior
+    );
+
+
+    const cosa =
+        resultadosPatito[indice];
+
+
+    resultadoActual = {
+
+        es: cosa.es,
+
+        en: cosa.en,
+
+        categoriaEs:
+            cosa.categoriaEs,
+
+        categoriaEn:
+            cosa.categoriaEn,
+
+        url:
+            cosa.tipo === "link"
+            ? cosa.url
+            : null,
+
+        secreto: false,
+
+        hito: false,
+
+        _patitoAnterior: cosa
+
+    };
+
+
+    renderResultado();
+
+}
+
+
+/* =========================
    DATOS GUARDADOS
 ========================= */
 
@@ -512,13 +763,21 @@ let secretosEncontrados =
 let ultimoIndice = null;
 
 let resultadoActual = {
+
     es: "",
+
     en: "",
+
     categoriaEs: "",
+
     categoriaEn: "",
+
     url: null,
+
     secreto: false,
+
     hito: false
+
 };
 
 
@@ -526,33 +785,55 @@ let resultadoActual = {
    HITOS
 ========================= */
 
-const hitos = [100, 500, 1000, 2000, 3000];
+const hitos = [
+    100,
+    500,
+    1000,
+    2000,
+    3000
+];
+
 
 const mensajesHitos = {
 
     100: {
+
         es: "🏆 100 PULSACIONES. Has pulsado este botón cien veces. ¿No tienes nada mejor que hacer?",
+
         en: "🏆 100 CLICKS. You have pressed this button one hundred times. Don't you have anything better to do?"
+
     },
 
     500: {
+
         es: "🔥 500 PULSACIONES. Esto ya empieza a ser preocupante.",
+
         en: "🔥 500 CLICKS. This is starting to become concerning."
+
     },
 
     1000: {
+
         es: "👑 1.000 PULSACIONES. Oficialmente formas parte del problema.",
+
         en: "👑 1,000 CLICKS. You are officially part of the problem."
+
     },
 
     2000: {
+
         es: "💀 2.000 PULSACIONES. El botón te conoce mejor que tú.",
+
         en: "💀 2,000 CLICKS. The button knows you better than you know yourself."
+
     },
 
     3000: {
+
         es: "🗿 3.000 PULSACIONES. Internet Randomizer te está usando a ti.",
+
         en: "🗿 3,000 CLICKS. Internet Randomizer is now using you."
+
     }
 
 };
@@ -987,6 +1268,7 @@ function guardar() {
         "randomizerSecretos",
         secretosEncontrados
     );
+
 }
 
 
@@ -1039,6 +1321,8 @@ function actualizarEstadisticas() {
         }
 
     });
+
+    actualizarModoPatito();
 
 }
 
@@ -1096,6 +1380,7 @@ function renderResultado() {
         "milestone",
         resultadoActual.hito
     );
+
 }
 
 
@@ -1105,13 +1390,20 @@ function renderResultado() {
 
 function resultadoNormal() {
 
+    const rewardBox =
+        document.getElementById("rewardBox");
+
+    if (rewardBox)
+        rewardBox.style.display = "none";
+
     let indice;
 
     do {
 
         indice =
             Math.floor(
-                Math.random() * cosas.length
+                Math.random() *
+                cosas.length
             );
 
     } while (
@@ -1151,6 +1443,7 @@ function resultadoNormal() {
 
 
     renderResultado();
+
 }
 
 
@@ -1159,6 +1452,12 @@ function resultadoNormal() {
 ========================= */
 
 function intentarSecreto() {
+
+    const rewardBox =
+        document.getElementById("rewardBox");
+
+    if (rewardBox)
+        rewardBox.style.display = "none";
 
     for (const secreto of secretos) {
 
@@ -1194,6 +1493,7 @@ function intentarSecreto() {
 
             renderResultado();
 
+
             if (typeof gtag === "function") {
 
                 gtag(
@@ -1204,10 +1504,13 @@ function intentarSecreto() {
             }
 
             return true;
+
         }
+
     }
 
     return false;
+
 }
 
 
@@ -1243,6 +1546,25 @@ function mostrarHito(numero) {
 
 
     renderResultado();
+
+
+    const rewardBox =
+        document.getElementById("rewardBox");
+
+    if (
+        rewardBox &&
+        recompensasHitos[numero]
+    ) {
+
+        rewardBox.style.display =
+            "block";
+
+        rewardBox.textContent =
+            ingles
+            ? recompensasHitos[numero].en
+            : recompensasHitos[numero].es;
+
+    }
 
 
     if (typeof gtag === "function") {
@@ -1295,6 +1617,21 @@ function sorprendeme() {
         mostrarHito(contador);
 
         return;
+
+    }
+
+
+    /* MODO PATITO */
+
+    if (
+        modoPatito &&
+        contador >= 100
+    ) {
+
+        resultadoPatito();
+
+        return;
+
     }
 
 
@@ -1305,12 +1642,14 @@ function sorprendeme() {
     ) {
 
         return;
+
     }
 
 
     /* NORMAL */
 
     resultadoNormal();
+
 }
 
 
@@ -1323,7 +1662,9 @@ function copiarResultado() {
     if (
         !resultadoActual.es
     ) {
+
         return;
+
     }
 
 
@@ -1451,6 +1792,40 @@ function cambiarIdioma() {
 
     actualizarEstadisticas();
 
+    actualizarModoPatito();
+
+
+    if (resultadoActual.hito) {
+
+        const numeroHito =
+            hitos.find(
+                h =>
+                    resultadoActual.es ===
+                    mensajesHitos[h].es ||
+                    resultadoActual.en ===
+                    mensajesHitos[h].en
+            );
+
+        const rewardBox =
+            document.getElementById(
+                "rewardBox"
+            );
+
+        if (
+            rewardBox &&
+            numeroHito &&
+            recompensasHitos[numeroHito]
+        ) {
+
+            rewardBox.textContent =
+                ingles
+                ? recompensasHitos[numeroHito].en
+                : recompensasHitos[numeroHito].es;
+
+        }
+
+    }
+
 
     /* No crea un resultado nuevo.
        Solo vuelve a mostrar el actual. */
@@ -1480,6 +1855,8 @@ function cambiarIdioma() {
 ========================= */
 
 actualizarEstadisticas();
+
+actualizarModoPatito();
 
 </script>
 
