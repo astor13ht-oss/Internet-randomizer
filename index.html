@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet Randomizer 🎲</title>
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7FTXPGZX0W"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,283 +15,278 @@
   gtag('config', 'G-7FTXPGZX0W');
 </script>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Internet Randomizer 🎲</title>
-
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: "Trebuchet MS", Arial, sans-serif;
-        background: #111;
-        color: #eee;
-        padding: 25px 15px 40px;
-    }
+body {
+    margin: 0;
+    background: #111;
+    color: #f2f2f2;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+}
 
-    .page {
-        max-width: 850px;
-        margin: auto;
-    }
+.page {
+    width: min(900px, 92%);
+    margin: auto;
+    padding: 30px 0 50px;
+}
 
-    header {
-        text-align: center;
-        margin-bottom: 25px;
-    }
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-    .logo {
-        font-size: 58px;
-        transform: rotate(-3deg);
-        display: inline-block;
-    }
+.logo {
+    font-size: 32px;
+}
 
-    h1 {
-        margin: 5px 0 4px;
-        font-family: Impact, "Arial Black", sans-serif;
-        font-size: 46px;
-        letter-spacing: 1px;
-        color: #fff;
-        text-shadow: 4px 4px 0 #6c4cff;
-    }
+h1 {
+    margin: 5px 0;
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: clamp(40px, 8vw, 70px);
+    letter-spacing: 3px;
+    color: #b66cff;
+    text-shadow: 4px 4px 0 #32145a;
+}
 
-    .subtitle {
-        color: #aaa;
-        font-size: 15px;
-    }
+.subtitle {
+    color: #999;
+}
 
-    .language {
-        position: fixed;
-        top: 12px;
-        right: 12px;
-        background: #222;
-        border: 2px solid #444;
-        color: #fff;
-        padding: 7px 11px;
-        border-radius: 6px;
-        cursor: pointer;
-        z-index: 10;
-    }
+#languageButton {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: #1c1c1c;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-    .language:hover {
-        background: #333;
-    }
+.random-box {
+    background: #171717;
+    border: 2px solid #333;
+    padding: 25px;
+    text-align: center;
+}
 
-    .random-box {
-        background: #191919;
-        border: 2px solid #3b3b3b;
-        border-radius: 10px;
-        padding: 28px;
-        box-shadow: 8px 8px 0 #050505;
-        text-align: center;
-    }
+#randomButton {
+    background: #8d4de8;
+    color: white;
+    border: 0;
+    padding: 17px 28px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #4e2486;
+}
 
-    .random-button {
-        display: block;
-        width: 100%;
-        padding: 22px 15px;
-        background: #6c4cff;
-        color: white;
-        border: 0;
-        border-bottom: 7px solid #4025b3;
-        border-radius: 8px;
-        font-family: Impact, "Arial Black", sans-serif;
-        font-size: 30px;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: transform 0.1s;
-    }
+#randomButton:hover {
+    background: #9b63ed;
+}
 
-    .random-button:hover {
-        background: #795cff;
-    }
+#randomButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #4e2486;
+}
 
-    .random-button:active {
-        transform: translateY(5px);
-        border-bottom-width: 2px;
-    }
+#result {
+    margin-top: 25px;
+    min-height: 150px;
+    border: 2px dashed #555;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-    .result {
-        margin-top: 25px;
-        min-height: 180px;
-        background: #0c0c0c;
-        border: 2px dashed #444;
-        border-radius: 7px;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+#result.secret {
+    border-color: #ffd84d;
+    box-shadow: 0 0 20px rgba(255,216,77,.15);
+}
 
-    .waiting {
-        color: #777;
-        font-family: monospace;
-        font-size: 16px;
-    }
+#result.milestone {
+    border-color: #67e8a5;
+    box-shadow: 0 0 20px rgba(103,232,165,.15);
+}
 
-    .category {
-        display: inline-block;
-        background: #252525;
-        border: 1px solid #555;
-        padding: 5px 9px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 13px;
-        margin-bottom: 12px;
-        color: #bbb;
-    }
+.category {
+    color: #b66cff;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
 
-    .result-text {
-        font-size: 21px;
-        line-height: 1.5;
-        max-width: 700px;
-    }
+.result-text {
+    font-size: 21px;
+    line-height: 1.45;
+    text-align: center;
+}
 
-    .result a {
-        color: #9d8aff;
-        text-decoration: underline;
-    }
+.result-text a {
+    color: #72b7ff;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-    .result a:hover {
-        color: #c0b5ff;
-    }
+.result-text a:hover {
+    text-decoration: underline;
+}
 
-    .actions {
-        margin-top: 15px;
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
+.buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-    .small-button {
-        background: #222;
-        color: #ddd;
-        border: 1px solid #444;
-        border-radius: 5px;
-        padding: 8px 13px;
-        cursor: pointer;
-    }
+.small-button {
+    background: #202020;
+    color: white;
+    border: 1px solid #444;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-    .small-button:hover {
-        background: #303030;
-    }
+.small-button:hover {
+    background: #292929;
+}
 
-    .counter {
-        margin-top: 15px;
-        color: #666;
-        font-family: monospace;
-        font-size: 13px;
-    }
+#counter {
+    margin-top: 15px;
+    color: #888;
+    font-family: monospace;
+}
 
-    .section {
-        margin-top: 25px;
-        background: #191919;
-        border: 2px solid #333;
-        border-radius: 10px;
-        padding: 22px;
-        box-shadow: 5px 5px 0 #050505;
-    }
+.stats {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
 
-    .section h2 {
-        margin-top: 0;
-        font-family: Impact, "Arial Black", sans-serif;
-        font-size: 25px;
-        color: #fff;
-    }
+.stat {
+    background: #171717;
+    border: 1px solid #333;
+    padding: 15px;
+    text-align: center;
+}
 
+.stat-number {
+    display: block;
+    color: #b66cff;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #999;
+    font-size: 12px;
+}
+
+.milestones {
+    margin-top: 25px;
+    background: #151515;
+    border: 1px solid #333;
+    padding: 18px;
+}
+
+.milestones h2 {
+    margin-top: 0;
+}
+
+.milestone-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.milestone-item {
+    border: 1px solid #333;
+    padding: 10px 5px;
+    text-align: center;
+    color: #777;
+}
+
+.milestone-item.unlocked {
+    color: #67e8a5;
+    border-color: #67e8a5;
+}
+
+.facts {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.fact {
+    background: #151515;
+    border: 1px solid #333;
+    padding: 18px;
+}
+
+.fact h3 {
+    margin-top: 0;
+}
+
+.fact p {
+    color: #aaa;
+    line-height: 1.5;
+}
+
+.terminal {
+    margin-top: 30px;
+    background: #080808;
+    border: 1px solid #2d2d2d;
+    padding: 18px;
+    font-family: monospace;
+    color: #76e39b;
+    line-height: 1.7;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .stats,
     .facts {
-        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .milestone-list {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
     }
 
-    .fact {
-        background: #111;
-        border: 1px solid #333;
-        padding: 15px;
-        border-radius: 5px;
-    }
-
-    .fact strong {
+    #languageButton {
+        position: static;
         display: block;
-        color: #9d8aff;
-        margin-bottom: 7px;
+        margin: 0 auto 15px;
     }
-
-    .fact p {
-        margin: 0;
-        color: #aaa;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .terminal {
-        margin-top: 25px;
-        background: #050505;
-        border: 1px solid #333;
-        padding: 15px;
-        border-radius: 5px;
-        font-family: monospace;
-        font-size: 13px;
-        color: #777;
-    }
-
-    .terminal span {
-        color: #9d8aff;
-    }
-
-    footer {
-        text-align: center;
-        margin-top: 25px;
-        color: #555;
-        font-family: monospace;
-        font-size: 12px;
-    }
-
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 34px;
-        }
-
-        .logo {
-            font-size: 45px;
-        }
-
-        .random-box {
-            padding: 18px;
-        }
-
-        .random-button {
-            font-size: 23px;
-        }
-
-        .facts {
-            grid-template-columns: 1fr;
-        }
-
-        .result-text {
-            font-size: 18px;
-        }
-    }
+}
 </style>
 </head>
 
 <body>
 
-<button class="language" onclick="cambiarIdioma()" id="languageButton">
-    🇬🇧 English
-</button>
-
 <div class="page">
 
-<header>
+<button id="languageButton" onclick="cambiarIdioma()">🇬🇧 English</button>
 
+<header>
     <div class="logo">🌐🎲</div>
 
     <h1>INTERNET RANDOMIZER</h1>
@@ -296,130 +294,201 @@
     <div class="subtitle" id="subtitle">
         No sabes qué va a salir. Ni yo tampoco.
     </div>
-
 </header>
 
+<section class="random-box">
 
-<div class="random-box">
-
-    <button class="random-button" onclick="sorprendeme()" id="randomButton">
+    <button id="randomButton" onclick="sorprendeme()">
         🎲 SORPRÉNDEME
     </button>
 
-    <div class="result" id="result">
+    <div id="result">
 
-        <div class="waiting" id="placeholder">
+        <div class="category" id="category">
+            INTERNET RANDOMIZER
+        </div>
+
+        <div class="result-text" id="resultText">
             &gt; pulsa el botón...
         </div>
 
     </div>
 
-    <div class="actions">
+    <div class="buttons">
 
-        <button class="small-button" onclick="copiarResultado()" id="copyButton">
+        <button class="small-button" id="copyButton" onclick="copiarResultado()">
             📋 Copiar
         </button>
 
-        <button class="small-button" onclick="sorprendeme()" id="againButton">
+        <button class="small-button" id="againButton" onclick="sorprendeme()">
             🔄 Otra vez
         </button>
 
     </div>
 
-    <div class="counter">
-
-        <span id="counterLabel">randomizaciones:</span>
-        <span id="counter">0</span>
-
+    <div id="counter">
+        Tiradas: 0
     </div>
 
-</div>
+</section>
 
 
-<div class="section">
+<section class="stats">
 
-    <h2 id="factsTitle">
-        🧠 COSAS QUE QUIZÁ NO SABÍAS
-    </h2>
+    <div class="stat">
+        <span class="stat-number" id="localCounter">0</span>
+        <span class="stat-label" id="localLabel">
+            TUS TIRADAS
+        </span>
+    </div>
 
-    <div class="facts">
+    <div class="stat">
+        <span class="stat-number" id="secretCounter">0</span>
+        <span class="stat-label" id="secretLabel">
+            SECRETOS ENCONTRADOS
+        </span>
+    </div>
 
-        <div class="fact">
+    <div class="stat">
+        <span class="stat-number" id="nextMilestone">100</span>
+        <span class="stat-label" id="nextLabel">
+            PRÓXIMO HITO
+        </span>
+    </div>
 
-            <strong id="fact1Title">🌐 EL PRIMER SITIO WEB</strong>
+</section>
 
-            <p id="fact1Text">
-                El primer sitio web fue creado por Tim Berners-Lee
-                en 1991. Era bastante menos bonito que este.
-            </p>
 
+<section class="milestones">
+
+    <h2 id="milestonesTitle">🏆 Hitos</h2>
+
+    <div class="milestone-list">
+
+        <div class="milestone-item" id="m100">
+            100
         </div>
 
-
-        <div class="fact">
-
-            <strong id="fact2Title">🐙 TRES CORAZONES</strong>
-
-            <p id="fact2Text">
-                Los pulpos tienen tres corazones.
-                Internet probablemente tiene bastantes más.
-            </p>
-
+        <div class="milestone-item" id="m500">
+            500
         </div>
 
-
-        <div class="fact">
-
-            <strong id="fact3Title">🦈 ANTES QUE LOS DINOSAURIOS</strong>
-
-            <p id="fact3Text">
-                Los tiburones existen desde hace cientos de millones
-                de años, mucho antes que los dinosaurios.
-            </p>
-
+        <div class="milestone-item" id="m1000">
+            1.000
         </div>
 
+        <div class="milestone-item" id="m2000">
+            2.000
+        </div>
 
-        <div class="fact">
-
-            <strong id="fact4Title">💾 INTERNET ANTIGUO</strong>
-
-            <p id="fact4Text">
-                Algunas páginas web creadas hace décadas todavía
-                pueden encontrarse funcionando.
-            </p>
-
+        <div class="milestone-item" id="m3000">
+            3.000
         </div>
 
     </div>
 
-</div>
+</section>
+
+
+<section class="facts">
+
+<article class="fact">
+<h3>🐙 TRES CORAZONES</h3>
+<p>
+Los pulpos tienen tres corazones.
+</p>
+</article>
+
+<article class="fact">
+<h3>🦈 ANTES QUE LOS DINOSAURIOS</h3>
+<p>
+Los tiburones aparecieron cientos de millones de años antes que los dinosaurios.
+</p>
+</article>
+
+<article class="fact">
+<h3>🪐 VENUS</h3>
+<p>
+En Venus, una rotación sobre su eje dura más que una vuelta alrededor del Sol.
+</p>
+</article>
+
+<article class="fact">
+<h3>🍌 ¿BAYA?</h3>
+<p>
+Botánicamente, el plátano es una baya y la fresa no es una baya verdadera.
+</p>
+</article>
+
+<article class="fact">
+<h3>⚡ RAYOS</h3>
+<p>
+El canal de un rayo puede alcanzar temperaturas de decenas de miles de grados Kelvin.
+</p>
+</article>
+
+<article class="fact">
+<h3>🌙 CLEOPATRA</h3>
+<p>
+Cleopatra vivió más cerca del alunizaje de 1969 que de la construcción de la Gran Pirámide.
+</p>
+</article>
+
+<article class="fact">
+<h3>🏛️ OXFORD</h3>
+<p>
+La enseñanza en Oxford comenzó siglos antes de la existencia del Imperio azteca.
+</p>
+</article>
+
+<article class="fact">
+<h3>🐙 SANGRE AZUL</h3>
+<p>
+La sangre de los pulpos es azul debido a la hemocianina.
+</p>
+</article>
+
+<article class="fact">
+<h3>🌍 TIERRA</h3>
+<p>
+La Tierra está ligeramente achatada por los polos.
+</p>
+</article>
+
+<article class="fact">
+<h3>☀️ LUZ SOLAR</h3>
+<p>
+La luz del Sol tarda unos 8 minutos y 20 segundos en llegar a la Tierra.
+</p>
+</article>
+
+</section>
 
 
 <div class="terminal">
 
-    <span id="terminalPrompt">
-        internet@randomizer:~$
-    </span>
+<div>internet@randomizer:~$</div>
 
-    <span id="terminalText">
-        searching_for_something_useful...
-    </span>
+<div id="terminalLine">
+searching_for_something_useful...
+</div>
 
-    <br><br>
-
-    <span id="terminalResult">
-        result: probably not useful
-    </span>
+<div id="terminalResult">
+result: probably not useful
+</div>
 
 </div>
 
 
-<footer id="footer">
+<footer>
 
-    Internet Randomizer © 2026
-    <br>
-    hecho porque sí
+<div>
+Internet Randomizer © 2026
+</div>
+
+<div id="footerText">
+hecho porque sí
+</div>
 
 </footer>
 
@@ -427,699 +496,990 @@
 
 
 <script>
+
+/* =========================
+   DATOS GUARDADOS
+========================= */
+
 let ingles = false;
 
-let contador = 0;
+let contador =
+    Number(localStorage.getItem("randomizerContador")) || 0;
 
-let ultimoResultado = "";
+let secretosEncontrados =
+    Number(localStorage.getItem("randomizerSecretos")) || 0;
 
 let ultimoIndice = null;
 
+let resultadoActual = {
+    es: "",
+    en: "",
+    categoriaEs: "",
+    categoriaEn: "",
+    url: null,
+    secreto: false,
+    hito: false
+};
 
-/*
-    LISTA DE COSAS RANDOM
-*/
+
+/* =========================
+   HITOS
+========================= */
+
+const hitos = [100, 500, 1000, 2000, 3000];
+
+const mensajesHitos = {
+
+    100: {
+        es: "🏆 100 PULSACIONES. Has pulsado este botón cien veces. ¿No tienes nada mejor que hacer?",
+        en: "🏆 100 CLICKS. You have pressed this button one hundred times. Don't you have anything better to do?"
+    },
+
+    500: {
+        es: "🔥 500 PULSACIONES. Esto ya empieza a ser preocupante.",
+        en: "🔥 500 CLICKS. This is starting to become concerning."
+    },
+
+    1000: {
+        es: "👑 1.000 PULSACIONES. Oficialmente formas parte del problema.",
+        en: "👑 1,000 CLICKS. You are officially part of the problem."
+    },
+
+    2000: {
+        es: "💀 2.000 PULSACIONES. El botón te conoce mejor que tú.",
+        en: "💀 2,000 CLICKS. The button knows you better than you know yourself."
+    },
+
+    3000: {
+        es: "🗿 3.000 PULSACIONES. Internet Randomizer te está usando a ti.",
+        en: "🗿 3,000 CLICKS. Internet Randomizer is now using you."
+    }
+
+};
+
+
+/* =========================
+   RESULTADOS NORMALES
+========================= */
 
 const cosas = [
 
-    {
-        tipo: "enlace",
-        categoria: "🌐 INTERNET",
-        categoriaEn: "🌐 INTERNET",
-
-        es: "🌍 Explora Internet Archive",
-        en: "🌍 Explore Internet Archive",
-
-        url: "https://archive.org/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🤷 RANDOM",
-        categoriaEn: "🤷 RANDOM",
-
-        es: "🤷 The Useless Web — una web inútil al azar",
-        en: "🤷 The Useless Web — a random useless website",
-
-        url: "https://theuselessweb.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🔍 DETECTIVE CONAN",
-        categoriaEn: "🔍 DETECTIVE CONAN",
-
-        es: "🔍 ¿Te gusta Detective Conan? Échale un vistazo a MundoConan.",
-        en: "🔍 Do you like Detective Conan? Check out MundoConan.",
-
-        url: "https://mundoconan.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🔎 DETECTIVE CONAN",
-        categoriaEn: "🔎 DETECTIVE CONAN",
-
-        es: "🕵️‍♂️ ¿Necesitas más Conan en tu vida? Descubre MundoConan.",
-        en: "🕵️‍♂️ Need more Conan in your life? Discover MundoConan.",
-
-        url: "https://mundoconan.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎩 DETECTIVE CONAN",
-        categoriaEn: "🎩 DETECTIVE CONAN",
-
-        es: "🎩 Conan, misterios y más. Pásate por MundoConan.",
-        en: "🎩 Detective Conan, mysteries and more. Visit MundoConan.",
-
-        url: "https://mundoconan.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🚀 CIENCIA",
-        categoriaEn: "🚀 SCIENCE",
-
-        es: "🚀 Entra en la web de NASA.",
-        en: "🚀 Visit NASA.",
-
-        url: "https://www.nasa.gov/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎨 ARTE",
-        categoriaEn: "🎨 ART",
-
-        es: "🎨 Explora arte de todo el mundo.",
-        en: "🎨 Explore art from around the world.",
-
-        url: "https://artsandculture.google.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "📚 LIBROS",
-        categoriaEn: "📚 BOOKS",
-
-        es: "📚 Busca libros clásicos gratuitos.",
-        en: "📚 Find free classic books.",
-
-        url: "https://www.gutenberg.org/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🗺️ MAPAS",
-        categoriaEn: "🗺️ MAPS",
-
-        es: "🗺️ Explora el planeta con OpenStreetMap.",
-        en: "🗺️ Explore the planet with OpenStreetMap.",
-
-        url: "https://www.openstreetmap.org/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎮 JUEGOS",
-        categoriaEn: "🎮 GAMES",
-
-        es: "🎮 Mira juegos independientes en itch.io.",
-        en: "🎮 Check out indie games on itch.io.",
-
-        url: "https://itch.io/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎵 MÚSICA",
-        categoriaEn: "🎵 MUSIC",
-
-        es: "🎵 Descubre música independiente.",
-        en: "🎵 Discover independent music.",
-
-        url: "https://bandcamp.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "💻 CÓDIGO",
-        categoriaEn: "💻 CODE",
-
-        es: "💻 Piérdete por GitHub.",
-        en: "💻 Get lost on GitHub.",
-
-        url: "https://github.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🧠 APRENDER",
-        categoriaEn: "🧠 LEARNING",
-
-        es: "🧠 Aprende algo en Khan Academy.",
-        en: "🧠 Learn something on Khan Academy.",
-
-        url: "https://www.khanacademy.org/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "📸 FOTOS",
-        categoriaEn: "📸 PHOTOS",
-
-        es: "📸 Mira fotografías en Flickr.",
-        en: "📸 Browse photographs on Flickr.",
-
-        url: "https://www.flickr.com/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "🎲 RANDOM",
-        categoriaEn: "🎲 RANDOM",
-
-        es: "🎲 Genera un número aleatorio.",
-        en: "🎲 Generate a random number.",
-
-        url: "https://www.random.org/"
-    },
-
-    {
-        tipo: "enlace",
-        categoria: "📖 WIKIPEDIA",
-        categoriaEn: "📖 WIKIPEDIA",
-
-        es: "🎲 Abre un artículo aleatorio de Wikipedia.",
-        en: "🎲 Open a random Wikipedia article.",
-
-        url: "https://es.wikipedia.org/wiki/Especial:Aleatoria"
-    },
-
-
-    /* CURIOSIDADES */
-
-    {
-        tipo: "texto",
-        categoria: "🐙 CURIOSIDAD",
-        categoriaEn: "🐙 FACT",
-
-        es: "🐙 Los pulpos tienen tres corazones.",
-        en: "🐙 Octopuses have three hearts."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🦇 CURIOSIDAD",
-        categoriaEn: "🦇 FACT",
-
-        es: "🦇 Los murciélagos son los únicos mamíferos capaces de realizar un vuelo verdaderamente sostenido.",
-        en: "🦇 Bats are the only mammals capable of sustained powered flight."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🌍 CURIOSIDAD",
-        categoriaEn: "🌍 FACT",
-
-        es: "🌍 La Tierra está ligeramente achatada por los polos.",
-        en: "🌍 Earth is slightly flattened at the poles."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🦈 CURIOSIDAD",
-        categoriaEn: "🦈 FACT",
-
-        es: "🦈 Los tiburones son muchísimo más antiguos que los dinosaurios.",
-        en: "🦈 Sharks are much older than dinosaurs."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🧠 CURIOSIDAD",
-        categoriaEn: "🧠 FACT",
-
-        es: "🧠 Tu cerebro consume una cantidad considerable de energía incluso cuando estás descansando.",
-        en: "🧠 Your brain uses a significant amount of energy even while resting."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "💻 INTERNET",
-        categoriaEn: "💻 INTERNET",
-
-        es: "💻 Algunas páginas web antiguísimas todavía funcionan hoy.",
-        en: "💻 Some extremely old websites are still online today."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🤨 RANDOM",
-        categoriaEn: "🤨 RANDOM",
-
-        es: "🤨 Has llegado hasta aquí. Eso significa que Internet te ha atrapado.",
-        en: "🤨 You made it this far. Internet has trapped you."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🚨 ERROR",
-        categoriaEn: "🚨 ERROR",
-
-        es: "🚨 Error 404: no se ha encontrado ninguna explicación para esto.",
-        en: "🚨 Error 404: no explanation was found for this."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🦆 IMPORTANTE",
-        categoriaEn: "🦆 IMPORTANT",
-
-        es: "🦆 El pato ha sido localizado. Repetimos: el pato ha sido localizado.",
-        en: "🦆 The duck has been located. Repeat: the duck has been located."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🎲 RANDOM",
-        categoriaEn: "🎲 RANDOM",
-
-        es: "🎲 Probablemente no necesitabas saber esto.",
-        en: "🎲 You probably didn't need to know this."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🌐 INTERNET",
-        categoriaEn: "🌐 INTERNET",
-
-        es: "🌐 Internet es básicamente una cantidad absurda de ordenadores hablando entre ellos.",
-        en: "🌐 The Internet is basically a ridiculous number of computers talking to each other."
-    },
-
-    {
-        tipo: "texto",
-        categoria: "🕵️ MISTERIO",
-        categoriaEn: "🕵️ MYSTERY",
-
-        es: "🕵️ Existe una posibilidad razonable de que todavía no hayas encontrado las partes más raras de Internet.",
-        en: "🕵️ There is a good chance you still haven't found the strangest parts of the Internet."
-    }
+{
+tipo: "link",
+categoriaEs: "WEB",
+categoriaEn: "WEB",
+es: "Internet Archive: una gigantesca biblioteca de Internet.",
+en: "Internet Archive: a gigantic library of the Internet.",
+url: "https://archive.org/"
+},
+
+{
+tipo: "link",
+categoriaEs: "WEB RARO",
+categoriaEn: "WEIRD WEB",
+es: "The Useless Web: webs que probablemente no necesitabas.",
+en: "The Useless Web: websites you probably didn't need.",
+url: "https://theuselessweb.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "NASA: espacio, ciencia y misiones.",
+en: "NASA: space, science and missions.",
+url: "https://www.nasa.gov/"
+},
+
+{
+tipo: "link",
+categoriaEs: "ARTE",
+categoriaEn: "ART",
+es: "Google Arts & Culture.",
+en: "Google Arts & Culture.",
+url: "https://artsandculture.google.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "LIBROS",
+categoriaEn: "BOOKS",
+es: "Project Gutenberg: miles de libros gratuitos.",
+en: "Project Gutenberg: thousands of free books.",
+url: "https://www.gutenberg.org/"
+},
+
+{
+tipo: "link",
+categoriaEs: "MAPAS",
+categoriaEn: "MAPS",
+es: "OpenStreetMap: explora el planeta.",
+en: "OpenStreetMap: explore the planet.",
+url: "https://www.openstreetmap.org/"
+},
+
+{
+tipo: "link",
+categoriaEs: "JUEGOS",
+categoriaEn: "GAMES",
+es: "itch.io: juegos independientes.",
+en: "itch.io: indie games.",
+url: "https://itch.io/"
+},
+
+{
+tipo: "link",
+categoriaEs: "MÚSICA",
+categoriaEn: "MUSIC",
+es: "Bandcamp: descubre música independiente.",
+en: "Bandcamp: discover independent music.",
+url: "https://bandcamp.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "CÓDIGO",
+categoriaEn: "CODE",
+es: "GitHub: millones de proyectos.",
+en: "GitHub: millions of projects.",
+url: "https://github.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "APRENDER",
+categoriaEn: "LEARNING",
+es: "Khan Academy.",
+en: "Khan Academy.",
+url: "https://www.khanacademy.org/"
+},
+
+{
+tipo: "link",
+categoriaEs: "FOTOS",
+categoriaEn: "PHOTOS",
+es: "Flickr: fotografías de todo tipo.",
+en: "Flickr: photographs of all kinds.",
+url: "https://www.flickr.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "ALEATORIO",
+categoriaEn: "RANDOM",
+es: "Random.org.",
+en: "Random.org.",
+url: "https://www.random.org/"
+},
+
+{
+tipo: "link",
+categoriaEs: "WIKIPEDIA",
+categoriaEn: "WIKIPEDIA",
+es: "Artículo aleatorio de Wikipedia.",
+en: "Random Wikipedia article.",
+url: "https://es.wikipedia.org/wiki/Especial:Aleatoria"
+},
+
+{
+tipo: "link",
+categoriaEs: "CONAN",
+categoriaEn: "CONAN",
+es: "MundoConan.",
+en: "MundoConan.",
+url: "https://www.mundoconan.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "WEB",
+categoriaEn: "WEB",
+es: "Neal.fun: experimentos web.",
+en: "Neal.fun: web experiments.",
+url: "https://neal.fun/"
+},
+
+{
+tipo: "link",
+categoriaEs: "MÚSICA",
+categoriaEn: "MUSIC",
+es: "Radio Garden: escucha radios de todo el planeta.",
+en: "Radio Garden: listen to radio stations around the planet.",
+url: "https://radio.garden/"
+},
+
+{
+tipo: "link",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "Wolfram Alpha.",
+en: "Wolfram Alpha.",
+url: "https://www.wolframalpha.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "HISTORIA",
+categoriaEn: "HISTORY",
+es: "Smithsonian.",
+en: "Smithsonian.",
+url: "https://www.si.edu/"
+},
+
+{
+tipo: "link",
+categoriaEs: "ESPACIO",
+categoriaEn: "SPACE",
+es: "Space.com.",
+en: "Space.com.",
+url: "https://www.space.com/"
+},
+
+{
+tipo: "link",
+categoriaEs: "CARTOGRAFÍA",
+categoriaEn: "CARTOGRAPHY",
+es: "NASA Worldview: observa imágenes de la Tierra.",
+en: "NASA Worldview: explore Earth imagery.",
+url: "https://worldview.earthdata.nasa.gov/"
+},
+
+{
+tipo: "texto",
+categoriaEs: "CURIOSIDAD",
+categoriaEn: "CURIOSITY",
+es: "Los pulpos tienen tres corazones.",
+en: "Octopuses have three hearts."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ANIMALES",
+categoriaEn: "ANIMALS",
+es: "Los wombats producen heces aproximadamente cúbicas.",
+en: "Wombats produce roughly cube-shaped droppings."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ESPACIO",
+categoriaEn: "SPACE",
+es: "Júpiter es tan grande que cabrían más de mil Tierras en su volumen.",
+en: "Jupiter is so large that more than a thousand Earths could fit inside its volume."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ANIMALES",
+categoriaEn: "ANIMALS",
+es: "Los tiburones existen desde cientos de millones de años antes que los dinosaurios.",
+en: "Sharks have existed for hundreds of millions of years before dinosaurs."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ESPACIO",
+categoriaEn: "SPACE",
+es: "La luz solar tarda unos 8 minutos y 20 segundos en llegar a la Tierra.",
+en: "Sunlight takes about 8 minutes and 20 seconds to reach Earth."
+},
+
+{
+tipo: "texto",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "La sangre de los pulpos es azul por la hemocianina.",
+en: "Octopus blood is blue because of hemocyanin."
+},
+
+{
+tipo: "texto",
+categoriaEs: "HISTORIA",
+categoriaEn: "HISTORY",
+es: "Cleopatra vivió más cerca del alunizaje de 1969 que de la construcción de la Gran Pirámide.",
+en: "Cleopatra lived closer to the 1969 Moon landing than to the construction of the Great Pyramid."
+},
+
+{
+tipo: "texto",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "La Tierra está ligeramente achatada por los polos.",
+en: "Earth is slightly flattened at the poles."
+},
+
+{
+tipo: "texto",
+categoriaEs: "COMIDA",
+categoriaEn: "FOOD",
+es: "Botánicamente, el plátano es una baya.",
+en: "Botanically, a banana is a berry."
+},
+
+{
+tipo: "texto",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "La fresa no se considera una baya verdadera desde el punto de vista botánico.",
+en: "A strawberry is not considered a true berry botanically."
+},
+
+{
+tipo: "texto",
+categoriaEs: "CIENCIA",
+categoriaEn: "SCIENCE",
+es: "Un rayo puede calentar su canal a decenas de miles de grados Kelvin.",
+en: "A lightning channel can reach tens of thousands of kelvin."
+},
+
+{
+tipo: "texto",
+categoriaEs: "HISTORIA",
+categoriaEn: "HISTORY",
+es: "Oxford comenzó a enseñar siglos antes de la existencia del Imperio azteca.",
+en: "Oxford began teaching centuries before the Aztec Empire existed."
+},
+
+{
+tipo: "texto",
+categoriaEs: "TECNOLOGÍA",
+categoriaEn: "TECH",
+es: "El primer sitio web fue creado en el CERN.",
+en: "The first website was created at CERN."
+},
+
+{
+tipo: "texto",
+categoriaEs: "INTERNET",
+categoriaEn: "INTERNET",
+es: "Internet es una red de redes, no una sola máquina gigante.",
+en: "The Internet is a network of networks, not one giant machine."
+},
+
+{
+tipo: "texto",
+categoriaEs: "CURIOSIDAD",
+categoriaEn: "CURIOSITY",
+es: "La Torre Eiffel puede cambiar ligeramente de altura con la temperatura.",
+en: "The Eiffel Tower can change slightly in height with temperature."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ANIMALES",
+categoriaEn: "ANIMALS",
+es: "Las abejas pueden comunicar la dirección de comida mediante la danza de las abejas.",
+en: "Honeybees can communicate the direction of food through their waggle dance."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ANIMALES",
+categoriaEn: "ANIMALS",
+es: "Los cuervos pueden reconocer rostros humanos.",
+en: "Crows can recognize human faces."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ESPACIO",
+categoriaEn: "SPACE",
+es: "Venus tarda más en girar sobre sí mismo que en completar una órbita.",
+en: "Venus takes longer to rotate once than to orbit the Sun."
+},
+
+{
+tipo: "texto",
+categoriaEs: "INTERNET",
+categoriaEn: "INTERNET",
+es: "Hay páginas web que llevan décadas funcionando.",
+en: "Some websites have been running for decades."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ABSURDO",
+categoriaEn: "ABSURD",
+es: "Has venido a Internet buscando algo útil y has acabado aquí.",
+en: "You came to the Internet looking for something useful and ended up here."
+},
+
+{
+tipo: "texto",
+categoriaEs: "ABSURDO",
+categoriaEn: "ABSURD",
+es: "El pato ha sido localizado. Repetimos: el pato ha sido localizado.",
+en: "The duck has been located. Repeat: the duck has been located."
+}
 
 ];
 
 
-/*
-    MOSTRAR RESULTADO
-*/
+/* =========================
+   RESULTADOS SECRETOS
+========================= */
 
-function mostrarResultado(indice) {
+const secretos = [
 
-    const cosa = cosas[indice];
+{
+probabilidad: 1 / 50,
+categoriaEs: "🥚 SECRETO",
+categoriaEn: "🥚 SECRET",
+es: "HAS ENCONTRADO EL PATO LEGENDARIO. 🦆",
+en: "YOU FOUND THE LEGENDARY DUCK. 🦆"
+},
 
-    const texto = ingles ? cosa.en : cosa.es;
+{
+probabilidad: 1 / 100,
+categoriaEs: "👁️ SECRETO",
+categoriaEn: "👁️ SECRET",
+es: "No deberías haber encontrado esto.",
+en: "You probably shouldn't have found this."
+},
+
+{
+probabilidad: 1 / 250,
+categoriaEs: "💾 INTERNET ANTIGUO",
+categoriaEn: "💾 OLD INTERNET",
+es: "Has encontrado una señal perdida de Internet antiguo.",
+en: "You found a lost signal from the old Internet."
+},
+
+{
+probabilidad: 1 / 500,
+categoriaEs: "💀 ERROR",
+categoriaEn: "💀 ERROR",
+es: "ERROR 000: no se encontró una explicación.",
+en: "ERROR 000: no explanation was found."
+},
+
+{
+probabilidad: 1 / 1000,
+categoriaEs: "🌐 IMPROBABLE",
+categoriaEn: "🌐 UNLIKELY",
+es: "El algoritmo te ha elegido a ti.",
+en: "The algorithm has chosen you."
+},
+
+{
+probabilidad: 1 / 2000,
+categoriaEs: "👑 LEGENDARIO",
+categoriaEn: "👑 LEGENDARY",
+es: "Uno entre miles. Esto era extremadamente difícil de encontrar.",
+en: "One among thousands. This was extremely difficult to find."
+}
+
+];
+
+
+/* =========================
+   GUARDAR
+========================= */
+
+function guardar() {
+
+    localStorage.setItem(
+        "randomizerContador",
+        contador
+    );
+
+    localStorage.setItem(
+        "randomizerSecretos",
+        secretosEncontrados
+    );
+}
+
+
+/* =========================
+   ESTADÍSTICAS
+========================= */
+
+function actualizarEstadisticas() {
+
+    document.getElementById("localCounter").textContent =
+        contador.toLocaleString();
+
+    document.getElementById("secretCounter").textContent =
+        secretosEncontrados.toLocaleString();
+
+    document.getElementById("counter").textContent =
+        ingles
+        ? "Clicks: " + contador.toLocaleString()
+        : "Tiradas: " + contador.toLocaleString();
+
+
+    const siguiente =
+        hitos.find(hito => contador < hito);
+
+    document.getElementById("nextMilestone").textContent =
+        siguiente
+        ? siguiente.toLocaleString()
+        : "∞";
+
+
+    hitos.forEach(hito => {
+
+        const elemento =
+            document.getElementById("m" + hito);
+
+        if (contador >= hito) {
+
+            elemento.classList.add("unlocked");
+
+            elemento.textContent =
+                "✓ " + hito.toLocaleString();
+
+        } else {
+
+            elemento.classList.remove("unlocked");
+
+            elemento.textContent =
+                hito.toLocaleString();
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   MOSTRAR RESULTADO
+========================= */
+
+function renderResultado() {
 
     const categoria =
-        ingles ? cosa.categoriaEn : cosa.categoria;
+        ingles
+        ? resultadoActual.categoriaEn
+        : resultadoActual.categoriaEs;
 
-    ultimoResultado = texto;
-
-
-    let html = "";
-
-    html += `
-        <div class="category">
-            ${categoria}
-        </div>
-    `;
+    const texto =
+        ingles
+        ? resultadoActual.en
+        : resultadoActual.es;
 
 
-    if (cosa.tipo === "enlace") {
+    document.getElementById("category").textContent =
+        categoria;
 
-        html += `
-            <div class="result-text">
-                <a
-                    href="${cosa.url}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    ${texto}
-                </a>
-            </div>
-        `;
+    const resultText =
+        document.getElementById("resultText");
+
+
+    if (resultadoActual.url) {
+
+        resultText.innerHTML =
+            `<a href="${resultadoActual.url}"
+                target="_blank"
+                rel="noopener noreferrer">
+                ${texto} ↗
+            </a>`;
 
     } else {
 
-        html += `
-            <div class="result-text">
-                ${texto}
-            </div>
-        `;
+        resultText.textContent =
+            texto;
 
     }
 
 
-    document.getElementById("result").innerHTML = html;
+    const caja =
+        document.getElementById("result");
+
+    caja.classList.toggle(
+        "secret",
+        resultadoActual.secreto
+    );
+
+    caja.classList.toggle(
+        "milestone",
+        resultadoActual.hito
+    );
 }
 
 
-/*
-    SORPRÉNDEME
-*/
+/* =========================
+   RESULTADO NORMAL
+========================= */
 
-function sorprendeme() {
-    gtag('event', 'surprise_me');
+function resultadoNormal() {
 
     let indice;
 
     do {
 
         indice =
-            Math.floor(Math.random() * cosas.length);
+            Math.floor(
+                Math.random() * cosas.length
+            );
 
     } while (
-        cosas.length > 1 &&
-        indice === ultimoIndice
+        indice === ultimoIndice &&
+        cosas.length > 1
     );
 
 
     ultimoIndice = indice;
 
-    contador++;
+    const cosa =
+        cosas[indice];
 
-    document.getElementById("counter").textContent =
-        contador;
 
-    mostrarResultado(indice);
+    resultadoActual = {
+
+        es: cosa.es,
+
+        en: cosa.en,
+
+        categoriaEs:
+            cosa.categoriaEs,
+
+        categoriaEn:
+            cosa.categoriaEn,
+
+        url:
+            cosa.tipo === "link"
+            ? cosa.url
+            : null,
+
+        secreto: false,
+
+        hito: false
+
+    };
+
+
+    renderResultado();
 }
 
 
-/*
-    COPIAR
-*/
+/* =========================
+   RESULTADO SECRETO
+========================= */
 
-function copiarResultado() {
+function intentarSecreto() {
 
-    if (!ultimoResultado) {
+    for (const secreto of secretos) {
 
-        return;
+        if (
+            Math.random() <
+            secreto.probabilidad
+        ) {
+
+            resultadoActual = {
+
+                es: secreto.es,
+
+                en: secreto.en,
+
+                categoriaEs:
+                    secreto.categoriaEs,
+
+                categoriaEn:
+                    secreto.categoriaEn,
+
+                url: null,
+
+                secreto: true,
+
+                hito: false
+
+            };
+
+
+            secretosEncontrados++;
+
+            guardar();
+
+            renderResultado();
+
+            if (typeof gtag === "function") {
+
+                gtag(
+                    "event",
+                    "rare_result"
+                );
+
+            }
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/* =========================
+   HITOS
+========================= */
+
+function mostrarHito(numero) {
+
+    const mensaje =
+        mensajesHitos[numero];
+
+
+    resultadoActual = {
+
+        es: mensaje.es,
+
+        en: mensaje.en,
+
+        categoriaEs:
+            "🏆 HITO",
+
+        categoriaEn:
+            "🏆 MILESTONE",
+
+        url: null,
+
+        secreto: false,
+
+        hito: true
+
+    };
+
+
+    renderResultado();
+
+
+    if (typeof gtag === "function") {
+
+        gtag(
+            "event",
+            "milestone_reached",
+            {
+                milestone: numero
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================
+   SORPRÉNDEME
+========================= */
+
+function sorprendeme() {
+
+    contador++;
+
+    guardar();
+
+    actualizarEstadisticas();
+
+
+    if (typeof gtag === "function") {
+
+        gtag(
+            "event",
+            "surprise_me",
+            {
+                click_number: contador
+            }
+        );
 
     }
 
 
-    navigator.clipboard.writeText(
-        ultimoResultado
-    );
+    /* HITO */
+
+    if (
+        hitos.includes(contador)
+    ) {
+
+        mostrarHito(contador);
+
+        return;
+    }
 
 
-    alert(
-        ingles
-            ? "Result copied! 📋"
-            : "¡Resultado copiado! 📋"
-    );
+    /* SECRETO */
+
+    if (
+        intentarSecreto()
+    ) {
+
+        return;
+    }
+
+
+    /* NORMAL */
+
+    resultadoNormal();
 }
 
 
-/*
-    CAMBIAR IDIOMA
-*/
+/* =========================
+   COPIAR
+========================= */
+
+function copiarResultado() {
+
+    if (
+        !resultadoActual.es
+    ) {
+        return;
+    }
+
+
+    const texto =
+        ingles
+        ? resultadoActual.en
+        : resultadoActual.es;
+
+
+    navigator.clipboard
+        .writeText(texto)
+        .then(() => {
+
+            alert(
+                ingles
+                ? "Result copied!"
+                : "¡Resultado copiado!"
+            );
+
+        });
+
+}
+
+
+/* =========================
+   IDIOMA
+========================= */
 
 function cambiarIdioma() {
 
     ingles = !ingles;
 
 
-    if (ingles) {
-
-        /* BOTÓN */
-
-        document.getElementById(
-            "languageButton"
-        ).textContent = "🇪🇸 Español";
+    document.documentElement.lang =
+        ingles ? "en" : "es";
 
 
-        document.getElementById(
-            "randomButton"
-        ).textContent = "🎲 SURPRISE ME";
+    document.getElementById(
+        "languageButton"
+    ).textContent =
+        ingles
+        ? "🇪🇸 Español"
+        : "🇬🇧 English";
 
 
-        document.getElementById(
-            "copyButton"
-        ).textContent = "📋 Copy";
+    document.getElementById(
+        "subtitle"
+    ).textContent =
+        ingles
+        ? "You don't know what's coming. Neither do I."
+        : "No sabes qué va a salir. Ni yo tampoco.";
 
 
-        document.getElementById(
-            "againButton"
-        ).textContent = "🔄 Again";
+    document.getElementById(
+        "randomButton"
+    ).textContent =
+        ingles
+        ? "🎲 SURPRISE ME"
+        : "🎲 SORPRÉNDEME";
 
 
-        /* CABECERA */
-
-        document.getElementById(
-            "subtitle"
-        ).textContent =
-            "You don't know what's going to appear. Neither do I.";
-
-
-        /* CONTADOR */
-
-        document.getElementById(
-            "counterLabel"
-        ).textContent =
-            "randomizations:";
+    document.getElementById(
+        "copyButton"
+    ).textContent =
+        ingles
+        ? "📋 Copy"
+        : "📋 Copiar";
 
 
-        /* CURIOSIDADES */
-
-        document.getElementById(
-            "factsTitle"
-        ).textContent =
-            "🧠 THINGS YOU MAY NOT KNOW";
-
-
-        document.getElementById(
-            "fact1Title"
-        ).textContent =
-            "🌐 THE FIRST WEBSITE";
+    document.getElementById(
+        "againButton"
+    ).textContent =
+        ingles
+        ? "🔄 Again"
+        : "🔄 Otra vez";
 
 
-        document.getElementById(
-            "fact1Text"
-        ).textContent =
-            "The first website was created by Tim Berners-Lee in 1991. It was considerably less pretty than this one.";
+    document.getElementById(
+        "localLabel"
+    ).textContent =
+        ingles
+        ? "YOUR CLICKS"
+        : "TUS TIRADAS";
 
 
-        document.getElementById(
-            "fact2Title"
-        ).textContent =
-            "🐙 THREE HEARTS";
+    document.getElementById(
+        "secretLabel"
+    ).textContent =
+        ingles
+        ? "SECRETS FOUND"
+        : "SECRETOS ENCONTRADOS";
 
 
-        document.getElementById(
-            "fact2Text"
-        ).textContent =
-            "Octopuses have three hearts. The Internet probably has quite a few more.";
+    document.getElementById(
+        "nextLabel"
+    ).textContent =
+        ingles
+        ? "NEXT MILESTONE"
+        : "PRÓXIMO HITO";
 
 
-        document.getElementById(
-            "fact3Title"
-        ).textContent =
-            "🦈 OLDER THAN DINOSAURS";
+    document.getElementById(
+        "milestonesTitle"
+    ).textContent =
+        ingles
+        ? "🏆 Milestones"
+        : "🏆 Hitos";
 
 
-        document.getElementById(
-            "fact3Text"
-        ).textContent =
-            "Sharks have existed for hundreds of millions of years, long before dinosaurs.";
+    document.getElementById(
+        "terminalResult"
+    ).textContent =
+        ingles
+        ? "result: probably not useful"
+        : "result: probablemente no es útil";
 
 
-        document.getElementById(
-            "fact4Title"
-        ).textContent =
-            "💾 OLD INTERNET";
+    document.getElementById(
+        "footerText"
+    ).textContent =
+        ingles
+        ? "made because why not"
+        : "hecho porque sí";
 
 
-        document.getElementById(
-            "fact4Text"
-        ).textContent =
-            "Some websites created decades ago can still be found working today.";
+    actualizarEstadisticas();
 
 
-        /* TERMINAL */
+    /* No crea un resultado nuevo.
+       Solo vuelve a mostrar el actual. */
 
-        document.getElementById(
-            "terminalText"
-        ).textContent =
-            "searching_for_something_useful...";
+    if (
+        resultadoActual.es
+    ) {
 
-
-        document.getElementById(
-            "terminalResult"
-        ).textContent =
-            "result: probably not useful";
-
-
-        /* FOOTER */
-
-        document.getElementById(
-            "footer"
-        ).innerHTML =
-            "Internet Randomizer © 2026<br>made for no particular reason";
-
-
-        /* RESULTADO ACTUAL */
-
-        if (ultimoIndice !== null) {
-
-            mostrarResultado(ultimoIndice);
-
-        } else {
-
-            document.getElementById(
-                "placeholder"
-            ).textContent =
-                "> press the button...";
-
-        }
+        renderResultado();
 
     } else {
-            /* BOTÓN */
 
         document.getElementById(
-            "languageButton"
-        ).textContent = "🇬🇧 English";
-
-
-        document.getElementById(
-            "randomButton"
-        ).textContent = "🎲 SORPRÉNDEME";
-
-
-        document.getElementById(
-            "copyButton"
-        ).textContent = "📋 Copiar";
-
-
-        document.getElementById(
-            "againButton"
-        ).textContent = "🔄 Otra vez";
-
-
-        /* CABECERA */
-
-        document.getElementById(
-            "subtitle"
-        ).textContent =
-            "No sabes qué va a salir. Ni yo tampoco.";
-
-
-        /* CONTADOR */
-
-        document.getElementById(
-            "counterLabel"
-        ).textContent =
-            "randomizaciones:";
-
-
-        /* CURIOSIDADES */
-
-        document.getElementById(
-            "factsTitle"
-        ).textContent =
-            "🧠 COSAS QUE QUIZÁ NO SABÍAS";
-
-
-        document.getElementById(
-            "fact1Title"
-        ).textContent =
-            "🌐 EL PRIMER SITIO WEB";
-
-
-        document.getElementById(
-            "fact1Text"
-        ).textContent =
-            "El primer sitio web fue creado por Tim Berners-Lee en 1991. Era bastante menos bonito que este.";
-
-
-        document.getElementById(
-            "fact2Title"
-        ).textContent =
-            "🐙 TRES CORAZONES";
-
-
-        document.getElementById(
-            "fact2Text"
-        ).textContent =
-            "Los pulpos tienen tres corazones. Internet probablemente tiene bastantes más.";
-
-
-        document.getElementById(
-            "fact3Title"
-        ).textContent =
-            "🦈 ANTES QUE LOS DINOSAURIOS";
-
-
-        document.getElementById(
-            "fact3Text"
-        ).textContent =
-            "Los tiburones existen desde hace cientos de millones de años, mucho antes que los dinosaurios.";
-
-
-        document.getElementById(
-            "fact4Title"
-        ).textContent =
-            "💾 INTERNET ANTIGUO";
-
-
-        document.getElementById(
-            "fact4Text"
-        ).textContent =
-            "Algunas páginas web creadas hace décadas todavía pueden encontrarse funcionando.";
-
-
-        /* TERMINAL */
-
-        document.getElementById(
-            "terminalText"
-        ).textContent =
-            "searching_for_something_useful...";
-
-
-        document.getElementById(
-            "terminalResult"
-        ).textContent =
-            "result: probably not useful";
-
-
-        /* FOOTER */
-
-        document.getElementById(
-            "footer"
+            "resultText"
         ).innerHTML =
-            "Internet Randomizer © 2026<br>hecho porque sí";
-
-
-        /* RESULTADO ACTUAL */
-
-        if (ultimoIndice !== null) {
-
-            mostrarResultado(ultimoIndice);
-
-        } else {
-
-            document.getElementById(
-                "placeholder"
-            ).textContent =
-                "> pulsa el botón...";
-
-        }
+            ingles
+            ? "&gt; press the button..."
+            : "&gt; pulsa el botón...";
 
     }
 
 }
+
+
+/* =========================
+   INICIO
+========================= */
+
+actualizarEstadisticas();
 
 </script>
 
