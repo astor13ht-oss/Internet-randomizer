@@ -6,7 +6,8 @@
 <title>Internet Randomizer 🎲</title>
 
 <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7FTXPGZX0W"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7FTXPGZX0W">\n\n/* =========================\n   COMPARTIR\n========================= */\n\nfunction actualizarBotonCompartir() {\n    const boton = document.getElementById("shareButton");\n    const caja = document.getElementById("result");\n    if (!boton || !caja) return;\n    const visible = resultadoActual.compartible === true;\n    boton.style.display = visible ? "inline-block" : "none";\n    caja.classList.toggle("rare-result", visible);\n}\n\nfunction obtenerTextoCompartir() {\n    const texto = ingles ? resultadoActual.en : resultadoActual.es;\n    return "🎲 Internet Randomizer\\n\\n" + texto + "\\n\\n" + window.location.href;\n}\n\nasync function compartirHallazgo() {\n    if (!resultadoActual.compartible) return;\n    const texto = obtenerTextoCompartir();\n    if (typeof gtag === "function") gtag("event", "share_rare_result");\n\n    if (navigator.share && window.isSecureContext) {\n        try {\n            await navigator.share({ title: "Internet Randomizer", text: texto });\n            return;\n        } catch (e) {}\n    }\n\n    try {\n        await navigator.clipboard.writeText(texto);\n        alert(ingles ? "Share text copied!" : "¡Texto para compartir copiado!");\n    } catch (e) {\n        alert(texto);\n    }\n}\n\n\n/* =========================\n   PANEL ADMIN\n========================= */\n\nconst ADMIN_PASSWORD = "PATO-4869-ADMIN";\nlet adminActivo = false;\n\nfunction abrirAdmin() {\n    if (adminActivo) {\n        document.getElementById("adminPanel").style.display = "block";\n        return;\n    }\n\n    const password = prompt(ingles ? "🔐 Enter admin password:" : "🔐 Introduce la contraseña de administrador:");\n\n    if (password === ADMIN_PASSWORD) {\n        adminActivo = true;\n        document.getElementById("adminPanel").style.display = "block";\n        actualizarAdminStatus(ingles ? "autenticado" : "autenticado");\n        if (typeof gtag === "function") gtag("event", "admin_login");\n    } else if (password !== null) {\n        alert(ingles ? "❌ Incorrect password." : "❌ Contraseña incorrecta.");\n    }\n}\n\nfunction cerrarAdmin() {\n    adminActivo = false;\n    document.getElementById("adminPanel").style.display = "none";\n}\n\nfunction comprobarAdmin() {\n    return adminActivo;\n}\n\nfunction actualizarAdminStatus(texto) {\n    const elemento = document.getElementById("adminStatus");\n    if (elemento) elemento.textContent = "admin: " + texto;\n}\n\nfunction adminSecreto(indice) {\n    if (!comprobarAdmin()) return;\n    const secreto = secretos[indice];\n    if (!secreto) return;\n\n    resultadoActual = {\n        es: secreto.es,\n        en: secreto.en,\n        categoriaEs: secreto.categoriaEs,\n        categoriaEn: secreto.categoriaEn,\n        url: null,\n        secreto: true,\n        hito: false,\n        compartible: [1 / 250, 1 / 500, 1 / 1000, 1 / 2000].includes(secreto.probabilidad)\n    };\n    renderResultado();\n    actualizarBotonCompartir();\n    actualizarAdminStatus(ingles ? "testing secret 1/" + Math.round(1 / secreto.probabilidad) : "probando secreto 1/" + Math.round(1 / secreto.probabilidad));\n}\n\nfunction adminCompartible() {\n    if (!comprobarAdmin()) return;\n    const compartibles = secretos.filter(s => [1 / 250, 1 / 500, 1 / 1000, 1 / 2000].includes(s.probabilidad));\n    const secreto = compartibles[Math.floor(Math.random() * compartibles.length)];\n    adminSecreto(secretos.indexOf(secreto));\n    actualizarAdminStatus(ingles ? "share button test ready" : "botón de compartir listo para probar");\n}\n\nfunction adminHito(numero) {\n    if (!comprobarAdmin()) return;\n    mostrarHito(numero);\n    actualizarBotonCompartir();\n    actualizarAdminStatus(ingles ? "testing milestone " + numero : "probando hito " + numero);\n}\n\nfunction adminActivarPatito() {\n    if (!comprobarAdmin()) return;\n    modoPatito = true;\n    localStorage.setItem("randomizerModoPatito", "true");\n    actualizarModoPatito();\n    actualizarAdminStatus(ingles ? "duck mode forced ON" : "modo patito forzado a ON");\n}\n\nfunction adminDesactivarPatito() {\n    if (!comprobarAdmin()) return;\n    modoPatito = false;\n    localStorage.setItem("randomizerModoPatito", "false");\n    actualizarModoPatito();\n    actualizarAdminStatus(ingles ? "duck mode forced OFF" : "modo patito forzado a OFF");\n}\n\nfunction adminResultadoPatito() {\n    if (!comprobarAdmin()) return;\n    resultadoPatito();\n    actualizarBotonCompartir();\n    actualizarAdminStatus(ingles ? "duck result generated" : "resultado patito generado");\n}\n\nfunction adminResultadoNormal() {\n    if (!comprobarAdmin()) return;\n    resultadoNormal();\n    actualizarBotonCompartir();\n    actualizarAdminStatus(ingles ? "normal result generated" : "resultado normal generado");\n}\n\nfunction adminResetEstadisticas() {\n    if (!comprobarAdmin()) return;\n    if (!confirm(ingles ? "⚠️ Reset clicks and secrets?" : "⚠️ ¿Resetear tiradas y secretos?")) return;\n\n    contador = 0;\n    secretosEncontrados = 0;\n    recompensasDesbloqueadas = [];\n    guardar();\n    actualizarEstadisticas();\n    document.getElementById("rewardBox").style.display = "none";\n    actualizarAdminStatus(ingles ? "statistics reset" : "estadísticas reseteadas");\n}\n\n/* Ctrl + Shift + 9 */\ndocument.addEventListener("keydown", function(event) {\n    if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "9") {\n        event.preventDefault();\n        abrirAdmin();\n    }\n});\n\n/* Estado inicial del botón de compartir */\nactualizarBotonCompartir();\n
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -93,27 +94,6 @@ h1 {
 #randomButton:active {
     transform: translateY(4px);
     box-shadow: 0 1px 0 #4e2486;
-}
-
-#shareButton {
-    display: none;
-    background: #4b2a70;
-    color: #fff;
-    border: 1px solid #9d6bd6;
-    padding: 9px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#shareButton:hover {
-    background: #5b3385;
-}
-
-#shareButton.rare {
-    display: inline-block;
-    border-color: #ffd84d;
-    color: #ffd84d;
 }
 
 #duckModeButton {
@@ -316,9 +296,15 @@ footer {
     }
 }
 
-/* =========================
-   PANEL DE ADMIN
-========================= */
+
+#shareButton {
+    display: none;
+}
+
+#result.rare-result {
+    border-color: #ff4d8d;
+    box-shadow: 0 0 20px rgba(255,77,141,.18);
+}
 
 #adminPanel {
     display: none;
@@ -329,65 +315,15 @@ footer {
     box-shadow: 0 0 25px rgba(255,77,141,.15);
 }
 
-#adminPanel h2 {
-    margin-top: 0;
-    color: #ff4d8d;
-    font-family: monospace;
-}
-
-.admin-warning {
-    color: #888;
-    font-family: monospace;
-    font-size: 12px;
-    margin-bottom: 15px;
-}
-
-.admin-section {
-    border-top: 1px solid #333;
-    margin-top: 15px;
-    padding-top: 15px;
-}
-
-.admin-section h3 {
-    margin-top: 0;
-    color: #b66cff;
-}
-
-.admin-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.admin-button {
-    background: #191919;
-    color: white;
-    border: 1px solid #555;
-    padding: 9px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: monospace;
-}
-
-.admin-button:hover {
-    background: #292929;
-    border-color: #ff4d8d;
-}
-
-.admin-danger {
-    border-color: #ff5555;
-}
-
-.admin-status {
-    margin-top: 15px;
-    padding: 10px;
-    background: #050505;
-    border: 1px dashed #444;
-    color: #67e8a5;
-    font-family: monospace;
-    font-size: 13px;
-}
-
+#adminPanel h2 { margin-top: 0; color: #ff4d8d; font-family: monospace; }
+.admin-warning { color: #888; font-family: monospace; font-size: 12px; margin-bottom: 15px; }
+.admin-section { border-top: 1px solid #333; margin-top: 15px; padding-top: 15px; }
+.admin-section h3 { margin-top: 0; color: #b66cff; }
+.admin-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-button { background: #191919; color: white; border: 1px solid #555; padding: 9px 12px; border-radius: 6px; cursor: pointer; font-family: monospace; }
+.admin-button:hover { background: #292929; border-color: #ff4d8d; }
+.admin-danger { border-color: #ff5555; }
+.admin-status { margin-top: 15px; padding: 10px; background: #050505; border: 1px dashed #444; color: #67e8a5; font-family: monospace; font-size: 13px; }
 </style>
 </head>
 
@@ -435,12 +371,12 @@ footer {
             📋 Copiar
         </button>
 
-        <button class="small-button" id="againButton" onclick="sorprendeme()">
-            🔄 Otra vez
+        <button class="small-button" id="shareButton" onclick="compartirHallazgo()">
+            📤 Compartir
         </button>
 
-        <button class="small-button" id="shareButton" onclick="compartirResultado()">
-            📤 Compartir hallazgo
+        <button class="small-button" id="againButton" onclick="sorprendeme()">
+            🔄 Otra vez
         </button>
 
     </div>
@@ -603,17 +539,10 @@ result: probably not useful
 
 
 
-<!-- =========================
-     PANEL DE ADMIN
-========================= -->
 
 <section id="adminPanel">
-
     <h2>🔐 INTERNET RANDOMIZER ADMIN</h2>
-
-    <div class="admin-warning">
-        MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
-    </div>
+    <div class="admin-warning">MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.</div>
 
     <div class="admin-section">
         <h3>🥚 Secretos</h3>
@@ -663,8 +592,7 @@ result: probably not useful
         </div>
     </div>
 
-    <div class="admin-status" id="adminStatus">admin: conectado</div>
-
+    <div class="admin-status" id="adminStatus">admin: desconectado</div>
 </section>
 
 <footer>
@@ -1158,8 +1086,7 @@ probabilidad: 1 / 50,
 categoriaEs: "🥚 SECRETO",
 categoriaEn: "🥚 SECRET",
 es: "HAS ENCONTRADO EL PATO LEGENDARIO. 🦆",
-en: "YOU FOUND THE LEGENDARY DUCK. 🦆",
-compartible: false
+en: "YOU FOUND THE LEGENDARY DUCK. 🦆"
 },
 
 {
@@ -1167,8 +1094,7 @@ probabilidad: 1 / 100,
 categoriaEs: "👁️ SECRETO",
 categoriaEn: "👁️ SECRET",
 es: "No deberías haber encontrado esto.",
-en: "You probably shouldn't have found this.",
-compartible: false
+en: "You probably shouldn't have found this."
 },
 
 {
@@ -1176,8 +1102,7 @@ probabilidad: 1 / 250,
 categoriaEs: "💾 INTERNET ANTIGUO",
 categoriaEn: "💾 OLD INTERNET",
 es: "Has encontrado una señal perdida de Internet antiguo.",
-en: "You found a lost signal from the old Internet.",
-compartible: true
+en: "You found a lost signal from the old Internet."
 },
 
 {
@@ -1185,8 +1110,7 @@ probabilidad: 1 / 500,
 categoriaEs: "💀 ERROR",
 categoriaEn: "💀 ERROR",
 es: "ERROR 000: no se encontró una explicación.",
-en: "ERROR 000: no explanation was found.",
-compartible: true
+en: "ERROR 000: no explanation was found."
 },
 
 {
@@ -1194,8 +1118,7 @@ probabilidad: 1 / 1000,
 categoriaEs: "🌐 IMPROBABLE",
 categoriaEn: "🌐 UNLIKELY",
 es: "El algoritmo te ha elegido a ti.",
-en: "The algorithm has chosen you.",
-compartible: true
+en: "The algorithm has chosen you."
 },
 
 {
@@ -1203,8 +1126,7 @@ probabilidad: 1 / 2000,
 categoriaEs: "👑 LEGENDARIO",
 categoriaEn: "👑 LEGENDARY",
 es: "Uno entre miles. Esto era extremadamente difícil de encontrar.",
-en: "One among thousands. This was extremely difficult to find.",
-compartible: true
+en: "One among thousands. This was extremely difficult to find."
 }
 
 ];
@@ -1341,14 +1263,6 @@ function renderResultado() {
         "milestone",
         resultadoActual.hito
     );
-
-    const shareButton = document.getElementById("shareButton");
-    if (shareButton) {
-        shareButton.classList.toggle("rare", resultadoActual.secreto && !resultadoActual.hito);
-        shareButton.textContent = ingles
-            ? "📤 Share rare find"
-            : "📤 Compartir hallazgo";
-    }
 }
 
 
@@ -1455,47 +1369,30 @@ function resultadoNormal() {
 }
 
 
-for (const secreto of secretos) {
+function intentarSecreto() {
 
-        if (
-            Math.random() <
-            secreto.probabilidad
-        ) {
+    for (const secreto of secretos) {
+
+        if (Math.random() < secreto.probabilidad) {
 
             resultadoActual = {
-
                 es: secreto.es,
-
                 en: secreto.en,
-
-                categoriaEs:
-                    secreto.categoriaEs,
-
-                categoriaEn:
-                    secreto.categoriaEn,
-
+                categoriaEs: secreto.categoriaEs,
+                categoriaEn: secreto.categoriaEn,
                 url: null,
-
                 secreto: true,
-
-                hito: false
-
+                hito: false,
+                compartible: [1 / 250, 1 / 500, 1 / 1000, 1 / 2000].includes(secreto.probabilidad)
             };
 
-
             secretosEncontrados++;
-
             guardar();
-
             renderResultado();
+            actualizarBotonCompartir();
 
             if (typeof gtag === "function") {
-
-                gtag(
-                    "event",
-                    "rare_result"
-                );
-
+                gtag("event", "rare_result");
             }
 
             return true;
@@ -1503,7 +1400,7 @@ for (const secreto of secretos) {
     }
 
     return false;
-
+}
 
 
 /* =========================
@@ -1708,57 +1605,6 @@ function copiarResultado() {
 
 
 /* =========================
-   COMPARTIR HALLAZGO RARO
-========================= */
-
-async function compartirResultado() {
-
-    if (!resultadoActual.es || !resultadoActual.secreto || resultadoActual.hito) {
-        return;
-    }
-
-    const texto = ingles ? resultadoActual.en : resultadoActual.es;
-    const titulo = ingles
-        ? "🎲 I found a rare result on Internet Randomizer"
-        : "🎲 He encontrado un resultado raro en Internet Randomizer";
-
-    const mensaje = ingles
-        ? `${titulo}\n\n${texto}\n\nCan you find one too? 👀`
-        : `${titulo}\n\n${texto}\n\n¿Tú también puedes encontrar uno? 👀`;
-
-    const datos = {
-        title: "Internet Randomizer 🎲",
-        text: mensaje,
-        url: "https://astor13ht-oss.github.io/Internet-randomizer/"
-    };
-
-    try {
-
-        if (navigator.share) {
-            await navigator.share(datos);
-        } else {
-            await navigator.clipboard.writeText(
-                `${mensaje}\nhttps://astor13ht-oss.github.io/Internet-randomizer/`
-            );
-
-            alert(
-                ingles
-                    ? "Rare find copied! 📋"
-                    : "¡Hallazgo raro copiado! 📋"
-            );
-        }
-
-        if (typeof gtag === "function") {
-            gtag("event", "share_rare_result");
-        }
-
-    } catch (error) {
-        /* El usuario puede cancelar la ventana de compartir. */
-    }
-}
-
-
-/* =========================
    IDIOMA
 ========================= */
 
@@ -1905,230 +1751,6 @@ function cambiarIdioma() {
 
 actualizarEstadisticas();
 actualizarModoPatito();
-
-
-
-/* =========================
-   PANEL DE ADMIN
-========================= */
-
-/*
-   IMPORTANTE:
-   Esta contraseña NO es seguridad real porque
-   este proyecto funciona completamente en el navegador.
-*/
-
-const ADMIN_PASSWORD = "PATO-4869-ADMIN";
-let adminActivo = false;
-
-function abrirAdmin() {
-
-    if (adminActivo) {
-        document.getElementById("adminPanel").style.display = "block";
-        return;
-    }
-
-    const password = prompt(
-        ingles
-            ? "🔐 Enter admin password:"
-            : "🔐 Introduce la contraseña de administrador:"
-    );
-
-    if (password === ADMIN_PASSWORD) {
-        adminActivo = true;
-        document.getElementById("adminPanel").style.display = "block";
-        actualizarAdminStatus(
-            ingles ? "autenticado" : "autenticado"
-        );
-
-        if (typeof gtag === "function") {
-            gtag("event", "admin_login");
-        }
-    } else {
-        alert(
-            ingles
-                ? "❌ Incorrect password."
-                : "❌ Contraseña incorrecta."
-        );
-    }
-}
-
-function cerrarAdmin() {
-    adminActivo = false;
-    document.getElementById("adminPanel").style.display = "none";
-}
-
-function actualizarAdminStatus(texto) {
-    const elemento = document.getElementById("adminStatus");
-    if (elemento) elemento.textContent = "admin: " + texto;
-}
-
-function comprobarAdmin() {
-    return adminActivo;
-}
-
-function adminSecreto(indice) {
-    if (!comprobarAdmin()) return;
-
-    const secreto = secretos[indice];
-    if (!secreto) return;
-
-    resultadoActual = {
-        es: secreto.es,
-        en: secreto.en,
-        categoriaEs: secreto.categoriaEs,
-        categoriaEn: secreto.categoriaEn,
-        url: null,
-        secreto: true,
-        hito: false,
-        compartible: secreto.compartible === true
-    };
-
-    renderResultado();
-
-    actualizarAdminStatus(
-        ingles
-            ? "testing secret 1/" + Math.round(1 / secreto.probabilidad)
-            : "probando secreto 1/" + Math.round(1 / secreto.probabilidad)
-    );
-
-    if (typeof gtag === "function") {
-        gtag("event", "admin_test_secret", { rarity: secreto.probabilidad });
-    }
-}
-
-function adminCompartible() {
-    if (!comprobarAdmin()) return;
-
-    const compartibles = secretos.filter(
-        secreto => secreto.compartible === true
-    );
-
-    if (!compartibles.length) {
-        actualizarAdminStatus(
-            ingles
-                ? "no shareable secret found"
-                : "no se encontró secreto compartible"
-        );
-        return;
-    }
-
-    const secreto =
-        compartibles[Math.floor(Math.random() * compartibles.length)];
-
-    resultadoActual = {
-        es: secreto.es,
-        en: secreto.en,
-        categoriaEs: secreto.categoriaEs,
-        categoriaEn: secreto.categoriaEn,
-        url: null,
-        secreto: true,
-        hito: false,
-        compartible: true
-    };
-
-    renderResultado();
-
-    actualizarAdminStatus(
-        ingles
-            ? "share button test ready"
-            : "botón de compartir listo para probar"
-    );
-}
-
-function adminHito(numero) {
-    if (!comprobarAdmin()) return;
-
-    mostrarHito(numero);
-
-    actualizarAdminStatus(
-        ingles ? "testing milestone " + numero : "probando hito " + numero
-    );
-}
-
-function adminActivarPatito() {
-    if (!comprobarAdmin()) return;
-
-    modoPatito = true;
-    localStorage.setItem("randomizerModoPatito", "true");
-    actualizarModoPatito();
-
-    actualizarAdminStatus(
-        ingles ? "duck mode forced ON" : "modo patito forzado a ON"
-    );
-}
-
-function adminDesactivarPatito() {
-    if (!comprobarAdmin()) return;
-
-    modoPatito = false;
-    localStorage.setItem("randomizerModoPatito", "false");
-    actualizarModoPatito();
-
-    actualizarAdminStatus(
-        ingles ? "duck mode forced OFF" : "modo patito forzado a OFF"
-    );
-}
-
-function adminResultadoPatito() {
-    if (!comprobarAdmin()) return;
-
-    resultadoPatito();
-
-    actualizarAdminStatus(
-        ingles ? "duck result generated" : "resultado patito generado"
-    );
-}
-
-function adminResultadoNormal() {
-    if (!comprobarAdmin()) return;
-
-    resultadoNormal();
-
-    actualizarAdminStatus(
-        ingles ? "normal result generated" : "resultado normal generado"
-    );
-}
-
-function adminResetEstadisticas() {
-    if (!comprobarAdmin()) return;
-
-    const confirmar = confirm(
-        ingles
-            ? "⚠️ Reset clicks and secrets?"
-            : "⚠️ ¿Resetear tiradas y secretos?"
-    );
-
-    if (!confirmar) return;
-
-    contador = 0;
-    secretosEncontrados = 0;
-
-    localStorage.removeItem("randomizerContador");
-    localStorage.removeItem("randomizerSecretos");
-
-    actualizarEstadisticas();
-
-    const rewardBox = document.getElementById("rewardBox");
-    if (rewardBox) rewardBox.style.display = "none";
-
-    actualizarAdminStatus(
-        ingles ? "statistics reset" : "estadísticas reseteadas"
-    );
-}
-
-/* Ctrl + Shift + A */
-document.addEventListener("keydown", function(event) {
-
-    if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "9"
-    ) {
-        event.preventDefault();
-        abrirAdmin();
-    }
-});
 
 </script>
 
