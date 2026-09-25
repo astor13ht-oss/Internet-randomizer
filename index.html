@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -96,6 +95,44 @@ h1 {
     box-shadow: 0 1px 0 #4e2486;
 }
 
+#shareButton {
+    display: none;
+    background: #4b2a70;
+    color: #fff;
+    border: 1px solid #9d6bd6;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#shareButton:hover {
+    background: #5b3385;
+}
+
+#shareButton.rare {
+    display: inline-block;
+    border-color: #ffd84d;
+    color: #ffd84d;
+}
+
+#duckModeButton {
+    margin-top: 12px;
+    background: #202020;
+    color: #ffd84d;
+    border: 1px solid #555;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#duckModeButton.active {
+    background: #3a2f00;
+    border-color: #ffd84d;
+    box-shadow: 0 0 15px rgba(255,216,77,.18);
+}
+
 #result {
     margin-top: 25px;
     min-height: 150px;
@@ -115,11 +152,6 @@ h1 {
 #result.milestone {
     border-color: #67e8a5;
     box-shadow: 0 0 20px rgba(103,232,165,.15);
-}
-
-#result.rare-result {
-    border-color: #ff4d8d;
-    box-shadow: 0 0 30px rgba(255,77,141,.2);
 }
 
 .category {
@@ -165,15 +197,6 @@ h1 {
 
 .small-button:hover {
     background: #292929;
-}
-
-#shareButton {
-    display: none;
-    border-color: #ff4d8d;
-}
-
-#shareButton:hover {
-    background: #321522;
 }
 
 #counter {
@@ -292,6 +315,79 @@ footer {
         margin: 0 auto 15px;
     }
 }
+
+/* =========================
+   PANEL DE ADMIN
+========================= */
+
+#adminPanel {
+    display: none;
+    margin-top: 30px;
+    background: #0b0b0b;
+    border: 2px solid #ff4d8d;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(255,77,141,.15);
+}
+
+#adminPanel h2 {
+    margin-top: 0;
+    color: #ff4d8d;
+    font-family: monospace;
+}
+
+.admin-warning {
+    color: #888;
+    font-family: monospace;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.admin-section {
+    border-top: 1px solid #333;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.admin-section h3 {
+    margin-top: 0;
+    color: #b66cff;
+}
+
+.admin-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-button {
+    background: #191919;
+    color: white;
+    border: 1px solid #555;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+.admin-button:hover {
+    background: #292929;
+    border-color: #ff4d8d;
+}
+
+.admin-danger {
+    border-color: #ff5555;
+}
+
+.admin-status {
+    margin-top: 15px;
+    padding: 10px;
+    background: #050505;
+    border: 1px dashed #444;
+    color: #67e8a5;
+    font-family: monospace;
+    font-size: 13px;
+}
+
 </style>
 </head>
 
@@ -317,6 +413,10 @@ footer {
         🎲 SORPRÉNDEME
     </button>
 
+    <button id="duckModeButton" onclick="alternarModoPatito()">
+        🦆 MODO PATITO: OFF
+    </button>
+
     <div id="result">
 
         <div class="category" id="category">
@@ -335,27 +435,22 @@ footer {
             📋 Copiar
         </button>
 
-        <button class="small-button" id="shareButton" onclick="compartirHallazgo()">
-            📤 Compartir hallazgo
-        </button>
-
         <button class="small-button" id="againButton" onclick="sorprendeme()">
             🔄 Otra vez
         </button>
 
-    </div>
-
-    <div style="margin-top:15px;">
-        <button class="small-button" id="duckModeButton" onclick="toggleDuckMode()" style="display:none;">
-            🦆 MODO PATITO: OFF
+        <button class="small-button" id="shareButton" onclick="compartirResultado()">
+            📤 Compartir hallazgo
         </button>
+
     </div>
 
     <div id="counter">
         Tiradas: 0
     </div>
 
-    <div id="rewardBox" style="display:none; margin-top:15px; padding:14px; border:1px dashed #67e8a5; color:#67e8a5; font-family:monospace;"></div>
+
+<div id="rewardBox" style="display:none; margin-top:15px; padding:14px; border:1px dashed #67e8a5; color:#67e8a5; font-family:monospace;"></div>
 
 </section>
 
@@ -507,6 +602,71 @@ result: probably not useful
 </div>
 
 
+
+<!-- =========================
+     PANEL DE ADMIN
+========================= -->
+
+<section id="adminPanel">
+
+    <h2>🔐 INTERNET RANDOMIZER ADMIN</h2>
+
+    <div class="admin-warning">
+        MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
+    </div>
+
+    <div class="admin-section">
+        <h3>🥚 Secretos</h3>
+        <div class="admin-buttons">
+            <button class="admin-button" onclick="adminSecreto(0)">🦆 1/50</button>
+            <button class="admin-button" onclick="adminSecreto(1)">👁️ 1/100</button>
+            <button class="admin-button" onclick="adminSecreto(2)">💾 1/250</button>
+            <button class="admin-button" onclick="adminSecreto(3)">💀 1/500</button>
+            <button class="admin-button" onclick="adminSecreto(4)">🌐 1/1000</button>
+            <button class="admin-button" onclick="adminSecreto(5)">👑 1/2000</button>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h3>🏆 Hitos</h3>
+        <div class="admin-buttons">
+            <button class="admin-button" onclick="adminHito(100)">100</button>
+            <button class="admin-button" onclick="adminHito(500)">500</button>
+            <button class="admin-button" onclick="adminHito(1000)">1.000</button>
+            <button class="admin-button" onclick="adminHito(2000)">2.000</button>
+            <button class="admin-button" onclick="adminHito(3000)">3.000</button>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h3>🦆 Patito</h3>
+        <div class="admin-buttons">
+            <button class="admin-button" onclick="adminActivarPatito()">🦆 Activar Modo Patito</button>
+            <button class="admin-button" onclick="adminDesactivarPatito()">🚫 Desactivar</button>
+            <button class="admin-button" onclick="adminResultadoPatito()">🎲 Resultado Patito</button>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h3>🎲 Pruebas</h3>
+        <div class="admin-buttons">
+            <button class="admin-button" onclick="adminResultadoNormal()">🌐 Resultado normal</button>
+            <button class="admin-button" onclick="adminCompartible()">📤 Probar compartir</button>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h3>⚠️ Zona peligrosa</h3>
+        <div class="admin-buttons">
+            <button class="admin-button admin-danger" onclick="adminResetEstadisticas()">🗑️ Resetear estadísticas</button>
+            <button class="admin-button" onclick="cerrarAdmin()">🔒 Cerrar panel</button>
+        </div>
+    </div>
+
+    <div class="admin-status" id="adminStatus">admin: conectado</div>
+
+</section>
+
 <footer>
 
 <div>
@@ -525,253 +685,6 @@ hecho porque sí
 <script>
 
 /* =========================
-   MODO PATITO
-========================= */
-
-let modoPatito =
-    localStorage.getItem("randomizerModoPatito") === "true";
-
-const recompensasHitos = {
-
-    100: {
-        es: "🦆 RECOMPENSA: Has desbloqueado el MODO PATITO.",
-        en: "🦆 REWARD: You have unlocked DUCK MODE."
-    },
-
-    500: {
-        es: "🏆 RECOMPENSA: EL PATO TE RECONOCE. +1 respeto del pato.",
-        en: "🏆 REWARD: THE DUCK RECOGNIZES YOU. +1 duck respect."
-    },
-
-    1000: {
-        es: "👑 RECOMPENSA: LICENCIA OFICIAL PARA INVESTIGAR PATOS.",
-        en: "👑 REWARD: OFFICIAL LICENSE TO INVESTIGATE DUCKS."
-    },
-
-    2000: {
-        es: "💎 RECOMPENSA: RANGO MAESTRO DEL PATO.",
-        en: "💎 REWARD: DUCK MASTER RANK."
-    },
-
-    3000: {
-        es: "🗿 RECOMPENSA FINAL: EL PATO LEGENDARIO TE HA ELEGIDO.",
-        en: "🗿 FINAL REWARD: THE LEGENDARY DUCK HAS CHOSEN YOU."
-    }
-
-};
-
-
-const resultadosPatito = [
-
-    {
-        tipo: "link",
-        categoriaEs: "🦆 PATOS",
-        categoriaEn: "🦆 DUCKS",
-        es: "DuckDuckGo: sí, hay un pato hasta en un buscador.",
-        en: "DuckDuckGo: yes, there is a duck even in a search engine.",
-        url: "https://duckduckgo.com/"
-    },
-
-    {
-        tipo: "link",
-        categoriaEs: "🦆 PATOS",
-        categoriaEn: "🦆 DUCKS",
-        es: "Duck Museum: una colección dedicada a los patos.",
-        en: "Duck Museum: a collection dedicated to ducks.",
-        url: "https://www.duckmuseum.com/"
-    },
-
-    {
-        tipo: "link",
-        categoriaEs: "🦆 PATOS",
-        categoriaEn: "🦆 DUCKS",
-        es: "A página de patos porque claramente Internet necesitaba una.",
-        en: "A duck website because clearly the Internet needed one.",
-        url: "https://www.duck.com/"
-    },
-
-    {
-        tipo: "texto",
-        categoriaEs: "🦆 CURIOSIDAD DE PATO",
-        categoriaEn: "🦆 DUCK FACT",
-        es: "Los patos tienen plumas impermeables gracias al aceite que distribuyen sobre ellas.",
-        en: "Ducks have waterproof feathers thanks to oil they spread over them."
-    },
-
-    {
-        tipo: "texto",
-        categoriaEs: "🦆 CURIOSIDAD DE PATO",
-        categoriaEn: "🦆 DUCK FACT",
-        es: "El pico de un pato puede tener muchas terminaciones nerviosas que le ayudan a encontrar comida.",
-        en: "A duck's bill can have many nerve endings that help it find food."
-    },
-
-    {
-        tipo: "texto",
-        categoriaEs: "🦆 CURIOSIDAD DE PATO",
-        categoriaEn: "🦆 DUCK FACT",
-        es: "Los patos pueden dormir con un ojo abierto para mantenerse atentos a su entorno.",
-        en: "Ducks can sleep with one eye open to stay alert to their surroundings."
-    },
-
-    {
-        tipo: "texto",
-        categoriaEs: "🦆 ABSURDO",
-        categoriaEn: "🦆 ABSURD",
-        es: "El pato ha sido localizado. Esta vez con documentación.",
-        en: "The duck has been located. This time with documentation."
-    },
-
-    {
-        tipo: "texto",
-        categoriaEs: "🦆 ABSURDO",
-        categoriaEn: "🦆 ABSURD",
-        es: "El pato exige saber por qué has activado este modo.",
-        en: "The duck demands to know why you activated this mode."
-    }
-
-];
-
-
-function actualizarModoPatito() {
-
-    const boton =
-        document.getElementById("duckModeButton");
-
-    if (!boton) return;
-
-    if (contador >= 100) {
-
-        boton.style.display = "inline-block";
-
-        boton.textContent =
-            modoPatito
-            ? (ingles
-                ? "🦆 DUCK MODE: ON"
-                : "🦆 MODO PATITO: ON")
-            : (ingles
-                ? "🦆 DUCK MODE: OFF"
-                : "🦆 MODO PATITO: OFF");
-
-    } else {
-
-        boton.style.display = "none";
-
-    }
-
-}
-
-
-function toggleDuckMode() {
-
-    if (contador < 100) return;
-
-    modoPatito = !modoPatito;
-
-    localStorage.setItem(
-        "randomizerModoPatito",
-        modoPatito
-    );
-
-    actualizarModoPatito();
-
-    if (typeof gtag === "function") {
-
-        gtag(
-            "event",
-            "duck_mode",
-            {
-                enabled: modoPatito
-            }
-        );
-
-    }
-
-    resultadoActual = {
-
-        es: modoPatito
-            ? "🦆 MODO PATITO ACTIVADO. El pato controla ahora el Randomizer."
-            : "🦆 MODO PATITO DESACTIVADO. El pato vuelve a su hábitat natural.",
-
-        en: modoPatito
-            ? "🦆 DUCK MODE ACTIVATED. The duck now controls the Randomizer."
-            : "🦆 DUCK MODE DEACTIVATED. The duck returns to its natural habitat.",
-
-        categoriaEs: "🦆 MODO PATITO",
-        categoriaEn: "🦆 DUCK MODE",
-
-        url: null,
-
-        secreto: true,
-
-        hito: false,
-
-        compartible: false
-
-    };
-
-    renderResultado();
-
-}
-
-
-function resultadoPatito() {
-
-    let indice;
-
-    do {
-
-        indice =
-            Math.floor(
-                Math.random() *
-                resultadosPatito.length
-            );
-
-    } while (
-        resultadosPatito.length > 1 &&
-        resultadosPatito[indice] ===
-        resultadoActual._patitoAnterior
-    );
-
-
-    const cosa =
-        resultadosPatito[indice];
-
-
-    resultadoActual = {
-
-        es: cosa.es,
-
-        en: cosa.en,
-
-        categoriaEs:
-            cosa.categoriaEs,
-
-        categoriaEn:
-            cosa.categoriaEn,
-
-        url:
-            cosa.tipo === "link"
-            ? cosa.url
-            : null,
-
-        secreto: false,
-
-        hito: false,
-
-        compartible: false,
-
-        _patitoAnterior: cosa
-
-    };
-
-
-    renderResultado();
-
-}
-
-
-/* =========================
    DATOS GUARDADOS
 ========================= */
 
@@ -783,26 +696,21 @@ let contador =
 let secretosEncontrados =
     Number(localStorage.getItem("randomizerSecretos")) || 0;
 
+let recompensasDesbloqueadas =
+    JSON.parse(localStorage.getItem("randomizerRecompensas") || "[]");
+
 let ultimoIndice = null;
 
+let modoPatito = localStorage.getItem("randomizerModoPatito") === "true";
+
 let resultadoActual = {
-
     es: "",
-
     en: "",
-
     categoriaEs: "",
-
     categoriaEn: "",
-
     url: null,
-
     secreto: false,
-
-    hito: false,
-
-    compartible: false
-
+    hito: false
 };
 
 
@@ -810,55 +718,63 @@ let resultadoActual = {
    HITOS
 ========================= */
 
-const hitos = [
-    100,
-    500,
-    1000,
-    2000,
-    3000
-];
-
+const hitos = [100, 500, 1000, 2000, 3000];
 
 const mensajesHitos = {
 
     100: {
-
         es: "🏆 100 PULSACIONES. Has pulsado este botón cien veces. ¿No tienes nada mejor que hacer?",
-
         en: "🏆 100 CLICKS. You have pressed this button one hundred times. Don't you have anything better to do?"
-
     },
 
     500: {
-
         es: "🔥 500 PULSACIONES. Esto ya empieza a ser preocupante.",
-
         en: "🔥 500 CLICKS. This is starting to become concerning."
-
     },
 
     1000: {
-
         es: "👑 1.000 PULSACIONES. Oficialmente formas parte del problema.",
-
         en: "👑 1,000 CLICKS. You are officially part of the problem."
-
     },
 
     2000: {
-
         es: "💀 2.000 PULSACIONES. El botón te conoce mejor que tú.",
-
         en: "💀 2,000 CLICKS. The button knows you better than you know yourself."
-
     },
 
     3000: {
-
         es: "🗿 3.000 PULSACIONES. Internet Randomizer te está usando a ti.",
-
         en: "🗿 3,000 CLICKS. Internet Randomizer is now using you."
+    }
 
+};
+
+
+const recompensasHitos = {
+
+    100: {
+        es: "🎁 RECOMPENSA: Has desbloqueado el MODO PATITO. 🦆",
+        en: "🎁 REWARD: You unlocked DUCK MODE. 🦆"
+    },
+
+    500: {
+        es: "🎁 RECOMPENSA: El Internet Randomizer te reconoce como veterano.",
+        en: "🎁 REWARD: Internet Randomizer recognizes you as a veteran."
+    },
+
+    1000: {
+        es: "🎁 RECOMPENSA: Has desbloqueado el resultado legendario.",
+        en: "🎁 REWARD: You unlocked the legendary result."
+    },
+
+    2000: {
+        es: "🎁 RECOMPENSA: El botón te debe una.",
+        en: "🎁 REWARD: The button owes you one."
+    },
+
+    3000: {
+        es: "🎁 RECOMPENSA: HAS DESBLOQUEADO EL NIVEL FINAL. 👑",
+        en: "🎁 REWARD: YOU UNLOCKED THE FINAL LEVEL. 👑"
     }
 
 };
@@ -867,6 +783,7 @@ const mensajesHitos = {
 /* =========================
    RESULTADOS NORMALES
 ========================= */
+
 
 const cosas = [
 
@@ -1220,6 +1137,15 @@ en: "The duck has been located. Repeat: the duck has been located."
 
 ];
 
+const resultadosPatito = [
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "El pato te observa. El pato siempre te ha observado.", en: "The duck is watching you. The duck has always been watching you." },
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "🦆 +1 pato. La situación mejora considerablemente.", en: "🦆 +1 duck. The situation has improved considerably." },
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "ATENCIÓN: el pato ha tomado el control del Randomizer.", en: "WARNING: the duck has taken control of the Randomizer." },
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "Has activado el poder secreto del patito. No sirve para nada.", en: "You activated the duck's secret power. It is completely useless." },
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "El pato ha decidido que hoy es un buen día para hacer absolutamente nada.", en: "The duck has decided that today is a good day to do absolutely nothing." },
+    { categoriaEs: "🦆 MODO PATITO", categoriaEn: "🦆 DUCK MODE", es: "Has encontrado la dimensión donde todos los resultados son patos.", en: "You found the dimension where every result is a duck." }
+];
+
 
 /* =========================
    RESULTADOS SECRETOS
@@ -1300,6 +1226,10 @@ function guardar() {
         secretosEncontrados
     );
 
+    localStorage.setItem(
+        "randomizerRecompensas",
+        JSON.stringify(recompensasDesbloqueadas)
+    );
 }
 
 
@@ -1393,7 +1323,7 @@ function renderResultado() {
 
     } else {
 
-        resultText.textContent =
+        resultText.innerHTML =
             texto;
 
     }
@@ -1412,158 +1342,58 @@ function renderResultado() {
         resultadoActual.hito
     );
 
-    caja.classList.toggle(
-        "rare-result",
-        resultadoActual.compartible
-    );
-
-
-    actualizarBotonCompartir();
-
+    const shareButton = document.getElementById("shareButton");
+    if (shareButton) {
+        shareButton.classList.toggle("rare", resultadoActual.secreto && !resultadoActual.hito);
+        shareButton.textContent = ingles
+            ? "📤 Share rare find"
+            : "📤 Compartir hallazgo";
+    }
 }
 
 
 /* =========================
-   BOTÓN COMPARTIR
+   MODO PATITO
 ========================= */
 
-function actualizarBotonCompartir() {
-
-    const boton =
-        document.getElementById("shareButton");
-
+function actualizarModoPatito() {
+    const boton = document.getElementById("duckModeButton");
     if (!boton) return;
-
-
-    if (resultadoActual.compartible) {
-
-        boton.style.display = "inline-block";
-
-        boton.textContent =
-            ingles
-            ? "📤 Share rare find"
-            : "📤 Compartir hallazgo";
-
-    } else {
-
-        boton.style.display = "none";
-
-    }
-
+    boton.classList.toggle("active", modoPatito);
+    boton.textContent = ingles
+        ? (modoPatito ? "🦆 DUCK MODE: ON" : "🦆 DUCK MODE: OFF")
+        : (modoPatito ? "🦆 MODO PATITO: ON" : "🦆 MODO PATITO: OFF");
 }
 
-
-function obtenerTextoCompartir() {
-
-    const texto =
-        ingles
-        ? resultadoActual.en
-        : resultadoActual.es;
-
-
-    const titulo =
-        ingles
-        ? "🎲 I found a VERY rare result on Internet Randomizer!"
-        : "🎲 ¡He encontrado un resultado MUY raro en Internet Randomizer!";
-
-
-    const llamada =
-        ingles
-        ? "Can you find it too? 👀"
-        : "¿Tú también puedes encontrarlo? 👀";
-
-
-    return (
-        titulo +
-        "\n\n" +
-        "🔎 " +
-        texto +
-        "\n\n" +
-        llamada +
-        "\n" +
-        "https://astor13ht-oss.github.io/Internet-randomizer/"
-    );
-
-}
-
-
-async function compartirHallazgo() {
-
-    if (!resultadoActual.compartible) return;
-
-
-    const texto =
-        obtenerTextoCompartir();
-
+function alternarModoPatito() {
+    modoPatito = !modoPatito;
+    localStorage.setItem("randomizerModoPatito", modoPatito);
+    actualizarModoPatito();
 
     if (typeof gtag === "function") {
-
-        gtag(
-            "event",
-            "share_rare_result",
-            {
-                result_category:
-                    ingles
-                    ? resultadoActual.categoriaEn
-                    : resultadoActual.categoriaEs
-            }
-        );
-
+        gtag("event", "duck_mode", { enabled: modoPatito });
     }
 
+    resultadoActual = {
+        es: modoPatito ? "🦆 Modo Patito activado. El pato está ahora al mando." : "🦆 Modo Patito desactivado. El pato se ha retirado.",
+        en: modoPatito ? "🦆 Duck Mode activated. The duck is now in charge." : "🦆 Duck Mode deactivated. The duck has left.",
+        categoriaEs: "🦆 MODO PATITO",
+        categoriaEn: "🦆 DUCK MODE",
+        url: null,
+        secreto: true,
+        hito: false
+    };
+    renderResultado();
+}
 
-    if (
-        navigator.share &&
-        window.isSecureContext
-    ) {
-
-        try {
-
-            await navigator.share({
-
-                title:
-                    ingles
-                    ? "Internet Randomizer"
-                    : "Internet Randomizer",
-
-                text: texto
-
-            });
-
-            return;
-
-        } catch (error) {
-
-            if (
-                error &&
-                error.name === "AbortError"
-            ) {
-
-                return;
-
-            }
-
-        }
-
-    }
-
-
-    try {
-
-        await navigator.clipboard.writeText(texto);
-
-        alert(
-            ingles
-            ? "📋 Share text copied to clipboard!"
-            : "📋 ¡Texto para compartir copiado al portapapeles!"
-        );
-
-    } catch (error) {
-
-        alert(texto);
-
-    }
-
+function resultadoPatito() {
+    const pato = resultadosPatito[Math.floor(Math.random() * resultadosPatito.length)];
+    resultadoActual = {
+        es: pato.es, en: pato.en,
+        categoriaEs: pato.categoriaEs, categoriaEn: pato.categoriaEn,
+        url: null, secreto: true, hito: false
+    };
+    renderResultado();
 }
 
 
@@ -1572,12 +1402,9 @@ async function compartirHallazgo() {
 ========================= */
 
 function resultadoNormal() {
+    const rewardBox = document.getElementById("rewardBox");
+    if (rewardBox) rewardBox.style.display = "none";
 
-    const rewardBox =
-        document.getElementById("rewardBox");
-
-    if (rewardBox)
-        rewardBox.style.display = "none";
 
     let indice;
 
@@ -1585,8 +1412,7 @@ function resultadoNormal() {
 
         indice =
             Math.floor(
-                Math.random() *
-                cosas.length
+                Math.random() * cosas.length
             );
 
     } while (
@@ -1620,31 +1446,16 @@ function resultadoNormal() {
 
         secreto: false,
 
-        hito: false,
-
-        compartible: false
+        hito: false
 
     };
 
 
     renderResultado();
-
 }
 
 
-/* =========================
-   RESULTADO SECRETO
-========================= */
-
-function intentarSecreto() {
-
-    const rewardBox =
-        document.getElementById("rewardBox");
-
-    if (rewardBox)
-        rewardBox.style.display = "none";
-
-    for (const secreto of secretos) {
+for (const secreto of secretos) {
 
         if (
             Math.random() <
@@ -1667,10 +1478,7 @@ function intentarSecreto() {
 
                 secreto: true,
 
-                hito: false,
-
-                compartible:
-                    secreto.compartible === true
+                hito: false
 
             };
 
@@ -1681,28 +1489,20 @@ function intentarSecreto() {
 
             renderResultado();
 
-
             if (typeof gtag === "function") {
 
                 gtag(
                     "event",
-                    "rare_result",
-                    {
-                        rarity:
-                            secreto.probabilidad
-                    }
+                    "rare_result"
                 );
 
             }
 
             return true;
-
         }
-
     }
 
     return false;
-
 }
 
 
@@ -1710,56 +1510,90 @@ function intentarSecreto() {
    HITOS
 ========================= */
 
+function reproducirSonidoHito() {
+
+    const AudioContext =
+        window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContext) {
+        return;
+    }
+
+    const audio = new AudioContext();
+
+    const notas = [523.25, 659.25, 783.99, 1046.50];
+
+    notas.forEach((frecuencia, i) => {
+
+        const oscilador = audio.createOscillator();
+        const ganancia = audio.createGain();
+
+        oscilador.type = "square";
+        oscilador.frequency.value = frecuencia;
+
+        ganancia.gain.setValueAtTime(0.0001, audio.currentTime + i * 0.12);
+        ganancia.gain.exponentialRampToValueAtTime(
+            0.12,
+            audio.currentTime + i * 0.12 + 0.02
+        );
+        ganancia.gain.exponentialRampToValueAtTime(
+            0.0001,
+            audio.currentTime + i * 0.12 + 0.18
+        );
+
+        oscilador.connect(ganancia);
+        ganancia.connect(audio.destination);
+
+        oscilador.start(audio.currentTime + i * 0.12);
+        oscilador.stop(audio.currentTime + i * 0.12 + 0.2);
+    });
+
+}
+
+
 function mostrarHito(numero) {
 
     const mensaje =
         mensajesHitos[numero];
 
+    const recompensa =
+        recompensasHitos[numero];
+
+    const primeraVez =
+        !recompensasDesbloqueadas.includes(numero);
+
+    if (primeraVez) {
+        recompensasDesbloqueadas.push(numero);
+        guardar();
+    }
 
     resultadoActual = {
 
-        es: mensaje.es,
+        es:
+            mensaje.es + "<br><br>" +
+            (primeraVez ? recompensa.es : "🔓 RECOMPENSA YA DESBLOQUEADA"),
 
-        en: mensaje.en,
+        en:
+            mensaje.en + "<br><br>" +
+            (primeraVez ? recompensa.en : "🔓 REWARD ALREADY UNLOCKED"),
 
         categoriaEs:
-            "🏆 HITO",
+            "🏆 HITO + RECOMPENSA",
 
         categoriaEn:
-            "🏆 MILESTONE",
+            "🏆 MILESTONE + REWARD",
 
         url: null,
 
         secreto: false,
 
-        hito: true,
-
-        compartible: false
+        hito: true
 
     };
 
-
     renderResultado();
 
-
-    const rewardBox =
-        document.getElementById("rewardBox");
-
-    if (
-        rewardBox &&
-        recompensasHitos[numero]
-    ) {
-
-        rewardBox.style.display =
-            "block";
-
-        rewardBox.textContent =
-            ingles
-            ? recompensasHitos[numero].en
-            : recompensasHitos[numero].es;
-
-    }
-
+    reproducirSonidoHito();
 
     if (typeof gtag === "function") {
 
@@ -1767,7 +1601,8 @@ function mostrarHito(numero) {
             "event",
             "milestone_reached",
             {
-                milestone: numero
+                milestone: numero,
+                reward: primeraVez
             }
         );
 
@@ -1811,21 +1646,14 @@ function sorprendeme() {
         mostrarHito(contador);
 
         return;
-
     }
 
 
     /* MODO PATITO */
 
-    if (
-        modoPatito &&
-        contador >= 100
-    ) {
-
+    if (modoPatito) {
         resultadoPatito();
-
         return;
-
     }
 
 
@@ -1836,14 +1664,12 @@ function sorprendeme() {
     ) {
 
         return;
-
     }
 
 
     /* NORMAL */
 
     resultadoNormal();
-
 }
 
 
@@ -1856,9 +1682,7 @@ function copiarResultado() {
     if (
         !resultadoActual.es
     ) {
-
         return;
-
     }
 
 
@@ -1880,6 +1704,57 @@ function copiarResultado() {
 
         });
 
+}
+
+
+/* =========================
+   COMPARTIR HALLAZGO RARO
+========================= */
+
+async function compartirResultado() {
+
+    if (!resultadoActual.es || !resultadoActual.secreto || resultadoActual.hito) {
+        return;
+    }
+
+    const texto = ingles ? resultadoActual.en : resultadoActual.es;
+    const titulo = ingles
+        ? "🎲 I found a rare result on Internet Randomizer"
+        : "🎲 He encontrado un resultado raro en Internet Randomizer";
+
+    const mensaje = ingles
+        ? `${titulo}\n\n${texto}\n\nCan you find one too? 👀`
+        : `${titulo}\n\n${texto}\n\n¿Tú también puedes encontrar uno? 👀`;
+
+    const datos = {
+        title: "Internet Randomizer 🎲",
+        text: mensaje,
+        url: "https://astor13ht-oss.github.io/Internet-randomizer/"
+    };
+
+    try {
+
+        if (navigator.share) {
+            await navigator.share(datos);
+        } else {
+            await navigator.clipboard.writeText(
+                `${mensaje}\nhttps://astor13ht-oss.github.io/Internet-randomizer/`
+            );
+
+            alert(
+                ingles
+                    ? "Rare find copied! 📋"
+                    : "¡Hallazgo raro copiado! 📋"
+            );
+        }
+
+        if (typeof gtag === "function") {
+            gtag("event", "share_rare_result");
+        }
+
+    } catch (error) {
+        /* El usuario puede cancelar la ventana de compartir. */
+    }
 }
 
 
@@ -1936,6 +1811,9 @@ function cambiarIdioma() {
         : "🔄 Otra vez";
 
 
+    actualizarModoPatito();
+
+
     document.getElementById(
         "localLabel"
     ).textContent =
@@ -1985,41 +1863,16 @@ function cambiarIdioma() {
 
 
     actualizarEstadisticas();
-
     actualizarModoPatito();
 
-    actualizarBotonCompartir();
-
-
     if (resultadoActual.hito) {
-
-        const numeroHito =
-            hitos.find(
-                h =>
-                    resultadoActual.es ===
-                    mensajesHitos[h].es ||
-                    resultadoActual.en ===
-                    mensajesHitos[h].en
-            );
-
-        const rewardBox =
-            document.getElementById(
-                "rewardBox"
-            );
-
-        if (
-            rewardBox &&
-            numeroHito &&
-            recompensasHitos[numeroHito]
-        ) {
-
-            rewardBox.textContent =
-                ingles
+        const numeroHito = hitos.find(h => resultadoActual.es === mensajesHitos[h].es || resultadoActual.en === mensajesHitos[h].en);
+        const rewardBox = document.getElementById("rewardBox");
+        if (rewardBox && numeroHito && recompensasHitos[numeroHito]) {
+            rewardBox.textContent = ingles
                 ? recompensasHitos[numeroHito].en
                 : recompensasHitos[numeroHito].es;
-
         }
-
     }
 
 
@@ -2051,11 +1904,233 @@ function cambiarIdioma() {
 ========================= */
 
 actualizarEstadisticas();
-
 actualizarModoPatito();
+
+
+
+/* =========================
+   PANEL DE ADMIN
+========================= */
+
+/*
+   IMPORTANTE:
+   Esta contraseña NO es seguridad real porque
+   este proyecto funciona completamente en el navegador.
+*/
+
+const ADMIN_PASSWORD = "PATO-4869-ADMIN";
+let adminActivo = false;
+
+function abrirAdmin() {
+
+    if (adminActivo) {
+        document.getElementById("adminPanel").style.display = "block";
+        return;
+    }
+
+    const password = prompt(
+        ingles
+            ? "🔐 Enter admin password:"
+            : "🔐 Introduce la contraseña de administrador:"
+    );
+
+    if (password === ADMIN_PASSWORD) {
+        adminActivo = true;
+        document.getElementById("adminPanel").style.display = "block";
+        actualizarAdminStatus(
+            ingles ? "autenticado" : "autenticado"
+        );
+
+        if (typeof gtag === "function") {
+            gtag("event", "admin_login");
+        }
+    } else {
+        alert(
+            ingles
+                ? "❌ Incorrect password."
+                : "❌ Contraseña incorrecta."
+        );
+    }
+}
+
+function cerrarAdmin() {
+    adminActivo = false;
+    document.getElementById("adminPanel").style.display = "none";
+}
+
+function actualizarAdminStatus(texto) {
+    const elemento = document.getElementById("adminStatus");
+    if (elemento) elemento.textContent = "admin: " + texto;
+}
+
+function comprobarAdmin() {
+    return adminActivo;
+}
+
+function adminSecreto(indice) {
+    if (!comprobarAdmin()) return;
+
+    const secreto = secretos[indice];
+    if (!secreto) return;
+
+    resultadoActual = {
+        es: secreto.es,
+        en: secreto.en,
+        categoriaEs: secreto.categoriaEs,
+        categoriaEn: secreto.categoriaEn,
+        url: null,
+        secreto: true,
+        hito: false,
+        compartible: secreto.compartible === true
+    };
+
+    renderResultado();
+
+    actualizarAdminStatus(
+        ingles
+            ? "testing secret 1/" + Math.round(1 / secreto.probabilidad)
+            : "probando secreto 1/" + Math.round(1 / secreto.probabilidad)
+    );
+
+    if (typeof gtag === "function") {
+        gtag("event", "admin_test_secret", { rarity: secreto.probabilidad });
+    }
+}
+
+function adminCompartible() {
+    if (!comprobarAdmin()) return;
+
+    const compartibles = secretos.filter(
+        secreto => secreto.compartible === true
+    );
+
+    if (!compartibles.length) {
+        actualizarAdminStatus(
+            ingles
+                ? "no shareable secret found"
+                : "no se encontró secreto compartible"
+        );
+        return;
+    }
+
+    const secreto =
+        compartibles[Math.floor(Math.random() * compartibles.length)];
+
+    resultadoActual = {
+        es: secreto.es,
+        en: secreto.en,
+        categoriaEs: secreto.categoriaEs,
+        categoriaEn: secreto.categoriaEn,
+        url: null,
+        secreto: true,
+        hito: false,
+        compartible: true
+    };
+
+    renderResultado();
+
+    actualizarAdminStatus(
+        ingles
+            ? "share button test ready"
+            : "botón de compartir listo para probar"
+    );
+}
+
+function adminHito(numero) {
+    if (!comprobarAdmin()) return;
+
+    mostrarHito(numero);
+
+    actualizarAdminStatus(
+        ingles ? "testing milestone " + numero : "probando hito " + numero
+    );
+}
+
+function adminActivarPatito() {
+    if (!comprobarAdmin()) return;
+
+    modoPatito = true;
+    localStorage.setItem("randomizerModoPatito", "true");
+    actualizarModoPatito();
+
+    actualizarAdminStatus(
+        ingles ? "duck mode forced ON" : "modo patito forzado a ON"
+    );
+}
+
+function adminDesactivarPatito() {
+    if (!comprobarAdmin()) return;
+
+    modoPatito = false;
+    localStorage.setItem("randomizerModoPatito", "false");
+    actualizarModoPatito();
+
+    actualizarAdminStatus(
+        ingles ? "duck mode forced OFF" : "modo patito forzado a OFF"
+    );
+}
+
+function adminResultadoPatito() {
+    if (!comprobarAdmin()) return;
+
+    resultadoPatito();
+
+    actualizarAdminStatus(
+        ingles ? "duck result generated" : "resultado patito generado"
+    );
+}
+
+function adminResultadoNormal() {
+    if (!comprobarAdmin()) return;
+
+    resultadoNormal();
+
+    actualizarAdminStatus(
+        ingles ? "normal result generated" : "resultado normal generado"
+    );
+}
+
+function adminResetEstadisticas() {
+    if (!comprobarAdmin()) return;
+
+    const confirmar = confirm(
+        ingles
+            ? "⚠️ Reset clicks and secrets?"
+            : "⚠️ ¿Resetear tiradas y secretos?"
+    );
+
+    if (!confirmar) return;
+
+    contador = 0;
+    secretosEncontrados = 0;
+
+    localStorage.removeItem("randomizerContador");
+    localStorage.removeItem("randomizerSecretos");
+
+    actualizarEstadisticas();
+
+    const rewardBox = document.getElementById("rewardBox");
+    if (rewardBox) rewardBox.style.display = "none";
+
+    actualizarAdminStatus(
+        ingles ? "statistics reset" : "estadísticas reseteadas"
+    );
+}
+
+/* Ctrl + Shift + A */
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "a"
+    ) {
+        event.preventDefault();
+        abrirAdmin();
+    }
+});
 
 </script>
 
 </body>
 </html>
-```
