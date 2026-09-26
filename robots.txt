@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://astor13ht-oss.github.io/Internet-randomizer/sitemap.xml
