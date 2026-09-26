@@ -21,445 +21,526 @@ gtag("js", new Date());
 gtag("config", "G-7FTXPGZX0W");
 </script>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    background: #111;
-    color: #f2f2f2;
-    font-family: "Trebuchet MS", Arial, sans-serif;
+body{
+    margin:0;
+    background:#111;
+    color:#f2f2f2;
+    font-family:"Trebuchet MS",Arial,sans-serif;
 }
 
-.page {
-    width: min(950px, 92%);
-    margin: auto;
-    padding: 30px 0 60px;
+.page{
+    width:min(950px,92%);
+    margin:auto;
+    padding:30px 0 60px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
+header{
+    text-align:center;
+    margin-bottom:30px;
 }
 
-.logo {
-    font-size: 34px;
+.logo{
+    font-size:34px;
 }
 
-h1 {
-    margin: 5px 0;
-    font-family: Impact, "Arial Black", sans-serif;
-    font-size: clamp(40px, 8vw, 70px);
-    letter-spacing: 3px;
-    color: #b66cff;
-    text-shadow: 4px 4px 0 #32145a;
+h1{
+    margin:5px 0;
+    font-family:Impact,"Arial Black",sans-serif;
+    font-size:clamp(40px,8vw,70px);
+    letter-spacing:3px;
+    color:#b66cff;
+    text-shadow:4px 4px 0 #32145a;
 }
 
-.subtitle {
-    color: #999;
+.subtitle{
+    color:#999;
 }
 
-#languageButton {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    background: #1c1c1c;
-    color: white;
-    border: 1px solid #555;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 20;
+#languageButton{
+    position:fixed;
+    top:15px;
+    right:15px;
+    background:#1c1c1c;
+    color:white;
+    border:1px solid #555;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    z-index:20;
 }
 
-.random-box {
-    background: #171717;
-    border: 2px solid #333;
-    padding: 25px;
-    text-align: center;
+.random-box{
+    background:#171717;
+    border:2px solid #333;
+    padding:25px;
+    text-align:center;
 }
 
-#randomButton {
-    background: #8d4de8;
-    color: white;
-    border: 0;
-    padding: 17px 28px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 5px 0 #4e2486;
+#randomButton{
+    background:#8d4de8;
+    color:white;
+    border:0;
+    padding:17px 28px;
+    font-size:20px;
+    font-weight:bold;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 5px 0 #4e2486;
+    transition:.15s;
 }
 
-#randomButton:hover {
-    background: #9b63ed;
+#randomButton:hover{
+    background:#9b63ed;
+    transform:translateY(-1px);
 }
 
-#randomButton:active {
-    transform: translateY(4px);
-    box-shadow: 0 1px 0 #4e2486;
+#randomButton:active{
+    transform:translateY(4px);
+    box-shadow:0 1px 0 #4e2486;
 }
 
-.mode-buttons {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
+#randomButton.rolling{
+    animation:shake .25s infinite;
 }
 
-.mode-button {
-    background: #202020;
-    color: #ddd;
-    border: 1px solid #444;
-    padding: 9px 13px;
-    border-radius: 6px;
-    cursor: pointer;
+@keyframes shake{
+    0%{transform:rotate(0deg)}
+    25%{transform:rotate(-2deg)}
+    50%{transform:rotate(2deg)}
+    75%{transform:rotate(-2deg)}
+    100%{transform:rotate(0deg)}
 }
 
-.mode-button:hover {
-    background: #292929;
+.mode-buttons{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.mode-button.active {
-    border-color: #b66cff;
-    color: #d6b8ff;
-    box-shadow: 0 0 12px rgba(182,108,255,.18);
+.mode-button{
+    background:#202020;
+    color:#ddd;
+    border:1px solid #444;
+    padding:9px 13px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:.15s;
 }
 
-#duckModeButton.active {
-    border-color: #ffd84d;
-    color: #ffd84d;
+.mode-button:hover{
+    background:#292929;
 }
 
-#result {
-    margin-top: 25px;
-    min-height: 160px;
-    border: 2px dashed #555;
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: .2s;
+.mode-button.active{
+    border-color:#b66cff;
+    color:#d6b8ff;
+    box-shadow:0 0 12px rgba(182,108,255,.18);
 }
 
-#result.secret {
-    border-color: #ffd84d;
-    box-shadow: 0 0 25px rgba(255,216,77,.18);
+.mode-button.locked{
+    opacity:.45;
 }
 
-#result.milestone {
-    border-color: #67e8a5;
-    box-shadow: 0 0 25px rgba(103,232,165,.18);
+#modeDuck.active{
+    border-color:#ffd84d;
+    color:#ffd84d;
 }
 
-#result.legendary {
-    border-color: #ff4d8d;
-    box-shadow: 0 0 30px rgba(255,77,141,.22);
+#modeChaos.active{
+    border-color:#ff704d;
+    color:#ff9b82;
 }
 
-.category {
-    color: #b66cff;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
+#modeStreak.active{
+    border-color:#67e8a5;
+    color:#67e8a5;
 }
 
-.result-text {
-    font-size: 21px;
-    line-height: 1.5;
-    text-align: center;
+#modeLegendary.active{
+    border-color:#ff4d8d;
+    color:#ff78aa;
 }
 
-.result-text a {
-    color: #72b7ff;
-    text-decoration: none;
-    font-weight: bold;
+.mode-description{
+    margin-top:12px;
+    color:#999;
+    line-height:1.5;
 }
 
-.result-text a:hover {
-    text-decoration: underline;
+.mode-progress{
+    margin:10px auto 0;
+    max-width:600px;
+    font-family:monospace;
+    font-size:12px;
+    color:#666;
 }
 
-.rarity {
-    margin-top: 12px;
-    font-family: monospace;
-    font-size: 13px;
-    color: #aaa;
+#result{
+    margin-top:25px;
+    min-height:160px;
+    border:2px dashed #555;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    transition:.25s;
 }
 
-.buttons {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+#result.secret{
+    border-color:#ffd84d;
+    box-shadow:0 0 25px rgba(255,216,77,.18);
 }
 
-.small-button {
-    background: #202020;
-    color: white;
-    border: 1px solid #444;
-    padding: 9px 14px;
-    border-radius: 6px;
-    cursor: pointer;
+#result.milestone{
+    border-color:#67e8a5;
+    box-shadow:0 0 25px rgba(103,232,165,.18);
 }
 
-.small-button:hover {
-    background: #292929;
+#result.legendary{
+    border-color:#ff4d8d;
+    box-shadow:0 0 30px rgba(255,77,141,.22);
 }
 
-#shareButton {
-    display: none;
+#result.chaos{
+    border-color:#ff704d;
+    box-shadow:0 0 25px rgba(255,112,77,.18);
 }
 
-#counter {
-    margin-top: 15px;
-    color: #888;
-    font-family: monospace;
+#result.streak{
+    border-color:#67e8a5;
+    box-shadow:0 0 25px rgba(103,232,165,.18);
 }
 
-.stats {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+.category{
+    color:#b66cff;
+    font-size:13px;
+    font-weight:bold;
+    letter-spacing:2px;
+    margin-bottom:12px;
 }
 
-.stat {
-    background: #171717;
-    border: 1px solid #333;
-    padding: 15px;
-    text-align: center;
+.result-text{
+    font-size:21px;
+    line-height:1.5;
+    text-align:center;
 }
 
-.stat-number {
-    display: block;
-    color: #b66cff;
-    font-size: 25px;
-    font-weight: bold;
+.result-text a{
+    color:#72b7ff;
+    text-decoration:none;
+    font-weight:bold;
 }
 
-.stat-label {
-    color: #999;
-    font-size: 12px;
+.result-text a:hover{
+    text-decoration:underline;
 }
 
-.milestones {
-    margin-top: 25px;
-    background: #151515;
-    border: 1px solid #333;
-    padding: 18px;
+.rarity{
+    margin-top:12px;
+    font-family:monospace;
+    font-size:13px;
+    color:#aaa;
+}
+
+.buttons{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.small-button{
+    background:#202020;
+    color:white;
+    border:1px solid #444;
+    padding:9px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.small-button:hover{
+    background:#292929;
+}
+
+#shareButton{
+    display:none;
+}
+
+#counter{
+    margin-top:15px;
+    color:#888;
+    font-family:monospace;
+}
+
+.stats{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.stat{
+    background:#171717;
+    border:1px solid #333;
+    padding:15px;
+    text-align:center;
+}
+
+.stat-number{
+    display:block;
+    color:#b66cff;
+    font-size:25px;
+    font-weight:bold;
+}
+
+.stat-label{
+    color:#999;
+    font-size:12px;
+}
+
+.milestones,
+.collection,
+.modes{
+    margin-top:25px;
+    background:#151515;
+    border:1px solid #333;
+    padding:18px;
 }
 
 .milestones h2,
 .collection h2,
-.modes h2 {
-    margin-top: 0;
+.modes h2{
+    margin-top:0;
 }
 
-.milestone-list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+.milestone-list{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
 }
 
-.milestone-item {
-    border: 1px solid #333;
-    padding: 12px 5px;
-    text-align: center;
-    color: #777;
-    border-radius: 5px;
+.milestone-item{
+    border:1px solid #333;
+    padding:12px 5px;
+    text-align:center;
+    color:#777;
+    border-radius:5px;
 }
 
-.milestone-item.unlocked {
-    color: #67e8a5;
-    border-color: #67e8a5;
-    background: rgba(103,232,165,.05);
+.milestone-item.unlocked{
+    color:#67e8a5;
+    border-color:#67e8a5;
+    background:rgba(103,232,165,.05);
 }
 
-.collection {
-    margin-top: 25px;
-    background: #151515;
-    border: 1px solid #333;
-    padding: 18px;
+.collection-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
 }
 
-.collection-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+.collection-item{
+    border:1px solid #333;
+    padding:12px 5px;
+    text-align:center;
+    color:#555;
+    border-radius:5px;
+    font-size:13px;
 }
 
-.collection-item {
-    border: 1px solid #333;
-    padding: 12px 5px;
-    text-align: center;
-    color: #555;
-    border-radius: 5px;
-    font-size: 13px;
+.collection-item.found{
+    color:#ffd84d;
+    border-color:#ffd84d;
 }
 
-.collection-item.found {
-    color: #ffd84d;
-    border-color: #ffd84d;
+.unlock-item{
+    padding:12px;
+    margin-bottom:7px;
+    border:1px solid #333;
+    border-radius:5px;
 }
 
-.modes {
-    margin-top: 25px;
-    background: #151515;
-    border: 1px solid #333;
-    padding: 18px;
+.unlock-item.unlocked{
+    border-color:#67e8a5;
 }
 
-.mode-description {
-    color: #999;
-    line-height: 1.5;
+.unlock-item.current{
+    background:rgba(182,108,255,.06);
+    border-color:#b66cff;
 }
 
-.facts {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+.unlock-description{
+    margin-top:4px;
+    color:#777;
+    font-size:12px;
 }
 
-.fact {
-    background: #151515;
-    border: 1px solid #333;
-    padding: 18px;
+.facts{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
 }
 
-.fact h3 {
-    margin-top: 0;
+.fact{
+    background:#151515;
+    border:1px solid #333;
+    padding:18px;
 }
 
-.fact p {
-    color: #aaa;
-    line-height: 1.5;
+.fact h3{
+    margin-top:0;
 }
 
-.terminal {
-    margin-top: 30px;
-    background: #080808;
-    border: 1px solid #2d2d2d;
-    padding: 18px;
-    font-family: monospace;
-    color: #76e39b;
-    line-height: 1.7;
+.fact p{
+    color:#aaa;
+    line-height:1.5;
 }
 
-#rewardBox {
-    display: none;
-    margin-top: 15px;
-    padding: 14px;
-    border: 1px dashed #67e8a5;
-    color: #67e8a5;
-    font-family: monospace;
+.terminal{
+    margin-top:30px;
+    background:#080808;
+    border:1px solid #2d2d2d;
+    padding:18px;
+    font-family:monospace;
+    color:#76e39b;
+    line-height:1.7;
 }
 
-#adminPanel {
-    display: none;
-    margin-top: 30px;
-    background: #0b0b0b;
-    border: 2px solid #ff4d8d;
-    padding: 20px;
-    box-shadow: 0 0 25px rgba(255,77,141,.15);
+#rewardBox{
+    display:none;
+    margin-top:15px;
+    padding:14px;
+    border:1px dashed #67e8a5;
+    color:#67e8a5;
+    font-family:monospace;
 }
 
-#adminPanel h2 {
-    margin-top: 0;
-    color: #ff4d8d;
-    font-family: monospace;
+#supabaseStatus{
+    margin-top:8px;
+    color:#555;
+    font-family:monospace;
+    font-size:11px;
 }
 
-.admin-warning {
-    color: #888;
-    font-family: monospace;
-    font-size: 12px;
-    margin-bottom: 15px;
+#adminPanel{
+    display:none;
+    margin-top:30px;
+    background:#0b0b0b;
+    border:2px solid #ff4d8d;
+    padding:20px;
+    box-shadow:0 0 25px rgba(255,77,141,.15);
 }
 
-.admin-section {
-    border-top: 1px solid #333;
-    margin-top: 15px;
-    padding-top: 15px;
+#adminPanel h2{
+    margin-top:0;
+    color:#ff4d8d;
+    font-family:monospace;
 }
 
-.admin-section h3 {
-    margin-top: 0;
-    color: #b66cff;
+.admin-warning{
+    color:#888;
+    font-family:monospace;
+    font-size:12px;
+    margin-bottom:15px;
 }
 
-.admin-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.admin-section{
+    border-top:1px solid #333;
+    margin-top:15px;
+    padding-top:15px;
 }
 
-.admin-button {
-    background: #191919;
-    color: white;
-    border: 1px solid #555;
-    padding: 9px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: monospace;
+.admin-section h3{
+    margin-top:0;
+    color:#b66cff;
 }
 
-.admin-button:hover {
-    background: #292929;
-    border-color: #ff4d8d;
+.admin-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
-.admin-danger {
-    border-color: #ff5555;
+.admin-button{
+    background:#191919;
+    color:white;
+    border:1px solid #555;
+    padding:9px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    font-family:monospace;
 }
 
-.admin-status {
-    margin-top: 15px;
-    padding: 10px;
-    background: #050505;
-    border: 1px dashed #444;
-    color: #67e8a5;
-    font-family: monospace;
-    font-size: 13px;
+.admin-button:hover{
+    background:#292929;
+    border-color:#ff4d8d;
 }
 
-footer {
-    text-align: center;
-    margin-top: 30px;
-    color: #666;
-    font-size: 13px;
+.admin-danger{
+    border-color:#ff5555;
 }
 
-@media (max-width: 700px) {
+.admin-status{
+    margin-top:15px;
+    padding:10px;
+    background:#050505;
+    border:1px dashed #444;
+    color:#67e8a5;
+    font-family:monospace;
+    font-size:13px;
+}
+
+footer{
+    text-align:center;
+    margin-top:30px;
+    color:#666;
+    font-size:13px;
+}
+
+@media(max-width:700px){
 
     .stats,
-    .facts {
-        grid-template-columns: 1fr 1fr;
+    .facts{
+        grid-template-columns:1fr 1fr;
     }
 
-    .milestone-list {
-        grid-template-columns: repeat(2, 1fr);
+    .milestone-list{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .collection-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .collection-grid{
+        grid-template-columns:repeat(2,1fr);
     }
 
 }
 
-@media (max-width: 500px) {
+@media(max-width:500px){
 
     .stats,
-    .facts {
-        grid-template-columns: 1fr;
+    .facts{
+        grid-template-columns:1fr;
+    }
+
+    h1{
+        letter-spacing:1px;
+    }
+
+    .random-box{
+        padding:18px;
     }
 
 }
@@ -488,53 +569,41 @@ No sabes qué va a salir. Ni yo tampoco.
 
 </header>
 
-
 <section class="random-box">
 
 <button id="randomButton" onclick="sorprendeme()">
 🎲 SORPRÉNDEME
 </button>
 
-
 <div class="mode-buttons">
 
-<button class="mode-button active"
-onclick="cambiarModo('normal')"
-id="modeNormal">
+<button class="mode-button active" onclick="cambiarModo('normal')" id="modeNormal">
 🌐 NORMAL
 </button>
 
-<button class="mode-button"
-onclick="cambiarModo('duck')"
-id="modeDuck">
+<button class="mode-button" onclick="cambiarModo('duck')" id="modeDuck">
 🦆 PATITO
 </button>
 
-<button class="mode-button"
-onclick="cambiarModo('chaos')"
-id="modeChaos">
+<button class="mode-button" onclick="cambiarModo('chaos')" id="modeChaos">
 🌪️ CAOS
 </button>
 
-<button class="mode-button"
-onclick="cambiarModo('streak')"
-id="modeStreak">
+<button class="mode-button" onclick="cambiarModo('streak')" id="modeStreak">
 🔥 RACHA
 </button>
 
-<button class="mode-button"
-onclick="cambiarModo('legendary')"
-id="modeLegendary">
+<button class="mode-button" onclick="cambiarModo('legendary')" id="modeLegendary">
 👑 LEGENDARIO
 </button>
 
 </div>
 
-
 <div id="modeDescription" class="mode-description">
 Modo normal. Internet en estado puro.
 </div>
 
+<div id="modeProgress" class="mode-progress"></div>
 
 <div id="result">
 
@@ -550,109 +619,61 @@ INTERNET RANDOMIZER
 
 </div>
 
-
 <div class="buttons">
 
-<button class="small-button"
-id="copyButton"
-onclick="copiarResultado()">
+<button class="small-button" id="copyButton" onclick="copiarResultado()">
 📋 Copiar
 </button>
 
-<button class="small-button"
-id="shareButton"
-onclick="compartirHallazgo()">
+<button class="small-button" id="shareButton" onclick="compartirHallazgo()">
 📤 Compartir
 </button>
 
-<button class="small-button"
-id="againButton"
-onclick="sorprendeme()">
+<button class="small-button" id="againButton" onclick="sorprendeme()">
 🔄 Otra vez
 </button>
 
 </div>
 
-
 <div id="counter">
 Tiradas: 0
 </div>
 
-
 <div id="rewardBox"></div>
 
-</section>
+<div id="supabaseStatus">
+☁️ Supabase: preparando conexión...
+</div>
 
+</section>
 
 <section class="stats">
 
 <div class="stat">
-
-<span class="stat-number"
-id="localCounter">
-0
-</span>
-
-<span class="stat-label"
-id="localLabel">
-TUS TIRADAS
-</span>
-
+<span class="stat-number" id="localCounter">0</span>
+<span class="stat-label" id="localLabel">TUS TIRADAS</span>
 </div>
 
-
 <div class="stat">
-
-<span class="stat-number"
-id="secretCounter">
-0
-</span>
-
-<span class="stat-label"
-id="secretLabel">
-SECRETOS ENCONTRADOS
-</span>
-
+<span class="stat-number" id="secretCounter">0</span>
+<span class="stat-label" id="secretLabel">SECRETOS ENCONTRADOS</span>
 </div>
 
-
 <div class="stat">
-
-<span class="stat-number"
-id="streakCounter">
-0
-</span>
-
-<span class="stat-label"
-id="streakLabel">
-RACHA
-</span>
-
+<span class="stat-number" id="streakCounter">0</span>
+<span class="stat-label" id="streakLabel">RACHA</span>
 </div>
 
-
 <div class="stat">
-
-<span class="stat-number"
-id="nextMilestone">
-100
-</span>
-
-<span class="stat-label"
-id="nextLabel">
-PRÓXIMO HITO
-</span>
-
+<span class="stat-number" id="nextMilestone">100</span>
+<span class="stat-label" id="nextLabel">PRÓXIMO HITO</span>
 </div>
 
 </section>
 
-
 <section class="milestones">
 
-<h2 id="milestonesTitle">
-🏆 Hitos
-</h2>
+<h2 id="milestonesTitle">🏆 Hitos</h2>
 
 <div class="milestone-list">
 
@@ -675,28 +696,21 @@ PRÓXIMO HITO
 
 </section>
 
-
 <section class="collection">
 
-<h2>
-🥚 Colección de secretos
-</h2>
+<h2>🥚 Colección de secretos</h2>
 
 <div class="collection-grid" id="collectionGrid"></div>
 
 </section>
 
-
 <section class="modes">
 
-<h2>
-🎮 Modos desbloqueables
-</h2>
+<h2>🎮 Modos desbloqueables</h2>
 
 <div id="modeUnlocks"></div>
 
 </section>
-
 
 <section class="facts">
 
@@ -742,7 +756,6 @@ PRÓXIMO HITO
 
 </section>
 
-
 <div class="terminal">
 
 <div>internet@randomizer:~$</div>
@@ -757,7 +770,6 @@ result: probably not useful
 
 </div>
 
-
 <section id="adminPanel">
 
 <h2>🔐 INTERNET RANDOMIZER ADMIN</h2>
@@ -765,7 +777,6 @@ result: probably not useful
 <div class="admin-warning">
 MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 </div>
-
 
 <div class="admin-section">
 
@@ -775,7 +786,6 @@ MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 
 </div>
 
-
 <div class="admin-section">
 
 <h3>🏆 Hitos</h3>
@@ -784,42 +794,21 @@ MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 
 </div>
 
-
 <div class="admin-section">
 
 <h3>🎮 Modos</h3>
 
 <div class="admin-buttons">
 
-<button class="admin-button"
-onclick="adminModo('normal')">
-🌐 Normal
-</button>
-
-<button class="admin-button"
-onclick="adminModo('duck')">
-🦆 Patito
-</button>
-
-<button class="admin-button"
-onclick="adminModo('chaos')">
-🌪️ Caos
-</button>
-
-<button class="admin-button"
-onclick="adminModo('streak')">
-🔥 Racha
-</button>
-
-<button class="admin-button"
-onclick="adminModo('legendary')">
-👑 Legendario
-</button>
+<button class="admin-button" onclick="adminModo('normal')">🌐 Normal</button>
+<button class="admin-button" onclick="adminModo('duck')">🦆 Patito</button>
+<button class="admin-button" onclick="adminModo('chaos')">🌪️ Caos</button>
+<button class="admin-button" onclick="adminModo('streak')">🔥 Racha</button>
+<button class="admin-button" onclick="adminModo('legendary')">👑 Legendario</button>
 
 </div>
 
 </div>
-
 
 <div class="admin-section">
 
@@ -827,30 +816,14 @@ onclick="adminModo('legendary')">
 
 <div class="admin-buttons">
 
-<button class="admin-button"
-onclick="adminResultadoNormal()">
-🌐 Resultado normal
-</button>
-
-<button class="admin-button"
-onclick="adminCompartible()">
-📤 Probar compartir
-</button>
-
-<button class="admin-button"
-onclick="adminResultadoPatito()">
-🦆 Resultado pato
-</button>
-
-<button class="admin-button"
-onclick="adminRareza()">
-💎 Probar rareza
-</button>
+<button class="admin-button" onclick="adminResultadoNormal()">🌐 Resultado normal</button>
+<button class="admin-button" onclick="adminCompartible()">📤 Probar compartir</button>
+<button class="admin-button" onclick="adminResultadoPatito()">🦆 Resultado pato</button>
+<button class="admin-button" onclick="adminRareza()">💎 Probar rareza</button>
 
 </div>
 
 </div>
-
 
 <div class="admin-section">
 
@@ -858,13 +831,11 @@ onclick="adminRareza()">
 
 <div class="admin-buttons">
 
-<button class="admin-button admin-danger"
-onclick="adminResetEstadisticas()">
+<button class="admin-button admin-danger" onclick="adminResetEstadisticas()">
 🗑️ Resetear estadísticas
 </button>
 
-<button class="admin-button"
-onclick="cerrarAdmin()">
+<button class="admin-button" onclick="cerrarAdmin()">
 🔒 Cerrar panel
 </button>
 
@@ -872,14 +843,11 @@ onclick="cerrarAdmin()">
 
 </div>
 
-
-<div class="admin-status"
-id="adminStatus">
+<div class="admin-status" id="adminStatus">
 admin: desconectado
 </div>
 
 </section>
-
 
 <footer>
 
@@ -895,8 +863,48 @@ hecho porque sí
 
 </div>
 
-
 <script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+/*
+   PEGA AQUÍ TUS DATOS DE SUPABASE.
+
+   Ejemplo:
+
+   const SUPABASE_URL = "https://xxxxxxxx.supabase.co";
+   const SUPABASE_KEY = "sb_publishable_xxxxxxxxx";
+*/
+
+const SUPABASE_URL = "https://toymfoptbjmzfsjtcaoc.supabase.co"
+const SUPABASE_KEY = "sb_publishable_HEM80BBVfQe6tiHm8v50_g_bwnakFFc";
+
+let supabaseClient = null;
+
+try{
+
+    if(
+        SUPABASE_URL !== "https://toymfoptbjmzfsjtcaoc.supabase.co" &
+        SUPABASE_KEY !== "sb_publishable_HEM80BBVfQe6tiHm8v50_g_bwnakFFc" &&
+        window.supabase
+    ){
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+    }
+
+}catch(error){
+
+    console.error("Supabase:",error);
+
+}
+
 
 /* =========================================================
    ESTADO
@@ -912,12 +920,12 @@ Number(localStorage.getItem("randomizerSecretos")) || 0;
 
 let recompensasDesbloqueadas =
 JSON.parse(
-localStorage.getItem("randomizerRecompensas") || "[]"
+    localStorage.getItem("randomizerRecompensas") || "[]"
 );
 
 let secretosDescubiertos =
 JSON.parse(
-localStorage.getItem("randomizerSecretosLista") || "[]"
+    localStorage.getItem("randomizerSecretosLista") || "[]"
 );
 
 let racha =
@@ -933,16 +941,40 @@ let ultimoIndice = null;
 
 let adminActivo = false;
 
+let ultimaTirada = Date.now();
+
+let jugadorUsername =
+localStorage.getItem("randomizerUsername");
+
+if(!jugadorUsername){
+
+    jugadorUsername =
+    "Jugador-" +
+    Math.random()
+    .toString(36)
+    .substring(2,8)
+    .toUpperCase();
+
+    localStorage.setItem(
+        "randomizerUsername",
+        jugadorUsername
+    );
+
+}
+
 let resultadoActual = {
-    es: "",
-    en: "",
-    categoriaEs: "",
-    categoriaEn: "",
-    url: null,
-    secreto: false,
-    hito: false,
-    compartible: false,
-    rareza: ""
+
+    es:"",
+    en:"",
+    categoriaEs:"",
+    categoriaEn:"",
+    url:null,
+    secreto:false,
+    hito:false,
+    compartible:false,
+    rareza:"",
+    clase:""
+
 };
 
 
@@ -951,93 +983,93 @@ let resultadoActual = {
 ========================================================= */
 
 const hitos = [
-100,
-500,
-1000,
-2000,
-3000,
-5000,
-7500,
-10000,
-15000,
-20000,
-30000,
-50000,
-75000,
-100000
+    100,
+    500,
+    1000,
+    2000,
+    3000,
+    5000,
+    7500,
+    10000,
+    15000,
+    20000,
+    30000,
+    50000,
+    75000,
+    100000
 ];
 
 
 const mensajesHitos = {
 
-100: {
-es: "🏆 100 PULSACIONES. Has entrado oficialmente en la madriguera.",
-en: "🏆 100 CLICKS. You have officially entered the rabbit hole."
+100:{
+es:"🏆 100 PULSACIONES. Has entrado oficialmente en la madriguera.",
+en:"🏆 100 CLICKS. You have officially entered the rabbit hole."
 },
 
-500: {
-es: "🔥 500 PULSACIONES. Esto ya empieza a ser preocupante.",
-en: "🔥 500 CLICKS. This is getting concerning."
+500:{
+es:"🔥 500 PULSACIONES. Esto ya empieza a ser preocupante.",
+en:"🔥 500 CLICKS. This is getting concerning."
 },
 
-1000: {
-es: "👑 1.000 PULSACIONES. Ya eres parte del problema.",
-en: "👑 1,000 CLICKS. You are officially part of the problem."
+1000:{
+es:"👑 1.000 PULSACIONES. Ya eres parte del problema.",
+en:"👑 1,000 CLICKS. You are officially part of the problem."
 },
 
-2000: {
-es: "💀 2.000 PULSACIONES. El botón te conoce demasiado bien.",
-en: "💀 2,000 CLICKS. The button knows you too well."
+2000:{
+es:"💀 2.000 PULSACIONES. El botón te conoce demasiado bien.",
+en:"💀 2,000 CLICKS. The button knows you too well."
 },
 
-3000: {
-es: "🗿 3.000 PULSACIONES. Internet Randomizer te está usando a ti.",
-en: "🗿 3,000 CLICKS. Internet Randomizer is now using you."
+3000:{
+es:"🗿 3.000 PULSACIONES. Internet Randomizer te está usando a ti.",
+en:"🗿 3,000 CLICKS. Internet Randomizer is now using you."
 },
 
-5000: {
-es: "🚨 5.000 PULSACIONES. Esto dejó de ser una afición.",
-en: "🚨 5,000 CLICKS. This stopped being a hobby."
+5000:{
+es:"🚨 5.000 PULSACIONES. Esto dejó de ser una afición.",
+en:"🚨 5,000 CLICKS. This stopped being a hobby."
 },
 
-7500: {
-es: "🧠 7.500 PULSACIONES. Tu cerebro ya funciona en modo Randomizer.",
-en: "🧠 7,500 CLICKS. Your brain now operates in Randomizer mode."
+7500:{
+es:"🧠 7.500 PULSACIONES. Tu cerebro ya funciona en modo Randomizer.",
+en:"🧠 7,500 CLICKS. Your brain now operates in Randomizer mode."
 },
 
-10000: {
-es: "👑 10.000 PULSACIONES. DIEZ MIL. ¿QUÉ ESTÁS HACIENDO?",
-en: "👑 10,000 CLICKS. TEN THOUSAND. WHAT ARE YOU DOING?"
+10000:{
+es:"👑 10.000 PULSACIONES. DIEZ MIL. ¿QUÉ ESTÁS HACIENDO?",
+en:"👑 10,000 CLICKS. TEN THOUSAND. WHAT ARE YOU DOING?"
 },
 
-15000: {
-es: "🌐 15.000 PULSACIONES. Internet ya te considera parte de su infraestructura.",
-en: "🌐 15,000 CLICKS. The Internet now considers you infrastructure."
+15000:{
+es:"🌐 15.000 PULSACIONES. Internet ya te considera parte de su infraestructura.",
+en:"🌐 15,000 CLICKS. The Internet now considers you infrastructure."
 },
 
-20000: {
-es: "💀 20.000 PULSACIONES. El Randomizer ha ganado.",
-en: "💀 20,000 CLICKS. The Randomizer has won."
+20000:{
+es:"💀 20.000 PULSACIONES. El Randomizer ha ganado.",
+en:"💀 20,000 CLICKS. The Randomizer has won."
 },
 
-30000: {
-es: "🗿 30.000 PULSACIONES. Esto es arqueología digital.",
-en: "🗿 30,000 CLICKS. This is digital archaeology."
+30000:{
+es:"🗿 30.000 PULSACIONES. Esto es arqueología digital.",
+en:"🗿 30,000 CLICKS. This is digital archaeology."
 },
 
-50000: {
-es: "🔥 50.000 PULSACIONES. CINCUENTA MIL.",
-en: "🔥 50,000 CLICKS. FIFTY THOUSAND."
+50000:{
+es:"🔥 50.000 PULSACIONES. CINCUENTA MIL.",
+en:"🔥 50,000 CLICKS. FIFTY THOUSAND."
 },
 
-75000: {
-es: "👁️ 75.000 PULSACIONES. El botón te estaba esperando.",
-en: "👁️ 75,000 CLICKS. The button was waiting for you."
+75000:{
+es:"👁️ 75.000 PULSACIONES. El botón te estaba esperando.",
+en:"👁️ 75,000 CLICKS. The button was waiting for you."
 },
 
-100000: {
-es: "👑 100.000 PULSACIONES. HAS LLEGADO AL FINAL.",
-en: "👑 100,000 CLICKS. YOU HAVE REACHED THE END."
+100000:{
+es:"👑 100.000 PULSACIONES. HAS LLEGADO AL FINAL.",
+en:"👑 100,000 CLICKS. YOU HAVE REACHED THE END."
 }
 
 };
@@ -1049,74 +1081,74 @@ en: "👑 100,000 CLICKS. YOU HAVE REACHED THE END."
 
 const recompensasHitos = {
 
-100: {
-es: "🦆 RECOMPENSA: Modo Patito desbloqueado.",
-en: "🦆 REWARD: Duck Mode unlocked."
+100:{
+es:"🦆 RECOMPENSA: Modo Patito desbloqueado.",
+en:"🦆 REWARD: Duck Mode unlocked."
 },
 
-500: {
-es: "🎖️ RECOMPENSA: Insignia de Veterano.",
-en: "🎖️ REWARD: Veteran Badge."
+500:{
+es:"🎖️ RECOMPENSA: Insignia de Veterano.",
+en:"🎖️ REWARD: Veteran Badge."
 },
 
-1000: {
-es: "💎 RECOMPENSA: Resultado legendario desbloqueado.",
-en: "💎 REWARD: Legendary result unlocked."
+1000:{
+es:"💎 RECOMPENSA: Resultado legendario desbloqueado.",
+en:"💎 REWARD: Legendary result unlocked."
 },
 
-2000: {
-es: "🌪️ RECOMPENSA: Modo Caos desbloqueado.",
-en: "🌪️ REWARD: Chaos Mode unlocked."
+2000:{
+es:"🌪️ RECOMPENSA: Modo Caos desbloqueado.",
+en:"🌪️ REWARD: Chaos Mode unlocked."
 },
 
-3000: {
-es: "🔥 RECOMPENSA: Modo Racha desbloqueado.",
-en: "🔥 REWARD: Streak Mode unlocked."
+3000:{
+es:"🔥 RECOMPENSA: Modo Racha desbloqueado.",
+en:"🔥 REWARD: Streak Mode unlocked."
 },
 
-5000: {
-es: "🎲 RECOMPENSA: 5.000 Club desbloqueado.",
-en: "🎲 REWARD: 5,000 Club unlocked."
+5000:{
+es:"🎲 RECOMPENSA: 5.000 Club desbloqueado.",
+en:"🎲 REWARD: 5,000 Club unlocked."
 },
 
-7500: {
-es: "🥚 RECOMPENSA: Acceso a secretos especiales.",
-en: "🥚 REWARD: Special secrets unlocked."
+7500:{
+es:"🥚 RECOMPENSA: Acceso a secretos especiales.",
+en:"🥚 REWARD: Special secrets unlocked."
 },
 
-10000: {
-es: "👑 RECOMPENSA: Modo Legendario desbloqueado.",
-en: "👑 REWARD: Legendary Mode unlocked."
+10000:{
+es:"👑 RECOMPENSA: Modo Legendario desbloqueado.",
+en:"👑 REWARD: Legendary Mode unlocked."
 },
 
-15000: {
-es: "🌐 RECOMPENSA: Explorador de Internet.",
-en: "🌐 REWARD: Internet Explorer badge."
+15000:{
+es:"🌐 RECOMPENSA: Explorador de Internet.",
+en:"🌐 REWARD: Internet Explorer badge."
 },
 
-20000: {
-es: "💀 RECOMPENSA: El botón ahora te reconoce.",
-en: "💀 REWARD: The button now recognizes you."
+20000:{
+es:"💀 RECOMPENSA: El botón ahora te reconoce.",
+en:"💀 REWARD: The button now recognizes you."
 },
 
-30000: {
-es: "🗿 RECOMPENSA: Insignia Arqueólogo Digital.",
-en: "🗿 REWARD: Digital Archaeologist Badge."
+30000:{
+es:"🗿 RECOMPENSA: Insignia Arqueólogo Digital.",
+en:"🗿 REWARD: Digital Archaeologist Badge."
 },
 
-50000: {
-es: "🔥 RECOMPENSA: Leyenda de Internet Randomizer.",
-en: "🔥 REWARD: Internet Randomizer Legend."
+50000:{
+es:"🔥 RECOMPENSA: Leyenda de Internet Randomizer.",
+en:"🔥 REWARD: Internet Randomizer Legend."
 },
 
-75000: {
-es: "👁️ RECOMPENSA: El Ojo del Randomizer.",
-en: "👁️ REWARD: The Randomizer Eye."
+75000:{
+es:"👁️ RECOMPENSA: El Ojo del Randomizer.",
+en:"👁️ REWARD: The Randomizer Eye."
 },
 
-100000: {
-es: "👑 RECOMPENSA FINAL: HAS COMPLETADO INTERNET RANDOMIZER.",
-en: "👑 FINAL REWARD: YOU COMPLETED INTERNET RANDOMIZER."
+100000:{
+es:"👑 RECOMPENSA FINAL: HAS COMPLETADO INTERNET RANDOMIZER.",
+en:"👑 FINAL REWARD: YOU COMPLETED INTERNET RANDOMIZER."
 }
 
 };
@@ -1252,6 +1284,15 @@ categoriaEn:"CONAN",
 es:"MundoConan.",
 en:"MundoConan.",
 url:"https://www.mundoconan.com/"
+},
+
+{
+tipo:"link",
+categoriaEs:"CONAN",
+categoriaEn:"CONAN",
+es:"Detective Conan en Wikipedia.",
+en:"Detective Conan on Wikipedia.",
+url:"https://es.wikipedia.org/wiki/Detective_Conan"
 },
 
 {
@@ -1606,7 +1647,7 @@ rareza:"1/250000"
 
 
 /* =========================================================
-   MODOS
+   MODOS MEJORADOS
 ========================================================= */
 
 const modos = {
@@ -1622,32 +1663,32 @@ desbloqueado:0
 duck:{
 nombreEs:"🦆 PATITO",
 nombreEn:"🦆 DUCK",
-descripcionEs:"Todos los resultados han sido secuestrados por el pato.",
-descripcionEn:"Every result has been hijacked by the duck.",
+descripcionEs:"El pato toma el control. Algunos resultados pueden ser todavía más absurdos.",
+descripcionEn:"The duck takes control. Some results can become even more absurd.",
 desbloqueado:100
 },
 
 chaos:{
 nombreEs:"🌪️ CAOS",
 nombreEn:"🌪️ CHAOS",
-descripcionEs:"Más secretos, resultados absurdos y posibilidades extrañas.",
-descripcionEn:"More secrets, absurd results and strange possibilities.",
+descripcionEs:"Más secretos, más resultados absurdos y mayor probabilidad de rarezas.",
+descripcionEn:"More secrets, more absurd results and a higher chance of rare finds.",
 desbloqueado:2000
 },
 
 streak:{
 nombreEs:"🔥 RACHA",
 nombreEn:"🔥 STREAK",
-descripcionEs:"Mantén tu racha viva. Cada tirada consecutiva aumenta la recompensa.",
-descripcionEn:"Keep your streak alive. Every consecutive click increases the reward.",
+descripcionEs:"Tu racha aumenta el multiplicador. Cuanto más aguantas, más posibilidades especiales tienes.",
+descripcionEn:"Your streak increases the multiplier. The longer you keep it, the more special chances you get.",
 desbloqueado:3000
 },
 
 legendary:{
 nombreEs:"👑 LEGENDARIO",
 nombreEn:"👑 LEGENDARY",
-descripcionEs:"Solo resultados raros, secretos y cosas absurdas.",
-descripcionEn:"Only rare, secret and absurd results.",
+descripcionEs:"Los resultados normales desaparecen. Aquí mandan las rarezas.",
+descripcionEn:"Normal results disappear. Rare finds rule here.",
 desbloqueado:10000
 }
 
@@ -1655,7 +1696,7 @@ desbloqueado:10000
 
 
 /* =========================================================
-   GUARDADO
+   GUARDADO LOCAL
 ========================================================= */
 
 function guardar(){
@@ -1699,7 +1740,158 @@ modoActual
 
 
 /* =========================================================
-   DESBLOQUEO DE MODOS
+   SUPABASE - JUGADOR
+========================================================= */
+
+async function sincronizarSupabase(){
+
+if(!supabaseClient){
+
+    actualizarEstadoSupabase(
+        "☁️ Supabase: no configurado"
+    );
+
+    return;
+
+}
+
+try{
+
+    actualizarEstadoSupabase(
+        "☁️ Supabase: sincronizando..."
+    );
+
+    /*
+       Primero intentamos encontrar al jugador.
+    */
+
+    const {data:existente,error:selectError} =
+    await supabaseClient
+    .from("players")
+    .select("*")
+    .eq("username",jugadorUsername)
+    .maybeSingle();
+
+    if(selectError){
+
+        console.warn(
+            "Supabase SELECT:",
+            selectError
+        );
+
+        actualizarEstadoSupabase(
+            "☁️ Supabase conectado"
+        );
+
+        return;
+
+    }
+
+
+    if(!existente){
+
+        const {error:insertError} =
+        await supabaseClient
+        .from("players")
+        .insert({
+
+            username:jugadorUsername,
+            clicks:contador,
+            secrets:secretosEncontrados,
+            best_streak:mejorRacha
+
+        });
+
+        if(insertError){
+
+            console.warn(
+                "Supabase INSERT:",
+                insertError
+            );
+
+            actualizarEstadoSupabase(
+                "☁️ Supabase conectado"
+            );
+
+            return;
+
+        }
+
+    }else{
+
+        /*
+           Intentamos actualizar los datos.
+
+           Si todavía no has creado la policy UPDATE,
+           el progreso local seguirá funcionando y
+           aparecerá el error en la consola.
+        */
+
+        const {error:updateError} =
+        await supabaseClient
+        .from("players")
+        .update({
+
+            clicks:contador,
+            secrets:secretosEncontrados,
+            best_streak:mejorRacha,
+            updated_at:new Date().toISOString()
+
+        })
+        .eq("username",jugadorUsername);
+
+        if(updateError){
+
+            console.warn(
+                "Supabase UPDATE:",
+                updateError
+            );
+
+        }
+
+    }
+
+
+    actualizarEstadoSupabase(
+        "☁️ Supabase: conectado · " +
+        jugadorUsername
+    );
+
+}catch(error){
+
+    console.error(
+        "Error Supabase:",
+        error
+    );
+
+    actualizarEstadoSupabase(
+        "☁️ Supabase: conexión no disponible"
+    );
+
+}
+
+}
+
+
+function actualizarEstadoSupabase(texto){
+
+const elemento =
+document.getElementById(
+"supabaseStatus"
+);
+
+if(elemento){
+
+    elemento.textContent =
+    texto;
+
+}
+
+}
+
+
+/* =========================================================
+   DESBLOQUEO
 ========================================================= */
 
 function modoDesbloqueado(modo){
@@ -1710,6 +1902,9 @@ return contador >= modos[modo].desbloqueado;
 
 
 function cambiarModo(modo){
+
+if(!modos[modo])
+return;
 
 if(!modoDesbloqueado(modo)){
 
@@ -1758,7 +1953,7 @@ const botones = [
 "legendary"
 ];
 
-botones.forEach(modo => {
+botones.forEach(modo=>{
 
 const boton =
 document.getElementById(
@@ -1767,11 +1962,17 @@ modo.charAt(0).toUpperCase() +
 modo.slice(1)
 );
 
-if(!boton) return;
+if(!boton)
+return;
 
 boton.classList.toggle(
 "active",
 modoActual === modo
+);
+
+boton.classList.toggle(
+"locked",
+!modoDesbloqueado(modo)
 );
 
 });
@@ -1790,10 +1991,40 @@ ingles
 
 }
 
+
+const progress =
+document.getElementById(
+"modeProgress"
+);
+
+if(progress){
+
+if(modoActual === "streak"){
+
+progress.textContent =
+ingles
+? "Current streak: " + racha
+: "Racha actual: " + racha;
+
+}else{
+
+progress.textContent =
+ingles
+? "Best streak: " + mejorRacha
+: "Mejor racha: " + mejorRacha;
+
+}
+
+}
+
 renderListaModos();
 
 }
 
+
+/* =========================================================
+   LISTA MODOS
+========================================================= */
 
 function renderListaModos(){
 
@@ -1802,23 +2033,36 @@ document.getElementById(
 "modeUnlocks"
 );
 
-if(!caja) return;
+if(!caja)
+return;
 
 caja.innerHTML = "";
 
-Object.keys(modos).forEach(modo => {
+Object.keys(modos).forEach(modo=>{
 
-const info = modos[modo];
-
-const div =
-document.createElement("div");
+const info =
+modos[modo];
 
 const desbloqueado =
 modoDesbloqueado(modo);
 
-div.style.padding = "10px";
-div.style.marginBottom = "7px";
-div.style.border = "1px solid #333";
+const div =
+document.createElement("div");
+
+div.className =
+"unlock-item " +
+(desbloqueado ? "unlocked " : "") +
+(modoActual === modo ? "current" : "");
+
+const nombre =
+ingles
+? info.nombreEn
+: info.nombreEs;
+
+const descripcion =
+ingles
+? info.descripcionEn
+: info.descripcionEs;
 
 div.innerHTML =
 
@@ -1826,17 +2070,25 @@ div.innerHTML =
 ? "🔓 "
 : "🔒 ") +
 
-(ingles
-? info.nombreEn
-: info.nombreEs) +
+nombre +
 
 " — " +
 
 (desbloqueado
-? (ingles ? "UNLOCKED" : "DESBLOQUEADO")
+? (ingles
+    ? "UNLOCKED"
+    : "DESBLOQUEADO")
 : (ingles
-? "Unlock at " + info.desbloqueado.toLocaleString()
-: "Desbloquea en " + info.desbloqueado.toLocaleString()));
+    ? "Unlock at " +
+      info.desbloqueado.toLocaleString()
+    : "Desbloquea en " +
+      info.desbloqueado.toLocaleString()
+  )
+) +
+
+`<div class="unlock-description">
+${descripcion}
+</div>`;
 
 caja.appendChild(div);
 
@@ -1870,13 +2122,15 @@ document.getElementById(
 "counter"
 ).textContent =
 ingles
-? "Clicks: " + contador.toLocaleString()
-: "Tiradas: " + contador.toLocaleString();
+? "Clicks: " +
+contador.toLocaleString()
+: "Tiradas: " +
+contador.toLocaleString();
 
 
 const siguiente =
 hitos.find(
-h => contador < h
+h=>contador < h
 );
 
 document.getElementById(
@@ -1887,14 +2141,15 @@ siguiente
 : "∞";
 
 
-hitos.forEach(hito => {
+hitos.forEach(hito=>{
 
 const elemento =
 document.getElementById(
 "m" + hito
 );
 
-if(!elemento) return;
+if(!elemento)
+return;
 
 if(contador >= hito){
 
@@ -1903,7 +2158,8 @@ elemento.classList.add(
 );
 
 elemento.textContent =
-"✓ " + hito.toLocaleString();
+"✓ " +
+hito.toLocaleString();
 
 }else{
 
@@ -1935,11 +2191,12 @@ document.getElementById(
 "collectionGrid"
 );
 
-if(!caja) return;
+if(!caja)
+return;
 
 caja.innerHTML = "";
 
-secretos.forEach((secreto,index) => {
+secretos.forEach(secreto=>{
 
 const div =
 document.createElement("div");
@@ -1951,12 +2208,19 @@ secreto.id
 
 div.className =
 "collection-item " +
-(encontrado ? "found" : "");
+(encontrado
+? "found"
+: "");
 
 div.textContent =
 encontrado
 ? "✓ " + secreto.rareza
 : "❓ " + secreto.rareza;
+
+div.title =
+encontrado
+? secreto.es
+: "Secreto todavía no descubierto";
 
 caja.appendChild(div);
 
@@ -1966,7 +2230,7 @@ caja.appendChild(div);
 
 
 /* =========================================================
-   RENDER RESULTADO
+   RENDER
 ========================================================= */
 
 function renderResultado(){
@@ -2025,24 +2289,41 @@ document.getElementById(
 "result"
 );
 
-caja.classList.toggle(
+caja.classList.remove(
 "secret",
-resultadoActual.secreto
-);
-
-caja.classList.toggle(
 "milestone",
-resultadoActual.hito
+"legendary",
+"chaos",
+"streak"
 );
 
-caja.classList.toggle(
-"legendary",
+if(resultadoActual.secreto)
+caja.classList.add("secret");
+
+if(resultadoActual.hito)
+caja.classList.add("milestone");
+
+if(resultadoActual.clase)
+caja.classList.add(
+resultadoActual.clase
+);
+
+if(
+resultadoActual.rareza &&
+(
 resultadoActual.rareza === "1/10000" ||
 resultadoActual.rareza === "1/25000" ||
 resultadoActual.rareza === "1/50000" ||
 resultadoActual.rareza === "1/100000" ||
 resultadoActual.rareza === "1/250000"
+)
+){
+
+caja.classList.add(
+"legendary"
 );
+
+}
 
 actualizarBotonCompartir();
 
@@ -2060,7 +2341,8 @@ document.getElementById(
 "shareButton"
 );
 
-if(!boton) return;
+if(!boton)
+return;
 
 boton.style.display =
 resultadoActual.compartible
@@ -2079,7 +2361,7 @@ ingles
 
 return (
 "🎲 Internet Randomizer\n\n" +
-texto +
+texto.replace(/<[^>]*>/g,"") +
 "\n\n" +
 window.location.href
 );
@@ -2113,8 +2395,10 @@ window.isSecureContext
 try{
 
 await navigator.share({
+
 title:"Internet Randomizer",
 text:texto
+
 });
 
 return;
@@ -2179,7 +2463,6 @@ cosas.length > 1
 ultimoIndice =
 indice;
 
-
 const cosa =
 cosas[indice];
 
@@ -2187,27 +2470,17 @@ cosas[indice];
 resultadoActual = {
 
 es:cosa.es,
-
 en:cosa.en,
-
-categoriaEs:
-cosa.categoriaEs,
-
-categoriaEn:
-cosa.categoriaEn,
-
-url:
-cosa.tipo === "link"
+categoriaEs:cosa.categoriaEs,
+categoriaEn:cosa.categoriaEn,
+url:cosa.tipo === "link"
 ? cosa.url
 :null,
-
 secreto:false,
-
 hito:false,
-
 compartible:false,
-
-rareza:""
+rareza:"",
+clase:""
 
 };
 
@@ -2218,12 +2491,12 @@ renderResultado();
 
 
 /* =========================================================
-   PATITO
+   PATITO MEJORADO
 ========================================================= */
 
 function resultadoPatito(){
 
-const texto =
+let texto =
 resultadosPatito[
 Math.floor(
 Math.random() *
@@ -2232,25 +2505,35 @@ resultadosPatito.length
 ];
 
 
+/*
+   Cada 5 tiradas en Patito aparece
+   una variante especial.
+*/
+
+if(contador % 5 === 0){
+
+texto =
+ingles
+? "🦆 THE DUCK HAS ACTIVATED DUCK PROTOCOL."
+: "🦆 EL PATO HA ACTIVADO EL PROTOCOLO PATO.";
+
+}
+
+
 resultadoActual = {
 
 es:texto,
-
 en:texto,
-
 categoriaEs:"🦆 MODO PATITO",
-
 categoriaEn:"🦆 DUCK MODE",
-
 url:null,
-
 secreto:true,
-
 hito:false,
-
 compartible:false,
-
-rareza:""
+rareza:contador % 5 === 0
+? "PATO ESPECIAL"
+: "",
+clase:""
 
 };
 
@@ -2264,66 +2547,45 @@ renderResultado();
    SECRETOS
 ========================================================= */
 
-function intentarSecreto(){
+function obtenerSecretoAleatorio(filtro){
 
-let posibilidades =
-[...secretos];
+const lista =
+filtro || secretos;
 
+if(!lista.length)
+return null;
 
-if(modoActual === "chaos"){
-
-posibilidades =
-posibilidades.concat(
-secretos,
-secretos
-);
-
-}
-
-
-if(modoActual === "legendary"){
-
-posibilidades =
-secretos.filter(
-s => s.probabilidad <= 1/1000
-);
+return lista[
+Math.floor(
+Math.random() *
+lista.length
+)
+];
 
 }
 
 
-for(
-const secreto of posibilidades
-){
+function mostrarSecreto(secreto){
 
-if(
-Math.random() <
-secreto.probabilidad *
-(modoActual === "chaos" ? 3 : 1)
-){
+if(!secreto)
+return false;
 
 resultadoActual = {
 
 es:secreto.es,
-
 en:secreto.en,
-
-categoriaEs:
-secreto.categoriaEs,
-
-categoriaEn:
-secreto.categoriaEn,
-
+categoriaEs:secreto.categoriaEs,
+categoriaEn:secreto.categoriaEn,
 url:null,
-
 secreto:true,
-
 hito:false,
-
 compartible:
 secreto.probabilidad <= 1/250,
-
-rareza:
-secreto.rareza
+rareza:secreto.rareza,
+clase:
+secreto.probabilidad <= 1/10000
+? "legendary"
+: ""
 
 };
 
@@ -2345,6 +2607,7 @@ secreto.id
 
 
 guardar();
+
 renderResultado();
 
 if(typeof gtag === "function"){
@@ -2354,98 +2617,661 @@ gtag(
 "rare_result",
 {
 rarity:secreto.rareza,
-secret_id:secreto.id
+secret_id:secreto.id,
+mode:modoActual
 }
 );
 
 }
+
+sincronizarSupabase();
 
 return true;
 
 }
 
+
+/*
+   En vez de probar todos los secretos uno detrás de otro,
+   elegimos primero si habrá secreto.
+
+   Esto hace que Caos y Legendario sean realmente
+   diferentes.
+*/
+
+function intentarSecreto(){
+
+let probabilidadTotal = 0;
+
+
+/* NORMAL */
+
+if(modoActual === "normal"){
+
+probabilidadTotal =
+0.018;
+
 }
 
+
+/* CAOS */
+
+else if(modoActual === "chaos"){
+
+probabilidadTotal =
+0.065;
+
+}
+
+
+/* RACHA */
+
+else if(modoActual === "streak"){
+
+const bonus =
+Math.min(
+racha * 0.004,
+0.08
+);
+
+probabilidadTotal =
+0.025 + bonus;
+
+}
+
+
+/* LEGENDARIO */
+
+else if(modoActual === "legendary"){
+
+probabilidadTotal =
+0.35;
+
+}
+
+
+if(Math.random() >= probabilidadTotal)
 return false;
+
+
+/*
+   Selección ponderada.
+*/
+
+let lista = secretos;
+
+if(modoActual === "legendary"){
+
+lista =
+secretos.filter(
+s => s.probabilidad <= 1/1000
+);
+
+}
+
+else if(modoActual === "chaos"){
+
+lista =
+secretos;
+
+}
+
+else if(modoActual === "streak"){
+
+/*
+   Cuanto mayor la racha,
+   más posibilidades de secretos raros.
+*/
+
+if(racha >= 15){
+
+lista =
+secretos.filter(
+s => s.probabilidad <= 1/5000
+);
+
+}else if(racha >= 8){
+
+lista =
+secretos.filter(
+s => s.probabilidad <= 1/1000
+);
+
+}
+
+}
+
+
+/*
+   Para Legendario damos más peso a las rarezas extremas.
+*/
+
+if(modoActual === "legendary"){
+
+const expandida = [];
+
+lista.forEach(secreto=>{
+
+let peso = 1;
+
+if(secreto.probabilidad <= 1/10000)
+peso = 5;
+
+if(secreto.probabilidad <= 1/50000)
+peso = 10;
+
+for(let i=0;i<peso;i++){
+
+expandida.push(secreto);
+
+}
+
+});
+
+lista = expandida;
+
+}
+
+
+const secreto =
+obtenerSecretoAleatorio(lista);
+
+return mostrarSecreto(secreto);
 
 }
 
 
 /* =========================================================
-   SONIDO
+   CAOS MEJORADO
 ========================================================= */
 
-function reproducirSonidoHito(){
+function resultadoCaos(){
 
-const AudioContext =
-window.AudioContext ||
-window.webkitAudioContext;
+const cosasCaos = [
 
-if(!AudioContext)
-return;
+...cosas,
 
-const audio =
-new AudioContext();
+...cosas,
 
-const notas = [
-523.25,
-659.25,
-783.99,
-1046.50
+...cosas,
+
+{
+tipo:"texto",
+categoriaEs:"🌪️ CAOS",
+categoriaEn:"🌪️ CHAOS",
+es:"EL CAOS HA DECIDIDO QUE ESTO ERA LO QUE NECESITABAS.",
+en:"CHAOS HAS DECIDED THIS IS WHAT YOU NEEDED."
+},
+
+{
+tipo:"texto",
+categoriaEs:"🌪️ CAOS",
+categoriaEn:"🌪️ CHAOS",
+es:"No sabemos qué acaba de pasar.",
+en:"We don't know what just happened."
+},
+
+{
+tipo:"texto",
+categoriaEs:"🌪️ CAOS",
+categoriaEn:"🌪️ CHAOS",
+es:"El algoritmo ha tirado una moneda y ha perdido la moneda.",
+en:"The algorithm flipped a coin and lost the coin."
+},
+
+{
+tipo:"texto",
+categoriaEs:"🌪️ CAOS",
+categoriaEn:"🌪️ CHAOS",
+es:"El Randomizer ha dejado de seguir las normas durante 3 segundos.",
+en:"The Randomizer stopped following the rules for 3 seconds."
+},
+
+{
+tipo:"texto",
+categoriaEs:"🌪️ CAOS",
+categoriaEn:"🌪️ CHAOS",
+es:"Has recibido exactamente lo contrario de lo que esperabas.",
+en:"You received exactly the opposite of what you expected."
+}
+
 ];
 
-notas.forEach(
-(frecuencia,i) => {
 
-const oscilador =
-audio.createOscillator();
+const cosa =
+cosasCaos[
+Math.floor(
+Math.random() *
+cosasCaos.length
+)
+];
 
-const ganancia =
-audio.createGain();
 
-oscilador.type =
-"square";
+resultadoActual = {
 
-oscilador.frequency.value =
-frecuencia;
+es:cosa.es,
+en:cosa.en,
+categoriaEs:cosa.categoriaEs,
+categoriaEn:cosa.categoriaEn,
+url:cosa.url || null,
+secreto:false,
+hito:false,
+compartible:false,
+rareza:"",
+clase:"chaos"
 
-ganancia.gain.setValueAtTime(
-0.0001,
-audio.currentTime +
-i * .12
+};
+
+
+renderResultado();
+
+}
+
+
+/* =========================================================
+   RACHA MEJORADA
+========================================================= */
+
+function resultadoRacha(){
+
+const multiplicador =
+Math.min(
+1 + (racha * 0.1),
+3
 );
 
-ganancia.gain.exponentialRampToValueAtTime(
-0.12,
-audio.currentTime +
-i * .12 +
-0.02
+
+/*
+   Cada 5 rachas:
+   posibilidad de recompensa especial.
+*/
+
+const probabilidadEspecial =
+Math.min(
+0.05 + (racha * 0.015),
+0.5
 );
 
-ganancia.gain.exponentialRampToValueAtTime(
-0.0001,
-audio.currentTime +
-i * .12 +
-0.18
+
+if(
+Math.random() < probabilidadEspecial
+){
+
+resultadoActual = {
+
+es:
+"🔥 ¡RACHA DE " +
+racha +
+"! Multiplicador x" +
+multiplicador.toFixed(1) +
+". El Randomizer te recompensa.",
+
+en:
+"🔥 " +
+racha +
+" STREAK! x" +
+multiplicador.toFixed(1) +
+" multiplier. The Randomizer rewards you.",
+
+categoriaEs:"🔥 RACHA",
+categoriaEn:"🔥 STREAK",
+
+url:null,
+
+secreto:false,
+
+hito:false,
+
+compartible:true,
+
+rareza:
+"RACHA " +
+racha,
+
+clase:"streak"
+
+};
+
+renderResultado();
+
+return;
+
+}
+
+
+resultadoNormal();
+
+}
+
+
+/* =========================================================
+   SORPRÉNDEME
+========================================================= */
+
+async function sorprendeme(){
+
+const boton =
+document.getElementById(
+"randomButton"
 );
 
-oscilador.connect(
-ganancia
+if(boton)
+boton.classList.add(
+"rolling"
 );
 
-ganancia.connect(
-audio.destination
+
+/*
+   Si tardas demasiado entre tiradas,
+   la racha vuelve a 1.
+*/
+
+const ahora =
+Date.now();
+
+const diferencia =
+ahora - ultimaTirada;
+
+if(diferencia > 60000){
+
+racha = 0;
+
+}
+
+ultimaTirada =
+ahora;
+
+
+contador++;
+
+racha++;
+
+
+if(
+racha > mejorRacha
+){
+
+mejorRacha =
+racha;
+
+}
+
+
+guardar();
+
+actualizarEstadisticas();
+
+
+if(typeof gtag === "function"){
+
+gtag(
+"event",
+"surprise_me",
+{
+click_number:contador,
+mode:modoActual,
+streak:racha
+}
 );
 
-oscilador.start(
-audio.currentTime +
-i * .12
+}
+
+
+/* HITOS */
+
+if(
+hitos.includes(contador)
+){
+
+mostrarHito(contador);
+
+if(boton)
+boton.classList.remove(
+"rolling"
 );
 
-oscilador.stop(
-audio.currentTime +
-i * .12 +
-0.2
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+/* PATITO */
+
+if(
+modoActual === "duck"
+){
+
+resultadoPatito();
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+/* CAOS */
+
+if(
+modoActual === "chaos"
+){
+
+if(
+intentarSecreto()
+){
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+return;
+
+}
+
+resultadoCaos();
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+/* RACHA */
+
+if(
+modoActual === "streak"
+){
+
+if(
+intentarSecreto()
+){
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+return;
+
+}
+
+resultadoRacha();
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+/* LEGENDARIO */
+
+if(
+modoActual === "legendary"
+){
+
+if(
+intentarSecreto()
+){
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+return;
+
+}
+
+
+/*
+   Si no sale secreto, el modo legendario
+   usa resultados absurdos en vez de
+   volver simplemente al modo normal.
+*/
+
+const legendarios = [
+
+{
+es:"👑 Has entrado en territorio legendario. Pero el Randomizer no tiene nada que decir.",
+en:"👑 You entered legendary territory. But the Randomizer has nothing to say.",
+cat:"👑 LEGENDARIO"
+},
+
+{
+es:"💎 Resultado raro. No tanto como esperabas, pero raro.",
+en:"💎 Rare result. Not as rare as expected, but still rare.",
+cat:"💎 RARO"
+},
+
+{
+es:"🕳️ El algoritmo miró al vacío. El vacío devolvió la mirada.",
+en:"🕳️ The algorithm stared into the void. The void stared back.",
+cat:"🕳️ VACÍO"
+},
+
+{
+es:"👁️ Algo en Internet sabe que has llegado hasta aquí.",
+en:"👁️ Something on the Internet knows you made it this far.",
+cat:"👁️ IMPROBABLE"
+}
+
+];
+
+const raro =
+legendarios[
+Math.floor(
+Math.random() *
+legendarios.length
+)
+];
+
+resultadoActual = {
+
+es:raro.es,
+en:raro.en,
+categoriaEs:raro.cat,
+categoriaEn:raro.cat,
+url:null,
+secreto:false,
+hito:false,
+compartible:true,
+rareza:"LEGENDARIO",
+clase:"legendary"
+
+};
+
+renderResultado();
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+/* NORMAL */
+
+if(
+intentarSecreto()
+){
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+return;
+
+}
+
+resultadoNormal();
+
+if(boton)
+boton.classList.remove(
+"rolling"
+);
+
+await sincronizarSupabase();
+
+}
+
+
+/* =========================================================
+   COPIAR
+========================================================= */
+
+function copiarResultado(){
+
+if(
+!resultadoActual.es
+)
+return;
+
+
+const texto =
+ingles
+? resultadoActual.en
+: resultadoActual.es;
+
+
+navigator.clipboard
+.writeText(
+texto.replace(
+/<[^>]*>/g,
+""
+)
+)
+.then(()=>{
+
+alert(
+ingles
+? "Result copied!"
+: "¡Resultado copiado!"
 );
 
 });
@@ -2517,7 +3343,10 @@ hito:true,
 
 compartible:true,
 
-rareza:"HITO " + numero
+rareza:
+"HITO " + numero,
+
+clase:""
 
 };
 
@@ -2558,301 +3387,87 @@ reward:primeraVez
 
 
 /* =========================================================
-   MODO CAOS
+   SONIDO
 ========================================================= */
 
-function resultadoCaos(){
+function reproducirSonidoHito(){
 
-const opciones = [
+const AudioContext =
+window.AudioContext ||
+window.webkitAudioContext;
 
-...cosas,
-
-...cosas,
-
-{
-tipo:"texto",
-categoriaEs:"🌪️ CAOS",
-categoriaEn:"🌪️ CHAOS",
-es:"EL CAOS HA DECIDIDO QUE ESTO ERA LO QUE NECESITABAS.",
-en:"CHAOS HAS DECIDED THIS IS WHAT YOU NEEDED."
-},
-
-{
-tipo:"texto",
-categoriaEs:"🌪️ CAOS",
-categoriaEn:"🌪️ CHAOS",
-es:"No sabemos qué acaba de pasar.",
-en:"We don't know what just happened."
-},
-
-{
-tipo:"texto",
-categoriaEs:"🌪️ CAOS",
-categoriaEn:"🌪️ CHAOS",
-es:"El algoritmo ha tirado una moneda y ha perdido la moneda.",
-en:"The algorithm flipped a coin and lost the coin."
-}
-
-];
-
-
-const cosa =
-opciones[
-Math.floor(
-Math.random() *
-opciones.length
-)
-];
-
-
-resultadoActual = {
-
-es:cosa.es,
-
-en:cosa.en,
-
-categoriaEs:
-cosa.categoriaEs,
-
-categoriaEn:
-cosa.categoriaEn,
-
-url:cosa.url || null,
-
-secreto:false,
-
-hito:false,
-
-compartible:false,
-
-rareza:""
-
-};
-
-
-renderResultado();
-
-}
-
-
-/* =========================================================
-   MODO RACHA
-========================================================= */
-
-function resultadoRacha(){
-
-if(
-racha >= 10 &&
-Math.random() < 0.25
-){
-
-resultadoActual = {
-
-es:"🔥 ¡RACHA DE " +
-racha +
-"! El Randomizer te recompensa.",
-
-en:"🔥 " +
-racha +
-" STREAK! The Randomizer rewards you.",
-
-categoriaEs:"🔥 RACHA",
-
-categoriaEn:"🔥 STREAK",
-
-url:null,
-
-secreto:false,
-
-hito:false,
-
-compartible:true,
-
-rareza:"RACHA " + racha
-
-};
-
-renderResultado();
-
+if(!AudioContext)
 return;
 
-}
+try{
 
-resultadoNormal();
+const audio =
+new AudioContext();
 
-}
+const notas = [
+523.25,
+659.25,
+783.99,
+1046.50
+];
 
+notas.forEach(
+(frecuencia,i)=>{
 
-/* =========================================================
-   SORPRÉNDEME
-========================================================= */
+const oscilador =
+audio.createOscillator();
 
-function sorprendeme(){
+const ganancia =
+audio.createGain();
 
-contador++;
+oscilador.type =
+"square";
 
-racha++;
+oscilador.frequency.value =
+frecuencia;
 
-if(
-racha > mejorRacha
-){
-
-mejorRacha =
-racha;
-
-}
-
-
-guardar();
-actualizarEstadisticas();
-
-
-if(typeof gtag === "function"){
-
-gtag(
-"event",
-"surprise_me",
-{
-click_number:contador,
-mode:modoActual
-}
+ganancia.gain.setValueAtTime(
+0.0001,
+audio.currentTime +
+i * .12
 );
 
-}
+ganancia.gain.exponentialRampToValueAtTime(
+0.12,
+audio.currentTime +
+i * .12 +
+0.02
+);
 
+ganancia.gain.exponentialRampToValueAtTime(
+0.0001,
+audio.currentTime +
+i * .12 +
+0.18
+);
 
-/* HITOS */
+oscilador.connect(
+ganancia
+);
 
-if(
-hitos.includes(contador)
-){
+ganancia.connect(
+audio.destination
+);
 
-mostrarHito(contador);
+oscilador.start(
+audio.currentTime +
+i * .12
+);
 
-return;
-
-}
-
-
-/* MODO */
-
-if(
-modoActual === "duck"
-){
-
-resultadoPatito();
-
-return;
-
-}
-
-
-if(
-modoActual === "chaos"
-){
-
-if(
-intentarSecreto()
-){
-
-return;
-
-}
-
-resultadoCaos();
-
-return;
-
-}
-
-
-if(
-modoActual === "streak"
-){
-
-if(
-intentarSecreto()
-){
-
-return;
-
-}
-
-resultadoRacha();
-
-return;
-
-}
-
-
-if(
-modoActual === "legendary"
-){
-
-if(
-intentarSecreto()
-){
-
-return;
-
-}
-
-resultadoCaos();
-
-return;
-
-}
-
-
-/* NORMAL */
-
-if(
-intentarSecreto()
-){
-
-return;
-
-}
-
-resultadoNormal();
-
-}
-
-
-/* =========================================================
-   COPIAR
-========================================================= */
-
-function copiarResultado(){
-
-if(
-!resultadoActual.es
-)
-return;
-
-
-const texto =
-ingles
-? resultadoActual.en
-: resultadoActual.es;
-
-
-navigator.clipboard
-.writeText(
-texto.replace(
-/<[^>]*>/g,
-""
-)
-)
-.then(() => {
-
-alert(
-ingles
-? "Result copied!"
-: "¡Resultado copiado!"
+oscilador.stop(
+audio.currentTime +
+i * .12 +
+0.2
 );
 
 });
+
+}catch(e){}
 
 }
 
@@ -3099,7 +3714,7 @@ return;
 caja.innerHTML = "";
 
 secretos.forEach(
-(secreto,index) => {
+(secreto,index)=>{
 
 const boton =
 document.createElement(
@@ -3139,41 +3754,33 @@ secretos[indice];
 if(!secreto)
 return;
 
-
 resultadoActual = {
 
 es:secreto.es,
-
 en:secreto.en,
-
-categoriaEs:
-secreto.categoriaEs,
-
-categoriaEn:
-secreto.categoriaEn,
-
+categoriaEs:secreto.categoriaEs,
+categoriaEn:secreto.categoriaEn,
 url:null,
-
 secreto:true,
-
 hito:false,
-
 compartible:
 secreto.probabilidad <= 1/250,
-
-rareza:
-secreto.rareza
+rareza:secreto.rareza,
+clase:
+secreto.probabilidad <= 1/10000
+? "legendary"
+: ""
 
 };
 
-
 renderResultado();
-
 
 actualizarAdminStatus(
 ingles
-? "testing secret " + secreto.rareza
-: "probando secreto " + secreto.rareza
+? "testing secret " +
+  secreto.rareza
+: "probando secreto " +
+  secreto.rareza
 );
 
 }
@@ -3195,8 +3802,7 @@ return;
 
 caja.innerHTML = "";
 
-hitos.forEach(
-(numero) => {
+hitos.forEach(numero=>{
 
 const boton =
 document.createElement(
@@ -3234,12 +3840,18 @@ mostrarHito(numero);
 
 actualizarAdminStatus(
 ingles
-? "testing milestone " + numero
-: "probando hito " + numero
+? "testing milestone " +
+  numero
+: "probando hito " +
+  numero
 );
 
 }
 
+
+/* =========================================================
+   ADMIN MODOS
+========================================================= */
 
 function adminModo(modo){
 
@@ -3264,25 +3876,24 @@ modo +
 " mode activated from the admin panel.",
 
 categoriaEs:"🔐 ADMIN",
-
 categoriaEn:"🔐 ADMIN",
 
 url:null,
 
 secreto:false,
-
 hito:false,
-
 compartible:false,
-
-rareza:""
+rareza:"",
+clase:""
 
 };
 
 renderResultado();
 
 actualizarAdminStatus(
-"modo " + modo + " probado"
+"modo " +
+modo +
+" probado"
 );
 
 }
@@ -3327,7 +3938,7 @@ return;
 
 const posibles =
 secretos.filter(
-s => s.probabilidad <= 1/250
+s=>s.probabilidad <= 1/250
 );
 
 const secreto =
@@ -3377,7 +3988,7 @@ secreto
    ADMIN RESET
 ========================================================= */
 
-function adminResetEstadisticas(){
+async function adminResetEstadisticas(){
 
 if(!comprobarAdmin())
 return;
@@ -3425,26 +4036,14 @@ actualizarAdminStatus(
 "estadísticas reseteadas"
 );
 
+await sincronizarSupabase();
+
 }
 
 
 /* =========================================================
    ATAJO ADMIN
 ========================================================= */
-
-/*
-IMPORTANTE:
-
-Antes se comprobaba:
-
-event.key === "9"
-
-Pero con Ctrl + Shift + 9 algunos navegadores
-pueden entregar ")" como event.key.
-
-Por eso usamos event.code.
-
-*/
 
 document.addEventListener(
 "keydown",
@@ -3473,16 +4072,15 @@ abrirAdmin();
 const terminalMensajes = [
 
 "searching_for_something_useful...",
-
 "searching_for_duck...",
-
 "querying_the_entire_internet...",
-
 "asking_random_questions...",
-
 "looking_for_answers...",
-
-"probably_making_things_worse..."
+"probably_making_things_worse...",
+"checking_the_void...",
+"searching_for_conan...",
+"counting_ducks...",
+"checking_if_this_is_a_good_idea..."
 
 ];
 
@@ -3534,6 +4132,8 @@ actualizarEstadisticas();
 actualizarModos();
 
 actualizarBotonCompartir();
+
+sincronizarSupabase();
 
 </script>
 
