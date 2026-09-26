@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -670,6 +671,132 @@ footer{
     font-size:13px;
 }
 
+
+/* =========================================================
+   EXTRAS - PERFIL / RETO / HISTORIAL
+========================================================= */
+
+.player-extra{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.extra-card{
+    background:#151515;
+    border:1px solid #333;
+    padding:18px;
+}
+
+.extra-card h2{
+    margin-top:0;
+}
+
+.level-bar{
+    height:10px;
+    background:#080808;
+    border:1px solid #333;
+    border-radius:999px;
+    overflow:hidden;
+    margin:12px 0 7px;
+}
+
+.level-fill{
+    height:100%;
+    width:0%;
+    background:#b66cff;
+    transition:width .3s;
+}
+
+.level-meta{
+    display:flex;
+    justify-content:space-between;
+    color:#777;
+    font-family:monospace;
+    font-size:11px;
+}
+
+.daily-text{
+    color:#aaa;
+    line-height:1.5;
+    min-height:48px;
+}
+
+.daily-status{
+    margin-top:8px;
+    color:#67e8a5;
+    font-family:monospace;
+    font-size:11px;
+}
+
+.history-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.history-item{
+    display:grid;
+    grid-template-columns:28px 1fr;
+    gap:8px;
+    align-items:start;
+    background:#101010;
+    border:1px solid #292929;
+    padding:8px;
+    border-radius:5px;
+}
+
+.history-icon{
+    font-size:16px;
+}
+
+.history-text{
+    color:#bbb;
+    font-size:12px;
+    line-height:1.35;
+}
+
+.history-empty{
+    color:#666;
+    font-family:monospace;
+    font-size:12px;
+}
+
+.quick-actions{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.badge-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:10px;
+}
+
+.badge{
+    border:1px solid #333;
+    background:#101010;
+    padding:6px 8px;
+    border-radius:5px;
+    font-size:11px;
+    color:#777;
+}
+
+.badge.active{
+    color:#ffd84d;
+    border-color:#ffd84d;
+}
+
+@media(max-width:700px){
+    .player-extra{
+        grid-template-columns:1fr;
+    }
+}
+
 @media(max-width:900px){
 
     .game-layout{
@@ -937,6 +1064,42 @@ Cargando ranking...
 
 </section>
 
+<section class="player-extra">
+
+<div class="extra-card">
+<h2 id="levelTitle">⭐ Nivel del explorador</h2>
+<div>
+<span id="levelName">Nivel 1 · Novato</span>
+</div>
+<div class="level-bar">
+<div id="levelFill" class="level-fill"></div>
+</div>
+<div class="level-meta">
+<span id="levelProgress">0 / 10 XP</span>
+<span id="levelNext">Siguiente nivel</span>
+</div>
+<div class="badge-row" id="badgeRow"></div>
+</div>
+
+<div class="extra-card">
+<h2 id="dailyTitle">📅 Reto diario</h2>
+<div id="dailyText" class="daily-text"></div>
+<div class="quick-actions">
+<button class="small-button" id="dailyButton" onclick="completarRetoDiario()">🎯 Completar reto</button>
+<button class="small-button" id="dailyNewButton" onclick="mostrarRetoDiario(true)">🔄 Cambiar reto</button>
+</div>
+<div id="dailyStatus" class="daily-status"></div>
+</div>
+
+<div class="extra-card">
+<h2 id="historyTitle">🧾 Últimos hallazgos</h2>
+<div id="historyList" class="history-list">
+<div class="history-empty">Todavía no hay hallazgos.</div>
+</div>
+</div>
+
+</section>
+
 <section class="milestones">
 
 <h2 id="milestonesTitle">🏆 Hitos</h2>
@@ -964,7 +1127,7 @@ Cargando ranking...
 
 <section class="collection">
 
-<h2>🥚 Colección de secretos</h2>
+<h2 id="collectionTitle">🥚 Colección de secretos</h2>
 
 <div class="collection-grid" id="collectionGrid"></div>
 
@@ -972,7 +1135,7 @@ Cargando ranking...
 
 <section class="modes">
 
-<h2>🎮 Modos desbloqueables</h2>
+<h2 id="modesTitle">🎮 Modos desbloqueables</h2>
 
 <div id="modeUnlocks"></div>
 
@@ -1038,9 +1201,9 @@ result: probably not useful
 
 <section id="adminPanel">
 
-<h2>🔐 INTERNET RANDOMIZER ADMIN</h2>
+<h2 id="adminTitle">🔐 INTERNET RANDOMIZER ADMIN</h2>
 
-<div class="admin-warning">
+<div class="admin-warning" id="adminWarning">
 MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 </div>
 
@@ -1207,9 +1370,23 @@ let ultimaTirada = Date.now();
 let jugadorUsername =
 localStorage.getItem("randomizerUsername") || "";
 
+let rankingCargando = false;
+
+let historialResultados =
+JSON.parse(localStorage.getItem("randomizerHistorial") || "[]");
+
+let xpExplorador =
+Number(localStorage.getItem("randomizerXP")) || 0;
+
+let retoDiarioCompletado =
+localStorage.getItem("randomizerRetoDiario") || "";
+
+let retoDiarioPersonalizado =
+localStorage.getItem("randomizerRetoDiarioTexto") || "";
+
 let rankingOrden = "clicks";
 
-let rankingCargando = false;
+let resultadoNuevo = false;
 
 let resultadoActual = {
 
@@ -1985,6 +2162,16 @@ localStorage.setItem(
 modoActual
 );
 
+localStorage.setItem(
+"randomizerHistorial",
+JSON.stringify(historialResultados)
+);
+
+localStorage.setItem(
+"randomizerXP",
+xpExplorador
+);
+
 if(jugadorUsername){
 
 localStorage.setItem(
@@ -2514,6 +2701,435 @@ false;
 }
 
 
+
+/* =========================================================
+   PERFIL / NIVEL / HISTORIAL / RETO DIARIO
+========================================================= */
+
+function obtenerNivel(){
+    return Math.floor(Math.sqrt(xpExplorador / 25)) + 1;
+}
+
+function xpParaNivel(nivel){
+    return Math.pow(nivel,2) * 25;
+}
+
+function nombreNivel(nivel){
+    const nombresEs = [
+        "Novato","Curioso","Explorador","Viajero","Veterano",
+        "Cazador de secretos","Maestro del caos","Leyenda","Mito","Entidad de Internet"
+    ];
+    const nombresEn = [
+        "Rookie","Curious","Explorer","Traveler","Veteran",
+        "Secret Hunter","Chaos Master","Legend","Myth","Internet Entity"
+    ];
+    const indice = Math.min(nivel - 1, nombresEs.length - 1);
+    return ingles ? nombresEn[indice] : nombresEs[indice];
+}
+
+function actualizarNivel(){
+    const nivel = obtenerNivel();
+    const inicio = xpParaNivel(nivel - 1);
+    const siguiente = xpParaNivel(nivel);
+    const progreso = Math.max(0, xpExplorador - inicio);
+    const necesario = Math.max(1, siguiente - inicio);
+    const porcentaje = Math.min(100, (progreso / necesario) * 100);
+
+    const nombre = document.getElementById("levelName");
+    const fill = document.getElementById("levelFill");
+    const meta = document.getElementById("levelProgress");
+    const next = document.getElementById("levelNext");
+
+    if(nombre){
+        nombre.textContent =
+            (ingles ? "Level " : "Nivel ") +
+            nivel + " · " + nombreNivel(nivel);
+    }
+
+    if(fill) fill.style.width = porcentaje + "%";
+
+    if(meta){
+        meta.textContent =
+            Number(progreso).toLocaleString() +
+            " / " +
+            Number(necesario).toLocaleString() +
+            " XP";
+    }
+
+    if(next){
+        next.textContent =
+            ingles
+            ? "Next level · " + Number(siguiente).toLocaleString() + " XP"
+            : "Siguiente nivel · " + Number(siguiente).toLocaleString() + " XP";
+    }
+
+    renderInsignias();
+}
+
+function ganarXP(cantidad){
+    xpExplorador += cantidad;
+    guardar();
+    actualizarNivel();
+}
+
+function renderInsignias(){
+    const caja = document.getElementById("badgeRow");
+    if(!caja) return;
+
+    const insignias = [
+        {
+            ok:contador >= 100,
+            es:"🦆 100",
+            en:"🦆 100"
+        },
+        {
+            ok:secretosEncontrados >= 5,
+            es:"🥚 Cazador",
+            en:"🥚 Hunter"
+        },
+        {
+            ok:mejorRacha >= 10,
+            es:"🔥 Racha x10",
+            en:"🔥 x10 Streak"
+        },
+        {
+            ok:obtenerNivel() >= 10,
+            es:"👑 Nivel 10",
+            en:"👑 Level 10"
+        }
+    ];
+
+    caja.innerHTML = "";
+
+    insignias.forEach(insignia=>{
+        const div = document.createElement("div");
+        div.className = "badge " + (insignia.ok ? "active" : "");
+        div.textContent = ingles ? insignia.en : insignia.es;
+        caja.appendChild(div);
+    });
+}
+
+function registrarHistorial(){
+    if(!resultadoActual.es) return;
+
+    const texto = ingles
+        ? resultadoActual.en
+        : resultadoActual.es;
+
+    const limpio = texto.replace(/<[^>]*>/g,"").trim();
+
+    historialResultados.unshift({
+        icono:resultadoActual.secreto ? "🥚" :
+              resultadoActual.hito ? "🏆" :
+              resultadoActual.clase === "legendary" ? "👑" :
+              resultadoActual.clase === "chaos" ? "🌪️" :
+              "🎲",
+        es:resultadoActual.es.replace(/<[^>]*>/g,"").trim(),
+        en:resultadoActual.en.replace(/<[^>]*>/g,"").trim()
+    });
+
+    historialResultados = historialResultados.slice(0,8);
+    guardar();
+    renderHistorial();
+}
+
+function renderHistorial(){
+    const caja = document.getElementById("historyList");
+    if(!caja) return;
+
+    if(!historialResultados.length){
+        caja.innerHTML =
+            `<div class="history-empty">${
+                ingles
+                ? "No discoveries yet."
+                : "Todavía no hay hallazgos."
+            }</div>`;
+        return;
+    }
+
+    caja.innerHTML = "";
+
+    historialResultados.forEach(item=>{
+        const fila = document.createElement("div");
+        fila.className = "history-item";
+
+        const icono = document.createElement("div");
+        icono.className = "history-icon";
+        icono.textContent = item.icono;
+
+        const texto = document.createElement("div");
+        texto.className = "history-text";
+        texto.textContent = ingles ? item.en : item.es;
+
+        fila.appendChild(icono);
+        fila.appendChild(texto);
+        caja.appendChild(fila);
+    });
+}
+
+function obtenerRetoDelDia(){
+    const fecha = new Date();
+    const clave =
+        fecha.getFullYear() + "-" +
+        String(fecha.getMonth()+1).padStart(2,"0") + "-" +
+        String(fecha.getDate()).padStart(2,"0");
+
+    const retos = [
+        {
+            es:"Haz 10 tiradas hoy.",
+            en:"Make 10 rolls today.",
+            tipo:"clicks",
+            objetivo:10
+        },
+        {
+            es:"Consigue una racha de 5.",
+            en:"Reach a streak of 5.",
+            tipo:"streak",
+            objetivo:5
+        },
+        {
+            es:"Encuentra un secreto.",
+            en:"Find a secret.",
+            tipo:"secret",
+            objetivo:1
+        },
+        {
+            es:"Prueba 3 modos diferentes.",
+            en:"Try 3 different modes.",
+            tipo:"modes",
+            objetivo:3
+        },
+        {
+            es:"Llega a 25 tiradas totales.",
+            en:"Reach 25 total rolls.",
+            tipo:"total",
+            objetivo:25
+        }
+    ];
+
+    let hash = 0;
+    for(let i=0;i<clave.length;i++){
+        hash = ((hash << 5) - hash) + clave.charCodeAt(i);
+        hash |= 0;
+    }
+
+    let indice = Math.abs(hash) % retos.length;
+
+    if(retoDiarioPersonalizado &&
+       retoDiarioPersonalizado.startsWith(clave + "|")){
+        indice = Number(retoDiarioPersonalizado.split("|")[1]) % retos.length;
+    }
+
+    return {
+        clave,
+        reto:retos[indice],
+        indice
+    };
+}
+
+function mostrarRetoDiario(forzarNuevo){
+    const texto = document.getElementById("dailyText");
+    const estado = document.getElementById("dailyStatus");
+    if(!texto) return;
+
+    const info = obtenerRetoDelDia();
+
+    if(forzarNuevo){
+        const nuevoIndice = (info.indice + 1) % 5;
+        retoDiarioPersonalizado = info.clave + "|" + nuevoIndice;
+        localStorage.setItem(
+            "randomizerRetoDiarioTexto",
+            retoDiarioPersonalizado
+        );
+        info.reto = [
+            {es:"Haz 10 tiradas hoy.",en:"Make 10 rolls today.",tipo:"clicks",objetivo:10},
+            {es:"Consigue una racha de 5.",en:"Reach a streak of 5.",tipo:"streak",objetivo:5},
+            {es:"Encuentra un secreto.",en:"Find a secret.",tipo:"secret",objetivo:1},
+            {es:"Prueba 3 modos diferentes.",en:"Try 3 different modes.",tipo:"modes",objetivo:3},
+            {es:"Llega a 25 tiradas totales.",en:"Reach 25 total rolls.",tipo:"total",objetivo:25}
+        ][nuevoIndice];
+    }
+
+    const reto = info.reto;
+
+    texto.textContent = ingles ? reto.en : reto.es;
+
+    if(estado){
+        if(retoDiarioCompletado === info.clave){
+            estado.textContent =
+                ingles ? "✅ Completed today!" : "✅ ¡Completado hoy!";
+        }else{
+            estado.textContent =
+                ingles ? "🎯 Daily challenge active" : "🎯 Reto diario activo";
+        }
+    }
+}
+
+function completarRetoDiario(){
+    const info = obtenerRetoDelDia();
+
+    if(retoDiarioCompletado === info.clave){
+        alert(
+            ingles
+            ? "✅ You already completed today's challenge!"
+            : "✅ ¡Ya has completado el reto de hoy!"
+        );
+        return;
+    }
+
+    let completado = false;
+
+    if(info.reto.tipo === "clicks"){
+        completado = contador >= info.reto.objetivo;
+    }else if(info.reto.tipo === "streak"){
+        completado = mejorRacha >= info.reto.objetivo;
+    }else if(info.reto.tipo === "secret"){
+        completado = secretosEncontrados >= 1;
+    }else if(info.reto.tipo === "total"){
+        completado = contador >= info.reto.objetivo;
+    }else if(info.reto.tipo === "modes"){
+        completado = modoActual !== "normal" || contador >= 3000;
+    }
+
+    if(!completado){
+        alert(
+            ingles
+            ? "❌ Not completed yet. Keep playing!"
+            : "❌ Todavía no lo has completado. ¡Sigue jugando!"
+        );
+        return;
+    }
+
+    retoDiarioCompletado = info.clave;
+    localStorage.setItem(
+        "randomizerRetoDiario",
+        retoDiarioCompletado
+    );
+
+    ganarXP(50);
+
+    mostrarRetoDiario(false);
+
+    alert(
+        ingles
+        ? "🎉 Daily challenge completed! +50 XP"
+        : "🎉 ¡Reto diario completado! +50 XP"
+    );
+}
+
+/* =========================================================
+   TRADUCCIÓN EXTRA
+========================================================= */
+
+function actualizarTextosExtra(){
+    const textos = {
+        collectionTitle: ingles ? "🥚 Secret Collection" : "🥚 Colección de secretos",
+        modesTitle: ingles ? "🎮 Unlockable Modes" : "🎮 Modos desbloqueables",
+        levelTitle: ingles ? "⭐ Explorer Level" : "⭐ Nivel del explorador",
+        dailyTitle: ingles ? "📅 Daily Challenge" : "📅 Reto diario",
+        historyTitle: ingles ? "🧾 Recent Discoveries" : "🧾 Últimos hallazgos",
+        dailyButton: ingles ? "🎯 Complete challenge" : "🎯 Completar reto",
+        dailyNewButton: ingles ? "🔄 Change challenge" : "🔄 Cambiar reto",
+        adminTitle: ingles ? "🔐 INTERNET RANDOMIZER ADMIN" : "🔐 INTERNET RANDOMIZER ADMIN",
+        adminWarning: ingles
+            ? "DEVELOPMENT MODE — tests do NOT count as rolls."
+            : "MODO DE DESARROLLO — las pruebas NO cuentan como tiradas."
+    };
+
+    Object.keys(textos).forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.textContent = textos[id];
+    });
+
+    const adminSectionsEs = [
+        ["🥚 Secretos","🥚 Secrets"],
+        ["🏆 Hitos","🏆 Milestones"],
+        ["🎮 Modos","🎮 Modes"],
+        ["🎲 Pruebas","🎲 Tests"],
+        ["⚠️ Zona peligrosa","⚠️ Danger zone"]
+    ];
+
+    document.querySelectorAll("#adminPanel .admin-section h3").forEach((el,index)=>{
+        if(!adminSectionsEs[index]) return;
+        el.textContent = ingles
+            ? adminSectionsEs[index][1]
+            : adminSectionsEs[index][0];
+    });
+
+    const adminButtonsEs = [
+        ["🌐 Resultado normal","🌐 Normal result"],
+        ["📤 Probar compartir","📤 Test sharing"],
+        ["🦆 Resultado pato","🦆 Duck result"],
+        ["💎 Probar rareza","💎 Test rarity"],
+        ["🌐 Normal","🌐 Normal"],
+        ["🦆 Patito","🦆 Duck"],
+        ["🌪️ Caos","🌪️ Chaos"],
+        ["🔥 Racha","🔥 Streak"],
+        ["👑 Legendario","👑 Legendary"],
+        ["🗑️ Resetear estadísticas","🗑️ Reset statistics"],
+        ["🔒 Cerrar panel","🔒 Close panel"]
+    ];
+
+    const adminButtons = document.querySelectorAll("#adminPanel .admin-button");
+    adminButtons.forEach((el,index)=>{
+        if(!adminButtonsEs[index]) return;
+        el.textContent = ingles
+            ? adminButtonsEs[index][1]
+            : adminButtonsEs[index][0];
+    });
+
+    const factosEs = [
+        ["🐙 TRES CORAZONES","Los pulpos tienen tres corazones."],
+        ["🦈 ANTES QUE LOS DINOSAURIOS","Los tiburones aparecieron cientos de millones de años antes que los dinosaurios."],
+        ["🪐 VENUS","En Venus, una rotación sobre su eje dura más que una vuelta alrededor del Sol."],
+        ["🍌 ¿BAYA?","Botánicamente, el plátano es una baya."],
+        ["⚡ RAYOS","Un rayo puede alcanzar temperaturas de decenas de miles de grados Kelvin."],
+        ["🌙 CLEOPATRA","Cleopatra vivió más cerca del alunizaje de 1969 que de la construcción de la Gran Pirámide."],
+        ["🏛️ OXFORD","La enseñanza en Oxford comenzó siglos antes de la existencia del Imperio azteca."],
+        ["🐙 SANGRE AZUL","La sangre de los pulpos es azul debido a la hemocianina."]
+    ];
+
+    const factosEn = [
+        ["🐙 THREE HEARTS","Octopuses have three hearts."],
+        ["🦈 BEFORE DINOSAURS","Sharks appeared hundreds of millions of years before dinosaurs."],
+        ["🪐 VENUS","On Venus, one rotation on its axis takes longer than one orbit around the Sun."],
+        ["🍌 A BERRY?","Botanically, a banana is a berry."],
+        ["⚡ LIGHTNING","A lightning bolt can reach temperatures of tens of thousands of Kelvin."],
+        ["🌙 CLEOPATRA","Cleopatra lived closer to the 1969 Moon landing than to the construction of the Great Pyramid."],
+        ["🏛️ OXFORD","Teaching at Oxford began centuries before the Aztec Empire existed."],
+        ["🐙 BLUE BLOOD","Octopus blood is blue because of hemocyanin."]
+    ];
+
+    document.querySelectorAll(".fact").forEach((fact,index)=>{
+        const datos = ingles ? factosEn[index] : factosEs[index];
+        if(!datos) return;
+        const h3 = fact.querySelector("h3");
+        const p = fact.querySelector("p");
+        if(h3) h3.textContent = datos[0];
+        if(p) p.textContent = datos[1];
+    });
+
+    actualizarNivel();
+    mostrarRetoDiario(false);
+    renderHistorial();
+}
+
+/* =========================================================
+   APLICAR EXTRAS AL RESULTADO
+========================================================= */
+
+function actualizarExtrasTrasResultado(){
+    registrarHistorial();
+
+    let xp = 5;
+
+    if(resultadoActual.secreto) xp = 25;
+    if(resultadoActual.hito) xp = 50;
+    if(resultadoActual.clase === "legendary") xp = 35;
+
+    ganarXP(xp);
+}
+
 /* =========================================================
    SUPABASE - JUGADOR
 ========================================================= */
@@ -3022,8 +3638,8 @@ encontrado
 
 div.title =
 encontrado
-? secreto.es
-: "Secreto todavía no descubierto";
+? (ingles ? secreto.en : secreto.es)
+: (ingles ? "Secret not discovered yet" : "Secreto todavía no descubierto");
 
 caja.appendChild(div);
 
@@ -3037,6 +3653,9 @@ caja.appendChild(div);
 ========================================================= */
 
 function renderResultado(){
+
+const eraNuevo = resultadoNuevo;
+resultadoNuevo = false;
 
 const categoria =
 ingles
@@ -3082,7 +3701,7 @@ document.getElementById(
 "rarity"
 ).textContent =
 resultadoActual.rareza
-? "Rareza: " +
+? (ingles ? "Rarity: " : "Rareza: ") +
 resultadoActual.rareza
 : "";
 
@@ -3129,6 +3748,10 @@ caja.classList.add(
 }
 
 actualizarBotonCompartir();
+
+if(eraNuevo){
+    actualizarExtrasTrasResultado();
+}
 
 }
 
@@ -3288,6 +3911,7 @@ clase:""
 };
 
 
+resultadoNuevo = true;
 renderResultado();
 
 }
@@ -3336,6 +3960,7 @@ clase:""
 };
 
 
+resultadoNuevo = true;
 renderResultado();
 
 }
@@ -3406,6 +4031,7 @@ secreto.id
 
 guardar();
 
+resultadoNuevo = true;
 renderResultado();
 
 if(typeof gtag === "function"){
@@ -3632,6 +4258,7 @@ clase:"chaos"
 };
 
 
+resultadoNuevo = true;
 renderResultado();
 
 }
@@ -3696,6 +4323,7 @@ clase:"streak"
 
 };
 
+resultadoNuevo = true;
 renderResultado();
 
 return;
@@ -3974,6 +4602,7 @@ clase:"legendary"
 
 };
 
+resultadoNuevo = true;
 renderResultado();
 
 if(boton)
@@ -4125,6 +4754,7 @@ clase:""
 };
 
 
+resultadoNuevo = true;
 renderResultado();
 
 reproducirSonidoHito();
@@ -4414,6 +5044,8 @@ actualizarModos();
 
 actualizarBotonCompartir();
 
+actualizarTextosExtra();
+
 cargarRanking();
 
 
@@ -4421,6 +5053,7 @@ if(
 resultadoActual.es
 ){
 
+resultadoNuevo = false;
 renderResultado();
 
 }
@@ -4612,6 +5245,7 @@ secreto.probabilidad <= 1/10000
 
 };
 
+resultadoNuevo = false;
 renderResultado();
 
 actualizarAdminStatus(
@@ -4727,6 +5361,7 @@ clase:""
 
 };
 
+resultadoNuevo = false;
 renderResultado();
 
 actualizarAdminStatus(
@@ -4973,6 +5608,11 @@ actualizarModos();
 actualizarBotonCompartir();
 
 mostrarUsername();
+
+actualizarNivel();
+mostrarRetoDiario(false);
+renderHistorial();
+actualizarTextosExtra();
 
 cargarRanking();
 
