@@ -78,6 +78,13 @@ h1{
     z-index:20;
 }
 
+.game-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 300px;
+    gap:18px;
+    align-items:start;
+}
+
 .random-box{
     background:#171717;
     border:2px solid #333;
@@ -184,6 +191,61 @@ h1{
     font-family:monospace;
     font-size:12px;
     color:#666;
+}
+
+.profile-box{
+    margin-bottom:15px;
+    background:#121212;
+    border:1px solid #333;
+    padding:14px;
+    text-align:left;
+}
+
+.profile-title{
+    color:#b66cff;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.profile-row{
+    display:flex;
+    gap:8px;
+}
+
+#usernameInput{
+    flex:1;
+    min-width:0;
+    background:#080808;
+    color:white;
+    border:1px solid #444;
+    padding:10px;
+    border-radius:6px;
+    outline:none;
+}
+
+#usernameInput:focus{
+    border-color:#b66cff;
+}
+
+#usernameButton{
+    background:#8d4de8;
+    color:white;
+    border:0;
+    padding:10px 14px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+#usernameButton:hover{
+    background:#9b63ed;
+}
+
+#usernameStatus{
+    margin-top:7px;
+    color:#777;
+    font-family:monospace;
+    font-size:11px;
 }
 
 #result{
@@ -436,6 +498,103 @@ h1{
     font-size:11px;
 }
 
+.ranking{
+    background:#151515;
+    border:1px solid #333;
+    padding:18px;
+    position:sticky;
+    top:15px;
+}
+
+.ranking h2{
+    margin-top:0;
+    margin-bottom:12px;
+}
+
+.ranking-tabs{
+    display:flex;
+    gap:5px;
+    margin-bottom:12px;
+}
+
+.ranking-tab{
+    flex:1;
+    background:#202020;
+    color:#aaa;
+    border:1px solid #444;
+    padding:7px 5px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:11px;
+}
+
+.ranking-tab:hover{
+    background:#292929;
+}
+
+.ranking-tab.active{
+    color:#d6b8ff;
+    border-color:#b66cff;
+    background:#251a30;
+}
+
+.ranking-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.ranking-player{
+    display:grid;
+    grid-template-columns:30px 1fr auto;
+    gap:7px;
+    align-items:center;
+    background:#101010;
+    border:1px solid #292929;
+    padding:9px 7px;
+    border-radius:5px;
+    font-size:13px;
+}
+
+.ranking-player.you{
+    border-color:#b66cff;
+    background:rgba(182,108,255,.08);
+}
+
+.ranking-position{
+    color:#777;
+    font-family:monospace;
+}
+
+.ranking-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.ranking-value{
+    color:#b66cff;
+    font-family:monospace;
+    font-weight:bold;
+}
+
+.ranking-loading,
+.ranking-empty{
+    color:#666;
+    text-align:center;
+    padding:15px 5px;
+    font-family:monospace;
+    font-size:12px;
+}
+
+.ranking-status{
+    margin-top:10px;
+    color:#555;
+    font-family:monospace;
+    font-size:10px;
+    text-align:center;
+}
+
 #adminPanel{
     display:none;
     margin-top:30px;
@@ -511,6 +670,18 @@ footer{
     font-size:13px;
 }
 
+@media(max-width:900px){
+
+    .game-layout{
+        grid-template-columns:1fr;
+    }
+
+    .ranking{
+        position:static;
+    }
+
+}
+
 @media(max-width:700px){
 
     .stats,
@@ -543,6 +714,18 @@ footer{
         padding:18px;
     }
 
+    .profile-row{
+        flex-direction:column;
+    }
+
+    #usernameButton{
+        width:100%;
+    }
+
+    .ranking-tabs{
+        flex-direction:column;
+    }
+
 }
 
 </style>
@@ -569,7 +752,40 @@ No sabes qué va a salir. Ni yo tampoco.
 
 </header>
 
+<div class="game-layout">
+
 <section class="random-box">
+
+<div class="profile-box">
+
+<div class="profile-title" id="profileTitle">
+👤 Tu nombre en Internet Randomizer
+</div>
+
+<div class="profile-row">
+
+<input
+id="usernameInput"
+type="text"
+maxlength="20"
+placeholder="Elige un username..."
+autocomplete="off"
+>
+
+<button
+id="usernameButton"
+onclick="guardarUsername()"
+>
+Guardar
+</button>
+
+</div>
+
+<div id="usernameStatus">
+Elige un username para aparecer en el ranking.
+</div>
+
+</div>
 
 <button id="randomButton" onclick="sorprendeme()">
 🎲 SORPRÉNDEME
@@ -646,6 +862,56 @@ Tiradas: 0
 </div>
 
 </section>
+
+<aside class="ranking">
+
+<h2 id="rankingTitle">
+🏆 Ranking
+</h2>
+
+<div class="ranking-tabs">
+
+<button
+class="ranking-tab active"
+id="rankingClicks"
+onclick="cambiarRanking('clicks')"
+>
+🎲 Tiradas
+</button>
+
+<button
+class="ranking-tab"
+id="rankingSecrets"
+onclick="cambiarRanking('secrets')"
+>
+🥚 Secretos
+</button>
+
+<button
+class="ranking-tab"
+id="rankingStreak"
+onclick="cambiarRanking('best_streak')"
+>
+🔥 Racha
+</button>
+
+</div>
+
+<div id="rankingList" class="ranking-list">
+
+<div class="ranking-loading">
+Cargando ranking...
+</div>
+
+</div>
+
+<div id="rankingStatus" class="ranking-status">
+☁️ Conectando...
+</div>
+
+</aside>
+
+</div>
 
 <section class="stats">
 
@@ -895,6 +1161,7 @@ try {
 
 }
 
+
 /* =========================================================
    ESTADO
 ========================================================= */
@@ -932,24 +1199,17 @@ let adminActivo = false;
 
 let ultimaTirada = Date.now();
 
+/*
+   El username ya NO se genera automáticamente.
+   El jugador debe elegirlo.
+*/
+
 let jugadorUsername =
-localStorage.getItem("randomizerUsername");
+localStorage.getItem("randomizerUsername") || "";
 
-if(!jugadorUsername){
+let rankingOrden = "clicks";
 
-    jugadorUsername =
-    "Jugador-" +
-    Math.random()
-    .toString(36)
-    .substring(2,8)
-    .toUpperCase();
-
-    localStorage.setItem(
-        "randomizerUsername",
-        jugadorUsername
-    );
-
-}
+let rankingCargando = false;
 
 let resultadoActual = {
 
@@ -1725,6 +1985,532 @@ localStorage.setItem(
 modoActual
 );
 
+if(jugadorUsername){
+
+localStorage.setItem(
+"randomizerUsername",
+jugadorUsername
+);
+
+}
+
+}
+
+
+/* =========================================================
+   USERNAME
+========================================================= */
+
+function mostrarUsername(){
+
+const input =
+document.getElementById(
+"usernameInput"
+);
+
+if(input){
+
+input.value =
+jugadorUsername;
+
+}
+
+actualizarUsernameStatus();
+
+}
+
+
+function actualizarUsernameStatus(){
+
+const elemento =
+document.getElementById(
+"usernameStatus"
+);
+
+if(!elemento)
+return;
+
+if(jugadorUsername){
+
+elemento.textContent =
+ingles
+? "You are playing as: " + jugadorUsername
+: "Jugando como: " + jugadorUsername;
+
+}else{
+
+elemento.textContent =
+ingles
+? "Choose a username to appear on the ranking."
+: "Elige un username para aparecer en el ranking.";
+
+}
+
+}
+
+
+async function guardarUsername(){
+
+const input =
+document.getElementById(
+"usernameInput"
+);
+
+if(!input)
+return;
+
+const nuevoNombre =
+input.value.trim();
+
+
+if(nuevoNombre.length < 3){
+
+alert(
+ingles
+? "The username must have at least 3 characters."
+: "El username debe tener al menos 3 caracteres."
+);
+
+return;
+
+}
+
+
+if(nuevoNombre.length > 20){
+
+alert(
+ingles
+? "The username can have at most 20 characters."
+: "El username debe tener como máximo 20 caracteres."
+);
+
+return;
+
+}
+
+
+if(
+!/^[a-zA-Z0-9ÁÉÍÓÚáéíóúÑñÜü _-]+$/.test(
+nuevoNombre
+)
+){
+
+alert(
+ingles
+? "That username contains invalid characters."
+: "Ese username contiene caracteres no válidos."
+);
+
+return;
+
+}
+
+
+if(
+nuevoNombre === jugadorUsername
+){
+
+actualizarUsernameStatus();
+
+await sincronizarSupabase();
+
+return;
+
+}
+
+
+if(!supabaseClient){
+
+jugadorUsername =
+nuevoNombre;
+
+localStorage.setItem(
+"randomizerUsername",
+jugadorUsername
+);
+
+actualizarUsernameStatus();
+
+return;
+
+}
+
+
+try{
+
+const {
+data:existente,
+error
+} =
+await supabaseClient
+.from("players")
+.select("username")
+.eq("username",nuevoNombre)
+.maybeSingle();
+
+
+if(error){
+
+console.warn(
+"Username check:",
+error
+);
+
+alert(
+ingles
+? "Could not check that username."
+: "No se pudo comprobar ese username."
+);
+
+return;
+
+}
+
+
+if(existente){
+
+alert(
+ingles
+? "❌ That username is already taken."
+: "❌ Ese username ya está ocupado."
+);
+
+return;
+
+}
+
+
+jugadorUsername =
+nuevoNombre;
+
+localStorage.setItem(
+"randomizerUsername",
+jugadorUsername
+);
+
+actualizarUsernameStatus();
+
+await sincronizarSupabase();
+
+cargarRanking();
+
+}catch(error){
+
+console.error(
+"Username:",
+error
+);
+
+}
+
+}
+
+
+/* =========================================================
+   RANKING
+========================================================= */
+
+function cambiarRanking(tipo){
+
+rankingOrden =
+tipo;
+
+
+document.querySelectorAll(
+".ranking-tab"
+).forEach(
+boton=>{
+boton.classList.remove(
+"active"
+);
+}
+);
+
+
+const botones = {
+
+clicks:"rankingClicks",
+secrets:"rankingSecrets",
+best_streak:"rankingStreak"
+
+};
+
+
+const boton =
+document.getElementById(
+botones[tipo]
+);
+
+if(boton){
+
+boton.classList.add(
+"active"
+);
+
+}
+
+
+cargarRanking();
+
+}
+
+
+async function cargarRanking(){
+
+const lista =
+document.getElementById(
+"rankingList"
+);
+
+const estado =
+document.getElementById(
+"rankingStatus"
+);
+
+if(!lista)
+return;
+
+
+if(!supabaseClient){
+
+lista.innerHTML =
+`<div class="ranking-empty">
+☁️ Ranking no disponible
+</div>`;
+
+return;
+
+}
+
+
+if(rankingCargando)
+return;
+
+rankingCargando = true;
+
+
+lista.innerHTML =
+`<div class="ranking-loading">
+${ingles ? "Loading ranking..." : "Cargando ranking..."}
+</div>`;
+
+
+try{
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("players")
+.select(
+"username,clicks,secrets,best_streak"
+)
+.order(
+rankingOrden,
+{
+ascending:false
+}
+)
+.limit(10);
+
+
+if(error){
+
+console.warn(
+"Ranking:",
+error
+);
+
+lista.innerHTML =
+`<div class="ranking-empty">
+${ingles
+? "Could not load ranking."
+: "No se pudo cargar."
+}
+</div>`;
+
+if(estado){
+
+estado.textContent =
+ingles
+? "☁️ Ranking error"
+: "☁️ Error de ranking";
+
+}
+
+return;
+
+}
+
+
+if(!data || !data.length){
+
+lista.innerHTML =
+`<div class="ranking-empty">
+${ingles
+? "No players yet."
+: "Todavía no hay jugadores."
+}
+</div>`;
+
+if(estado){
+
+estado.textContent =
+ingles
+? "☁️ Empty ranking"
+: "☁️ Ranking vacío";
+
+}
+
+return;
+
+}
+
+
+lista.innerHTML = "";
+
+
+data.forEach(
+(jugador,index)=>{
+
+const fila =
+document.createElement(
+"div"
+);
+
+fila.className =
+"ranking-player";
+
+
+if(
+jugadorUsername &&
+jugador.username ===
+jugadorUsername
+){
+
+fila.classList.add(
+"you"
+);
+
+}
+
+
+const posicion =
+document.createElement(
+"div"
+);
+
+posicion.className =
+"ranking-position";
+
+posicion.textContent =
+"#" +
+(index + 1);
+
+
+const nombre =
+document.createElement(
+"div"
+);
+
+nombre.className =
+"ranking-name";
+
+nombre.textContent =
+jugador.username +
+(
+jugador.username ===
+jugadorUsername
+? " 👤"
+: ""
+);
+
+
+const valor =
+document.createElement(
+"div"
+);
+
+valor.className =
+"ranking-value";
+
+
+let numero = 0;
+
+if(
+rankingOrden === "clicks"
+)
+numero =
+jugador.clicks || 0;
+
+if(
+rankingOrden === "secrets"
+)
+numero =
+jugador.secrets || 0;
+
+if(
+rankingOrden === "best_streak"
+)
+numero =
+jugador.best_streak || 0;
+
+
+valor.textContent =
+Number(numero).toLocaleString();
+
+
+fila.appendChild(
+posicion
+);
+
+fila.appendChild(
+nombre
+);
+
+fila.appendChild(
+valor
+);
+
+lista.appendChild(
+fila
+);
+
+});
+
+
+if(estado){
+
+estado.textContent =
+ingles
+? "☁️ Top 10 players"
+: "☁️ Top 10 jugadores";
+
+}
+
+}catch(error){
+
+console.error(
+"Ranking:",
+error
+);
+
+lista.innerHTML =
+`<div class="ranking-empty">
+${ingles
+? "Error loading ranking."
+: "Error cargando ranking."
+}
+</div>`;
+
+}finally{
+
+rankingCargando =
+false;
+
+}
+
 }
 
 
@@ -1734,128 +2520,155 @@ modoActual
 
 async function sincronizarSupabase(){
 
+if(!jugadorUsername){
+
+actualizarEstadoSupabase(
+ingles
+? "☁️ Choose a username first"
+: "☁️ Elige un username primero"
+);
+
+cargarRanking();
+
+return;
+
+}
+
+
 if(!supabaseClient){
 
-    actualizarEstadoSupabase(
-        "☁️ Supabase: no configurado"
-    );
+actualizarEstadoSupabase(
+"☁️ Supabase: no configurado"
+);
 
-    return;
+return;
 
 }
 
 try{
 
-    actualizarEstadoSupabase(
-        "☁️ Supabase: sincronizando..."
-    );
-
-    /*
-       Primero intentamos encontrar al jugador.
-    */
-
-    const {data:existente,error:selectError} =
-    await supabaseClient
-    .from("players")
-    .select("*")
-    .eq("username",jugadorUsername)
-    .maybeSingle();
-
-    if(selectError){
-
-        console.warn(
-            "Supabase SELECT:",
-            selectError
-        );
-
-        actualizarEstadoSupabase(
-            "☁️ Supabase conectado"
-        );
-
-        return;
-
-    }
+actualizarEstadoSupabase(
+"☁️ Supabase: sincronizando..."
+);
 
 
-    if(!existente){
-
-        const {error:insertError} =
-        await supabaseClient
-        .from("players")
-        .insert({
-
-            username:jugadorUsername,
-            clicks:contador,
-            secrets:secretosEncontrados,
-            best_streak:mejorRacha
-
-        });
-
-        if(insertError){
-
-            console.warn(
-                "Supabase INSERT:",
-                insertError
-            );
-
-            actualizarEstadoSupabase(
-                "☁️ Supabase conectado"
-            );
-
-            return;
-
-        }
-
-    }else{
-
-        /*
-           Intentamos actualizar los datos.
-
-           Si todavía no has creado la policy UPDATE,
-           el progreso local seguirá funcionando y
-           aparecerá el error en la consola.
-        */
-
-        const {error:updateError} =
-        await supabaseClient
-        .from("players")
-        .update({
-
-            clicks:contador,
-            secrets:secretosEncontrados,
-            best_streak:mejorRacha,
-            updated_at:new Date().toISOString()
-
-        })
-        .eq("username",jugadorUsername);
-
-        if(updateError){
-
-            console.warn(
-                "Supabase UPDATE:",
-                updateError
-            );
-
-        }
-
-    }
+const {
+data:existente,
+error:selectError
+} =
+await supabaseClient
+.from("players")
+.select("*")
+.eq("username",jugadorUsername)
+.maybeSingle();
 
 
-    actualizarEstadoSupabase(
-        "☁️ Supabase: conectado · " +
-        jugadorUsername
-    );
+if(selectError){
+
+console.warn(
+"Supabase SELECT:",
+selectError
+);
+
+actualizarEstadoSupabase(
+"☁️ Supabase conectado"
+);
+
+cargarRanking();
+
+return;
+
+}
+
+
+if(!existente){
+
+const {
+error:insertError
+} =
+await supabaseClient
+.from("players")
+.insert({
+
+username:jugadorUsername,
+clicks:contador,
+secrets:secretosEncontrados,
+best_streak:mejorRacha
+
+});
+
+
+if(insertError){
+
+console.warn(
+"Supabase INSERT:",
+insertError
+);
+
+actualizarEstadoSupabase(
+"☁️ Supabase conectado"
+);
+
+cargarRanking();
+
+return;
+
+}
+
+}else{
+
+const {
+error:updateError
+} =
+await supabaseClient
+.from("players")
+.update({
+
+clicks:contador,
+secrets:secretosEncontrados,
+best_streak:mejorRacha,
+updated_at:
+new Date().toISOString()
+
+})
+.eq(
+"username",
+jugadorUsername
+);
+
+
+if(updateError){
+
+console.warn(
+"Supabase UPDATE:",
+updateError
+);
+
+}
+
+}
+
+
+actualizarEstadoSupabase(
+"☁️ Supabase: conectado · " +
+jugadorUsername
+);
+
+cargarRanking();
+
 
 }catch(error){
 
-    console.error(
-        "Error Supabase:",
-        error
-    );
+console.error(
+"Error Supabase:",
+error
+);
 
-    actualizarEstadoSupabase(
-        "☁️ Supabase: conexión no disponible"
-    );
+actualizarEstadoSupabase(
+"☁️ Supabase: conexión no disponible"
+);
+
+cargarRanking();
 
 }
 
@@ -1871,8 +2684,8 @@ document.getElementById(
 
 if(elemento){
 
-    elemento.textContent =
-    texto;
+elemento.textContent =
+texto;
 
 }
 
@@ -1885,7 +2698,8 @@ if(elemento){
 
 function modoDesbloqueado(modo){
 
-return contador >= modos[modo].desbloqueado;
+return contador >=
+modos[modo].desbloqueado;
 
 }
 
@@ -2494,11 +3308,6 @@ resultadosPatito.length
 ];
 
 
-/*
-   Cada 5 tiradas en Patito aparece
-   una variante especial.
-*/
-
 if(contador % 5 === 0){
 
 texto =
@@ -2620,20 +3429,10 @@ return true;
 }
 
 
-/*
-   En vez de probar todos los secretos uno detrás de otro,
-   elegimos primero si habrá secreto.
-
-   Esto hace que Caos y Legendario sean realmente
-   diferentes.
-*/
-
 function intentarSecreto(){
 
 let probabilidadTotal = 0;
 
-
-/* NORMAL */
 
 if(modoActual === "normal"){
 
@@ -2643,8 +3442,6 @@ probabilidadTotal =
 }
 
 
-/* CAOS */
-
 else if(modoActual === "chaos"){
 
 probabilidadTotal =
@@ -2652,8 +3449,6 @@ probabilidadTotal =
 
 }
 
-
-/* RACHA */
 
 else if(modoActual === "streak"){
 
@@ -2669,8 +3464,6 @@ probabilidadTotal =
 }
 
 
-/* LEGENDARIO */
-
 else if(modoActual === "legendary"){
 
 probabilidadTotal =
@@ -2682,10 +3475,6 @@ probabilidadTotal =
 if(Math.random() >= probabilidadTotal)
 return false;
 
-
-/*
-   Selección ponderada.
-*/
 
 let lista = secretos;
 
@@ -2707,11 +3496,6 @@ secretos;
 
 else if(modoActual === "streak"){
 
-/*
-   Cuanto mayor la racha,
-   más posibilidades de secretos raros.
-*/
-
 if(racha >= 15){
 
 lista =
@@ -2730,10 +3514,6 @@ s => s.probabilidad <= 1/1000
 
 }
 
-
-/*
-   Para Legendario damos más peso a las rarezas extremas.
-*/
 
 if(modoActual === "legendary"){
 
@@ -2870,11 +3650,6 @@ Math.min(
 );
 
 
-/*
-   Cada 5 rachas:
-   posibilidad de recompensa especial.
-*/
-
 const probabilidadEspecial =
 Math.min(
 0.05 + (racha * 0.015),
@@ -2939,6 +3714,27 @@ resultadoNormal();
 
 async function sorprendeme(){
 
+if(!jugadorUsername){
+
+alert(
+ingles
+? "👤 Choose a username before playing."
+: "👤 Elige un username antes de jugar."
+);
+
+const input =
+document.getElementById(
+"usernameInput"
+);
+
+if(input)
+input.focus();
+
+return;
+
+}
+
+
 const boton =
 document.getElementById(
 "randomButton"
@@ -2949,11 +3745,6 @@ boton.classList.add(
 "rolling"
 );
 
-
-/*
-   Si tardas demasiado entre tiradas,
-   la racha vuelve a 1.
-*/
 
 const ahora =
 Date.now();
@@ -3131,12 +3922,6 @@ return;
 
 }
 
-
-/*
-   Si no sale secreto, el modo legendario
-   usa resultados absurdos en vez de
-   volver simplemente al modo normal.
-*/
 
 const legendarios = [
 
@@ -3418,20 +4203,20 @@ frecuencia;
 ganancia.gain.setValueAtTime(
 0.0001,
 audio.currentTime +
-i * .12
+i * 0.12
 );
 
 ganancia.gain.exponentialRampToValueAtTime(
 0.12,
 audio.currentTime +
-i * .12 +
+i * 0.12 +
 0.02
 );
 
 ganancia.gain.exponentialRampToValueAtTime(
 0.0001,
 audio.currentTime +
-i * .12 +
+i * 0.12 +
 0.18
 );
 
@@ -3445,12 +4230,12 @@ audio.destination
 
 oscilador.start(
 audio.currentTime +
-i * .12
+i * 0.12
 );
 
 oscilador.stop(
 audio.currentTime +
-i * .12 +
+i * 0.12 +
 0.2
 );
 
@@ -3565,7 +4350,72 @@ ingles
 : "hecho porque sí";
 
 
+document.getElementById(
+"profileTitle"
+).textContent =
+ingles
+? "👤 Your Internet Randomizer username"
+: "👤 Tu nombre en Internet Randomizer";
+
+
+document.getElementById(
+"usernameInput"
+).placeholder =
+ingles
+? "Choose a username..."
+: "Elige un username...";
+
+
+document.getElementById(
+"usernameButton"
+).textContent =
+ingles
+? "Save"
+: "Guardar";
+
+
+document.getElementById(
+"rankingTitle"
+).textContent =
+ingles
+? "🏆 Ranking"
+: "🏆 Ranking";
+
+
+document.getElementById(
+"rankingClicks"
+).textContent =
+ingles
+? "🎲 Clicks"
+: "🎲 Tiradas";
+
+
+document.getElementById(
+"rankingSecrets"
+).textContent =
+ingles
+? "🥚 Secrets"
+: "🥚 Secretos";
+
+
+document.getElementById(
+"rankingStreak"
+).textContent =
+ingles
+? "🔥 Streak"
+: "🔥 Racha";
+
+
+actualizarUsernameStatus();
+
 actualizarEstadisticas();
+
+actualizarModos();
+
+actualizarBotonCompartir();
+
+cargarRanking();
+
 
 if(
 resultadoActual.es
@@ -4122,7 +4972,23 @@ actualizarModos();
 
 actualizarBotonCompartir();
 
+mostrarUsername();
+
+cargarRanking();
+
+if(jugadorUsername){
+
 sincronizarSupabase();
+
+}else{
+
+actualizarEstadoSupabase(
+ingles
+? "☁️ Choose a username to connect"
+: "☁️ Elige un username para conectar"
+);
+
+}
 
 </script>
 
