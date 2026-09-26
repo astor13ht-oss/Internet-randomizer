@@ -869,42 +869,31 @@ hecho porque sí
    SUPABASE
 ========================================================= */
 
-/*
-   PEGA AQUÍ TUS DATOS DE SUPABASE.
-
-   Ejemplo:
-
-   const SUPABASE_URL = "https://xxxxxxxx.supabase.co";
-   const SUPABASE_KEY = "sb_publishable_xxxxxxxxx";
-*/
-
-const SUPABASE_URL = "https://toymfoptbjmzfsjtcaoc.supabase.co"
+const SUPABASE_URL = "https://toymfoptbjmzfsjtcaoc.supabase.co";
 const SUPABASE_KEY = "sb_publishable_HEM80BBVfQe6tiHm8v50_g_bwnakFFc";
 
 let supabaseClient = null;
 
-try{
+try {
 
-    if(
-        SUPABASE_URL !== "https://toymfoptbjmzfsjtcaoc.supabase.co" &
-        SUPABASE_KEY !== "sb_publishable_HEM80BBVfQe6tiHm8v50_g_bwnakFFc" &&
+    if (
+        SUPABASE_URL &&
+        SUPABASE_KEY &&
         window.supabase
-    ){
+    ) {
 
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_KEY
-            );
+        supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
 
     }
 
-}catch(error){
+} catch (error) {
 
-    console.error("Supabase:",error);
+    console.error("Supabase:", error);
 
 }
-
 
 /* =========================================================
    ESTADO
