@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -886,6 +885,114 @@ footer{
 
 }
 
+
+
+/* =========================================================
+   V2 — INTERFAZ + RECOMPENSAS
+========================================================= */
+
+header{
+    padding:24px 18px 18px;
+    border:1px solid #2b2140;
+    border-radius:16px;
+    background:linear-gradient(145deg,#15101f,#0e0e12);
+    box-shadow:0 12px 40px rgba(120,70,220,.10);
+}
+
+.logo{filter:drop-shadow(0 0 12px rgba(182,108,255,.35));}
+
+.game-layout{gap:22px;}
+
+.random-box{
+    border-color:#33264d;
+    box-shadow:0 0 0 1px rgba(182,108,255,.04),0 20px 55px rgba(0,0,0,.28);
+}
+
+.random-button{
+    box-shadow:0 0 25px rgba(182,108,255,.16),inset 0 1px rgba(255,255,255,.08);
+}
+
+.mode-buttons{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:8px;
+}
+
+.mode-button{
+    transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+
+.mode-button:hover:not(.locked){
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(182,108,255,.10);
+}
+
+.reward-track{
+    margin-top:12px;
+    padding:14px;
+    border:1px solid #292929;
+    background:#101010;
+    border-radius:8px;
+}
+
+.reward-track h3{margin:0 0 10px;}
+
+.reward-track-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+}
+
+.reward-node{
+    padding:10px;
+    border:1px solid #2b2b2b;
+    border-radius:7px;
+    color:#666;
+    font-family:monospace;
+    font-size:11px;
+    text-align:center;
+}
+
+
+.reward-inventory{margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.025)}
+.reward-inventory h4{margin:0 0 12px;font-size:15px}
+.reward-inventory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.reward-card{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#101018}
+.reward-card.locked{opacity:.48;filter:grayscale(.7)}
+.reward-card .reward-icon{font-size:24px}
+.reward-card .reward-name{font-weight:800;margin-top:5px}
+.reward-card .reward-desc{font-size:12px;opacity:.72;margin-top:4px;line-height:1.35}
+.reward-card button{margin-top:9px;width:100%;border:0;border-radius:9px;padding:7px;cursor:pointer;background:#272733;color:white}
+.reward-card.equipped{outline:2px solid #9b5cff}
+.reward-status{font-size:11px;margin-top:6px;opacity:.75}
+@media(max-width:700px){.reward-inventory-grid{grid-template-columns:1fr 1fr}}
+
+.reward-node.unlocked{
+    border-color:#67e8a5;
+    color:#67e8a5;
+    background:rgba(103,232,165,.05);
+}
+
+.interface-strip{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin:12px 0 0;
+    padding:9px 12px;
+    border:1px solid #292929;
+    border-radius:8px;
+    background:#0c0c0f;
+    color:#777;
+    font-family:monospace;
+    font-size:11px;
+}
+
+@media(max-width:700px){
+    .mode-buttons{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .reward-track-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .interface-strip{flex-direction:column;}
+}
+
 </style>
 
 </head>
@@ -909,6 +1016,11 @@ No sabes qué va a salir. Ni yo tampoco.
 </div>
 
 </header>
+
+<div class="interface-strip">
+<span id="interfaceStatus">● RANDOMIZER ONLINE</span>
+<span id="interfaceHint">🎁 Cada tirada puede acercarte a una recompensa</span>
+</div>
 
 <div class="game-layout">
 
@@ -969,6 +1081,14 @@ Elige un username para aparecer en el ranking.
 
 <button class="mode-button" onclick="cambiarModo('legendary')" id="modeLegendary">
 👑 LEGENDARIO
+</button>
+
+<button class="mode-button" onclick="cambiarModo('mystery')" id="modeMystery">
+🔮 MISTERIO
+</button>
+
+<button class="mode-button" onclick="cambiarModo('turbo')" id="modeTurbo">
+⚡ TURBO
 </button>
 
 </div>
@@ -1110,6 +1230,16 @@ Cargando ranking...
 <span id="levelNext">Siguiente nivel</span>
 </div>
 <div class="badge-row" id="badgeRow"></div>
+
+<div class="reward-track">
+<h3 id="rewardTrackTitle">🎁 Ruta de recompensas</h3>
+<div class="reward-track-grid" id="rewardTrackGrid"></div>
+<div class="reward-inventory" id="rewardInventory">
+<h4 id="rewardInventoryTitle">🎁 Tus recompensas</h4>
+<div id="rewardInventoryGrid" class="reward-inventory-grid"></div>
+</div>
+
+</div>
 </div>
 
 <div class="extra-card">
@@ -1372,6 +1502,9 @@ let recompensasDesbloqueadas =
 JSON.parse(
     localStorage.getItem("randomizerRecompensas") || "[]"
 );
+
+let recompensasEquipadas =
+localStorage.getItem("randomizerRecompensaEquipado") || "";
 
 let secretosDescubiertos =
 JSON.parse(
@@ -2147,6 +2280,22 @@ nombreEn:"👑 LEGENDARY",
 descripcionEs:"Los resultados normales desaparecen. Aquí mandan las rarezas.",
 descripcionEn:"Normal results disappear. Rare finds rule here.",
 desbloqueado:10000
+}
+,
+mystery:{
+nombreEs:"🔮 MISTERIO",
+nombreEn:"🔮 MYSTERY",
+descripcionEs:"La probabilidad de encontrar secretos aumenta. Nunca sabes qué puede aparecer.",
+descripcionEn:"Secret chances are boosted. You never know what may appear.",
+desbloqueado:750
+},
+
+turbo:{
+nombreEs:"⚡ TURBO",
+nombreEn:"⚡ TURBO",
+descripcionEs:"Modo rápido con recompensas de XP mejoradas y resultados especiales.",
+descripcionEn:"Fast mode with boosted XP rewards and special results.",
+desbloqueado:7500
 }
 
 };
@@ -3056,6 +3205,9 @@ function actualizarTextosExtra(){
     const textos = {
         collectionTitle: ingles ? "🥚 Secret Collection" : "🥚 Colección de secretos",
         modesTitle: ingles ? "🎮 Unlockable Modes" : "🎮 Modos desbloqueables",
+        rewardTrackTitle: ingles ? "🎁 Reward Path" : "🎁 Ruta de recompensas",
+        interfaceStatus: ingles ? "● RANDOMIZER ONLINE" : "● RANDOMIZER ONLINE",
+        interfaceHint: ingles ? "🎁 Every roll can bring you closer to a reward" : "🎁 Cada tirada puede acercarte a una recompensa",
         levelTitle: ingles ? "⭐ Explorer Level" : "⭐ Nivel del explorador",
         dailyTitle: ingles ? "📅 Daily Challenge" : "📅 Reto diario",
         historyTitle: ingles ? "🧾 Recent Discoveries" : "🧾 Últimos hallazgos",
@@ -3097,6 +3249,8 @@ function actualizarTextosExtra(){
         ["🌪️ Caos","🌪️ Chaos"],
         ["🔥 Racha","🔥 Streak"],
         ["👑 Legendario","👑 Legendary"],
+        ["🔮 Misterio","🔮 Mystery"],
+        ["⚡ Turbo","⚡ Turbo"],
         ["🗑️ Resetear estadísticas","🗑️ Reset statistics"],
         ["🔒 Cerrar panel","🔒 Close panel"]
     ];
@@ -3143,6 +3297,9 @@ function actualizarTextosExtra(){
     actualizarNivel();
     mostrarRetoDiario(false);
     renderHistorial();
+    renderRutaRecompensas();
+renderInventarioRecompensas();
+mostrarPerfilRecompensa();
 }
 
 /* =========================================================
@@ -3157,6 +3314,9 @@ function actualizarExtrasTrasResultado(){
     if(resultadoActual.secreto) xp = 25;
     if(resultadoActual.hito) xp = 50;
     if(resultadoActual.clase === "legendary") xp = 35;
+    if(resultadoActual.clase === "mystery") xp = 15;
+    if(resultadoActual.clase === "turbo") xp = 20;
+    if(modoActual === "turbo") xp *= 2;
 
     ganarXP(xp);
 }
@@ -3400,7 +3560,9 @@ const botones = [
 "duck",
 "chaos",
 "streak",
-"legendary"
+"legendary",
+"mystery",
+"turbo"
 ];
 
 botones.forEach(modo=>{
@@ -3626,6 +3788,7 @@ hito.toLocaleString();
 
 renderColeccion();
 actualizarModos();
+renderRutaRecompensas();
 
 }
 
@@ -4125,6 +4288,20 @@ else if(modoActual === "legendary"){
 
 probabilidadTotal =
 0.35;
+
+}
+
+else if(modoActual === "mystery"){
+
+probabilidadTotal =
+0.12;
+
+}
+
+else if(modoActual === "turbo"){
+
+probabilidadTotal =
+0.08;
 
 }
 
@@ -4648,6 +4825,36 @@ return;
 }
 
 
+/* MISTERIO */
+
+if(modoActual === "mystery"){
+
+if(intentarSecreto()){
+    if(boton) boton.classList.remove("rolling");
+    return;
+}
+
+resultadoMisterio();
+if(boton) boton.classList.remove("rolling");
+await sincronizarSupabase();
+return;
+}
+
+/* TURBO */
+
+if(modoActual === "turbo"){
+
+if(intentarSecreto()){
+    if(boton) boton.classList.remove("rolling");
+    return;
+}
+
+resultadoTurbo();
+if(boton) boton.classList.remove("rolling");
+await sincronizarSupabase();
+return;
+}
+
 /* NORMAL */
 
 if(
@@ -4674,6 +4881,128 @@ await sincronizarSupabase();
 
 }
 
+
+/* =========================================================
+   MISTERIO + TURBO
+========================================================= */
+
+function resultadoMisterio(){
+    const candidatos = cosas.filter(c => c.tipo === "link");
+    const lista = candidatos.length ? candidatos : cosas;
+    const cosa = lista[Math.floor(Math.random()*lista.length)];
+
+    resultadoActual = {
+        es:cosa.es,
+        en:cosa.en,
+        categoriaEs:"🔮 MISTERIO · " + cosa.categoriaEs,
+        categoriaEn:"🔮 MYSTERY · " + cosa.categoriaEn,
+        url:cosa.url || null,
+        secreto:false,
+        hito:false,
+        compartible:true,
+        rareza:"MISTERIO",
+        clase:"mystery"
+    };
+    resultadoNuevo = true;
+    renderResultado();
+}
+
+function resultadoTurbo(){
+    const especiales = [
+        {es:"⚡ TURBO: El Randomizer ha acelerado Internet durante exactamente 3 segundos.",en:"⚡ TURBO: The Randomizer accelerated the Internet for exactly 3 seconds."},
+        {es:"⚡ TURBO: Has obtenido un resultado a velocidad ilegalmente rápida.",en:"⚡ TURBO: You got a result at illegally fast speed."},
+        {es:"🚀 TURBO: Ni el algoritmo sabe qué acaba de ocurrir.",en:"🚀 TURBO: Even the algorithm doesn't know what just happened."}
+    ];
+    const especial = especiales[Math.floor(Math.random()*especiales.length)];
+    resultadoActual = {
+        es:especial.es,
+        en:especial.en,
+        categoriaEs:"⚡ TURBO",
+        categoriaEn:"⚡ TURBO",
+        url:null,
+        secreto:false,
+        hito:false,
+        compartible:true,
+        rareza:"TURBO",
+        clase:"turbo"
+    };
+    resultadoNuevo = true;
+    renderResultado();
+}
+
+
+const recompensasEspeciales = [
+{n:500, id:"veterano", icon:"🏅", es:"Veterano", en:"Veteran", descEs:"Tu primer título especial.", descEn:"Your first special title."},
+{n:1000, id:"diamante", icon:"💎", es:"Cazador de secretos", en:"Secret Hunter", descEs:"Título para quien ya ha visto cosas raras.", descEn:"A title for players who have seen strange things."},
+{n:5000, id:"glitch", icon:"🌀", es:"Glitch Walker", en:"Glitch Walker", descEs:"Tu perfil parece haber roto Internet.", descEn:"Your profile looks like it broke the Internet."},
+{n:10000, id:"leyenda", icon:"👑", es:"Leyenda", en:"Legend", descEs:"Título reservado para los veteranos.", descEn:"A title reserved for veterans."},
+{n:25000, id:"orbita", icon:"🛰️", es:"Fuera de órbita", en:"Out of Orbit", descEs:"Has ido demasiado lejos.", descEn:"You have gone too far."},
+{n:50000, id:"maestro", icon:"🌌", es:"Maestro del Randomizer", en:"Randomizer Master", descEs:"Has visto una barbaridad de Internet.", descEn:"You have seen an absurd amount of the Internet."}
+];
+
+function renderInventarioRecompensas(){
+    const caja=document.getElementById("rewardInventoryGrid");
+    if(!caja) return;
+    caja.innerHTML="";
+    recompensasEspeciales.forEach(r=>{
+        const ok=contador>=r.n;
+        const equipada=recompensasEquipadas===r.id;
+        const div=document.createElement("div");
+        div.className="reward-card "+(!ok?"locked ":"")+(equipada?"equipped":"");
+        const nombre=ingles?r.en:r.es;
+        const desc=ingles?r.descEn:r.descEs;
+        div.innerHTML=`
+            <div class="reward-icon">${r.icon}</div>
+            <div class="reward-name">${nombre}</div>
+            <div class="reward-desc">${desc}</div>
+            <div class="reward-status">${ok ? (ingles?"Unlocked":"Desbloqueada") : ((ingles?"Unlock at ":"Desbloquea en ")+r.n.toLocaleString())}</div>
+            ${ok ? `<button onclick="equiparRecompensa('${r.id}')">${equipada ? (ingles?"Equipped":"Equipada") : (ingles?"Equip":"Equipar")}</button>` : ""}
+        `;
+        caja.appendChild(div);
+    });
+}
+
+function equiparRecompensa(id){
+    const recompensa=recompensasEspeciales.find(r=>r.id===id);
+    if(!recompensa || contador<recompensa.n) return;
+    recompensasEquipadas = recompensasEquipadas===id ? "" : id;
+    guardar();
+    renderInventarioRecompensas();
+    mostrarPerfilRecompensa();
+}
+
+function mostrarPerfilRecompensa(){
+    const el=document.getElementById("interfaceHint");
+    if(!el) return;
+    const r=recompensasEspeciales.find(x=>x.id===recompensasEquipadas);
+    if(r){
+        el.textContent=(ingles?"🏆 Equipped title: ":"🏆 Título equipado: ")+(ingles?r.en:r.es);
+    }
+}
+
+function renderRutaRecompensas(){
+    const caja=document.getElementById("rewardTrackGrid");
+    if(!caja) return;
+    const recompensas=[
+        {n:100,es:"🦆 Modo Patito",en:"🦆 Duck Mode"},
+        {n:500,es:"🏅 Veterano",en:"🏅 Veteran"},
+        {n:750,es:"🔮 Modo Misterio",en:"🔮 Mystery Mode"},
+        {n:1000,es:"👑 Resultado legendario",en:"👑 Legendary results"},
+        {n:3000,es:"🔥 Modo Racha",en:"🔥 Streak Mode"},
+        {n:7500,es:"⚡ Modo Turbo",en:"⚡ Turbo Mode"},
+        {n:10000,es:"🌟 Nivel leyenda",en:"🌟 Legend status"},
+        {n:25000,es:"🛰️ Explorador extremo",en:"🛰️ Extreme explorer"},
+        {n:50000,es:"💎 Maestro del Randomizer",en:"💎 Randomizer Master"}
+    ];
+    caja.innerHTML="";
+    recompensas.forEach(r=>{
+        const div=document.createElement("div");
+        const ok=contador>=r.n;
+        div.className="reward-node "+(ok?"unlocked":"");
+        div.innerHTML=(ok?"✓ ":"🔒 ")+r.n.toLocaleString()+"<br>"+(ingles?r.en:r.es);
+        caja.appendChild(div);
+    });
+}
 
 /* =========================================================
    COPIAR
@@ -5514,6 +5843,7 @@ contador = 0;
 secretosEncontrados = 0;
 
 recompensasDesbloqueadas = [];
+recompensasEquipadas = "";
 
 secretosDescubiertos = [];
 
