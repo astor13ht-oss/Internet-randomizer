@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internet Randomizer 🎲 — Descubre algo al azar en Internet</title>
+<title>Internet Randomizer 🎲 — Ultimate Edition</title>
 <meta name="description" content="Internet Randomizer es un juego web gratuito para descubrir enlaces, curiosidades, secretos y resultados aleatorios de Internet. ¡Pulsa SORPRÉNDEME y descubre algo nuevo!">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://astor13ht-oss.github.io/Internet-randomizer/">
@@ -36,6 +36,299 @@
   "operatingSystem": "Web Browser",
   "isAccessibleForFree": true
 }
+</script>
+
+<script>
+/* =========================================================
+   SOCIAL HUB
+   Funcionamiento local activado; conexión online preparada para Supabase.
+   Para activar la versión online: cambia SOCIAL_USE_SUPABASE a true
+   y crea las tablas/policies indicadas en el bloque SQL que te daré.
+========================================================= */
+const SOCIAL_USE_SUPABASE = true;
+const SOCIAL_CHAT_KEY = "randomizerSocialChat";
+const SOCIAL_LOCAL_USERS_KEY = "randomizerSocialLocalUsers";
+const SOCIAL_SESSION_KEY = "randomizerSocialSession";
+let socialMessages = JSON.parse(localStorage.getItem(SOCIAL_CHAT_KEY) || "[]");
+let socialLocalUsers = JSON.parse(localStorage.getItem(SOCIAL_LOCAL_USERS_KEY) || "[]");
+let socialChannel = null;
+let socialPresenceTimer = null;
+let socialSessionId = localStorage.getItem(SOCIAL_SESSION_KEY);
+
+if(!socialSessionId){
+  socialSessionId = "local-" + Date.now() + "-" + Math.random().toString(36).slice(2,8);
+  localStorage.setItem(SOCIAL_SESSION_KEY, socialSessionId);
+}
+
+const socialLocalNames = ["RandomExplorer","PatoMaster","ConanFan","GlitchKid","InternetGhost","4869Agent","MundoRandom","DuckHunter","PixelWalker","RNG_Lord"];
+const socialLocalTexts = [
+  "¿Qué os ha salido en el random? 👀",
+  "Acabo de desbloquear un modo nuevo xD",
+  "Ese resultado ha sido demasiado random.",
+  "¿Alguien ha encontrado todos los secretos?",
+  "BRO, ¿habéis visto ese resultado?",
+  "Voy a intentar llegar a 10.000 clicks.",
+  "La tienda está peligrosamente buena 😂"
+];
+
+function socialEscape(value){
+  const d=document.createElement("div");
+  d.textContent=String(value ?? "");
+  return d.innerHTML;
+}
+
+function socialTime(ts){
+  try{return new Date(ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});}
+  catch{return "";}
+}
+
+function socialCurrentName(){
+  return jugadorUsername || "Explorador";
+}
+
+function guardarSocialLocal(){
+  localStorage.setItem(SOCIAL_CHAT_KEY, JSON.stringify(socialMessages.slice(-100)));
+  localStorage.setItem(SOCIAL_LOCAL_USERS_KEY, JSON.stringify(socialLocalUsers.slice(-20)));
+}
+
+
+/* =========================================================
+   MODERACIÓN DEL CHAT
+========================================================= */
+
+const CHAT_MIN_INTERVAL = 1800;
+const CHAT_MAX_PER_WINDOW = 6;
+const CHAT_WINDOW_MS = 30000;
+let chatLastSentAt = 0;
+let chatRecentSent = [];
+let chatReportedMessages = JSON.parse(localStorage.getItem("randomizerChatReports") || "[]");
+
+const CHAT_BLOCKED_PATTERNS = [
+  /\b(?:puto|puta|joder|gilipollas|idiota|imbecil|imbécil|cabron|cabrón)\b/i,
+  /\b(?:fuck|fucking|bitch|asshole|idiot)\b/i
+];
+
+function moderarMensajeChat(text){
+  const limpio = String(text || "").replace(/\s+/g," ").trim();
+
+  if(!limpio) return {ok:false, reason:ingles?"Write something first.":"Escribe algo primero."};
+  if(limpio.length > 240) return {ok:false, reason:ingles?"Message too long (max 240 characters).":"Mensaje demasiado largo (máximo 240 caracteres)."};
+
+  const ahora=Date.now();
+  if(ahora-chatLastSentAt < CHAT_MIN_INTERVAL){
+    return {ok:false, reason:ingles?"Slow down a little.":"Espera un poco antes de enviar otro mensaje."};
+  }
+
+  chatRecentSent=chatRecentSent.filter(t=>ahora-t<CHAT_WINDOW_MS);
+  if(chatRecentSent.length >= CHAT_MAX_PER_WINDOW){
+    return {ok:false, reason:ingles?"Too many messages. Try again in a moment.":"Demasiados mensajes. Espera un momento."};
+  }
+
+  if(/(.)\1{9,}/u.test(limpio)){
+    return {ok:false, reason:ingles?"That message looks like spam.":"Ese mensaje parece spam."};
+  }
+
+  if(/^\S+$/.test(limpio) && limpio.length > 60){
+    return {ok:false, reason:ingles?"That message looks like spam.":"Ese mensaje parece spam."};
+  }
+
+  if(CHAT_BLOCKED_PATTERNS.some(re=>re.test(limpio))){
+    return {ok:false, reason:ingles?"Please keep the chat respectful.":"Por favor, mantén un tono respetuoso en el chat."};
+  }
+
+  const normalizado=limpio.toLowerCase();
+  const ultima=socialMessages[socialMessages.length-1];
+  if(ultima && ultima.username===socialCurrentName() && String(ultima.text||"").trim().toLowerCase()===normalizado){
+    return {ok:false, reason:ingles?"Don't repeat the same message.":"No repitas el mismo mensaje seguido."};
+  }
+
+  return {ok:true,text:limpio};
+}
+
+function chatModerationToast(text){
+  if(typeof mostrarToastOffline==="function") mostrarToastOffline("🛡️ "+text);
+  else alert("🛡️ "+text);
+}
+
+function guardarChatReports(){
+  localStorage.setItem("randomizerChatReports",JSON.stringify(chatReportedMessages.slice(-100)));
+}
+
+async function reportarMensajeChat(id, username, text){
+  if(!id)return;
+  const key=String(id);
+  if(chatReportedMessages.includes(key)){
+    chatModerationToast(ingles?"You already reported this message.":"Ya has reportado este mensaje.");
+    return;
+  }
+
+  chatReportedMessages.push(key);
+  guardarChatReports();
+
+  if(SOCIAL_USE_SUPABASE && supabaseClient){
+    const {error}=await supabaseClient.from("chat_reports").insert({
+      message_id:Number.isFinite(Number(id)) ? Number(id) : null,
+      reporter: socialCurrentName(),
+      reported_username: String(username||"").slice(0,20),
+      reason:"user_report"
+    });
+    if(error) console.warn("Chat report:",error);
+  }
+
+  chatModerationToast(ingles?"Report sent to moderation.":"Reporte enviado a moderación.");
+}
+
+function renderSocialChat(){
+  const box=document.getElementById("chatMessages");
+  if(!box)return;
+  if(!socialMessages.length){
+    box.innerHTML='<div class="chat-empty">Todavía no hay mensajes.<br>¡Sé el primero en escribir!</div>';
+  }else{
+    box.innerHTML=socialMessages.slice(-100).map(m=>{
+      const mine=(m.username||m.user)===socialCurrentName();
+      const mid=socialEscape(m.id);
+      const uname=socialEscape(m.username||m.user);
+      return `<div class="chat-message ${mine?'mine':''}">
+        <div class="chat-name">${uname} <span class="chat-time">${socialTime(m.created_at)}</span></div>
+        <div class="chat-text">${socialEscape(m.text)}</div>
+        ${!mine && !String(m.id).startsWith("local-") ? `<button class="chat-report" onclick="reportarMensajeChat('${mid}','${uname.replace(/'/g,"&#39;")}','${socialEscape(m.text).replace(/'/g,"&#39;")}')">⚑ ${ingles?"Report":"Reportar"}</button>` : ""}
+      </div>`;
+    }).join("");
+    box.scrollTop=box.scrollHeight;
+  }
+  const stat=document.getElementById("communityMessages");
+  if(stat)stat.textContent=socialMessages.length;
+}
+
+function renderSocialUsers(){
+  const box=document.getElementById("onlineUsers");
+  if(!box)return;
+  const users=[{username:socialCurrentName(),self:true,last_seen:Date.now()},...socialLocalUsers];
+  const unique=[];
+  const seen=new Set();
+  users.forEach(u=>{const n=String(u.username||"").trim();if(n&&!seen.has(n)){seen.add(n);unique.push({...u,username:n});}});
+  box.innerHTML=unique.map(u=>{
+    const initials=socialEscape(u.username.slice(0,2).toUpperCase());
+    return `<div class="online-user"><div class="online-avatar">${initials}</div><div class="online-info"><div class="online-name">${socialEscape(u.username)} ${u.self?'⭐':''}</div><div class="online-meta">${u.self?'Tú · conectado ahora':'Explorador · online'}</div></div><span class="online-live"></span></div>`;
+  }).join("");
+  document.getElementById("onlineCount").textContent=unique.length;
+  document.getElementById("communityOnline").textContent=unique.length;
+  document.getElementById("communityPlayers").textContent=Math.max(unique.length,Number(contador)>0?1:0);
+}
+
+function enviarMensajeSocial(event){
+  event.preventDefault();
+  const input=document.getElementById("chatInput");
+  const text=(input?.value||"").trim();
+  const mod=moderarMensajeChat(text);
+  if(!mod.ok){
+    chatModerationToast(mod.reason);
+    return;
+  }
+
+  chatLastSentAt=Date.now();
+  chatRecentSent.push(chatLastSentAt);
+
+  const msg={id:"local-"+Date.now(),user:socialCurrentName(),text:mod.text,created_at:new Date().toISOString()};
+  if(SOCIAL_USE_SUPABASE && supabaseClient){
+    enviarMensajeSupabase(msg);
+  }else{
+    socialMessages.push(msg);
+    guardarSocialLocal();
+    renderSocialChat();
+  }
+  input.value="";
+}
+
+async function enviarMensajeSupabase(msg){
+  const {error}=await supabaseClient.from("chat_messages").insert({username:msg.user,text:msg.text});
+  if(error){
+    console.warn("Chat Supabase:",error);
+    chatModerationToast(ingles?"The message could not be sent.":"No se pudo enviar el mensaje.");
+  }
+}
+
+function añadirExploradorLocal(){
+  const disponibles=socialLocalNames.filter(n=>n!==socialCurrentName()&&!socialLocalUsers.some(u=>u.username===n));
+  if(!disponibles.length)return;
+  const username=disponibles[Math.floor(Math.random()*disponibles.length)];
+  socialLocalUsers.push({username,last_seen:Date.now()});
+  const text=socialLocalTexts[Math.floor(Math.random()*socialLocalTexts.length)];
+  socialMessages.push({id:"local-"+Date.now(),user:username,text,created_at:new Date().toISOString()});
+  guardarSocialLocal();renderSocialUsers();renderSocialChat();
+}
+
+function limpiarChatLocal(){
+  if(SOCIAL_USE_SUPABASE)return;
+  socialMessages=[];guardarSocialLocal();renderSocialChat();
+}
+
+async function cargarChatSupabase(){
+  if(!supabaseClient)return;
+  const {data,error}=await supabaseClient.from("chat_messages").select("id,username,text,created_at").order("created_at",{ascending:true}).limit(100);
+  if(error){console.warn("Chat Supabase:",error);return;}
+  socialMessages=data||[];renderSocialChat();
+}
+
+async function cargarPresenciaSupabase(){
+  if(!supabaseClient)return;
+  const cutoff=new Date(Date.now()-30000).toISOString();
+  const {data,error}=await supabaseClient.from("randomizer_presence").select("username,last_seen").gte("last_seen",cutoff).order("username");
+  if(error){console.warn("Presencia Supabase:",error);return;}
+  const names=(data||[]).map(x=>({username:x.username,last_seen:x.last_seen}));
+  const me=socialCurrentName();
+  socialLocalUsers=names.filter(x=>x.username!==me);
+  renderSocialUsers();
+}
+
+async function enviarHeartbeatSupabase(){
+  if(!supabaseClient || !jugadorUsername)return;
+  const {error}=await supabaseClient.from("randomizer_presence").upsert({username:jugadorUsername,last_seen:new Date().toISOString()},{onConflict:"username"});
+  if(error)console.warn("Heartbeat Supabase:",error);
+}
+
+function iniciarSocialSupabase(){
+  if(!SOCIAL_USE_SUPABASE || !supabaseClient)return;
+  document.getElementById("socialConnectionText").textContent="Online · Supabase";
+  document.getElementById("chatNote").textContent="Chat conectado a Supabase en tiempo real.";
+  document.getElementById("onlineNote").textContent="Mostrando exploradores activos durante los últimos 30 segundos.";
+  cargarChatSupabase();
+  cargarPresenciaSupabase();
+  enviarHeartbeatSupabase();
+  socialPresenceTimer=setInterval(()=>{enviarHeartbeatSupabase();cargarPresenciaSupabase();},15000);
+  socialChannel=supabaseClient.channel("randomizer-social-chat")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"chat_messages"},payload=>{
+      const row=payload.new;
+      if(!socialMessages.some(m=>String(m.id)===String(row.id))){
+        socialMessages.push(row);
+        socialMessages=socialMessages.slice(-100);
+        renderSocialChat();
+      }
+    })
+    .subscribe(status=>{
+      const el=document.getElementById("socialConnectionText");
+      if(!el)return;
+      if(status==="SUBSCRIBED") el.textContent="Online · Supabase Realtime";
+      else if(status==="CHANNEL_ERROR" || status==="TIMED_OUT") el.textContent="Online · conexión Realtime inestable";
+    });
+}
+
+function iniciarSocialHub(){
+  renderSocialChat();
+  renderSocialUsers();
+  if(!SOCIAL_USE_SUPABASE){
+    document.getElementById("socialConnectionText").textContent="Modo local";
+    if(!socialMessages.length && !socialLocalUsers.length){
+      socialMessages=[{id:"welcome",user:"Randomizer",text:"¡Bienvenido al Central social! Prueba a escribir algo 👋",created_at:new Date().toISOString()}];
+      guardarSocialLocal();
+    }
+    renderSocialChat();renderSocialUsers();
+  }else iniciarSocialSupabase();
+}
+
+window.addEventListener("beforeunload",()=>{if(socialPresenceTimer)clearInterval(socialPresenceTimer);if(socialChannel&&supabaseClient)supabaseClient.removeChannel(socialChannel);});
+
+
 </script>
 
 <!-- GOOGLE ANALYTICS -->
@@ -993,6 +1286,64 @@ header{
     .interface-strip{flex-direction:column;}
 }
 
+
+
+/* =========================================================
+   OFFLINE HUB — ECONOMIA / TIENDA / MISIONES
+========================================================= */
+.offline-hub{margin-top:25px;padding:18px;border:1px solid #33264d;border-radius:16px;background:linear-gradient(145deg,#12101a,#0d0d10);box-shadow:0 18px 45px rgba(0,0,0,.22)}
+.offline-hub-header{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:14px}
+.offline-hub-header h2{margin:0}
+.offline-hub-sub{color:#777;font-size:12px}
+.wallet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.wallet-card{background:#0b0b0e;border:1px solid #29252f;border-radius:11px;padding:12px;text-align:center}
+.wallet-icon{font-size:22px}.wallet-value{font-size:20px;font-weight:900;margin-top:3px}.wallet-label{font-size:10px;color:#777;font-family:monospace}
+.offline-columns{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:12px;margin-top:12px}
+.offline-panel{background:#0e0e12;border:1px solid #292929;border-radius:12px;padding:14px;min-width:0}
+.offline-panel h3{margin:0 0 10px}.offline-panel-sub{font-size:11px;color:#666;margin-bottom:10px}
+.missions-grid{display:flex;flex-direction:column;gap:8px}.mission-item{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid #292929;border-radius:9px;background:#101014}.mission-item.done{border-color:#67e8a5}.mission-icon{font-size:21px}.mission-main{flex:1;min-width:0}.mission-main b{font-size:12px}.mission-main small{color:#666;font-family:monospace}.mission-bar{height:6px;background:#050505;border-radius:99px;margin:6px 0;overflow:hidden}.mission-bar span{display:block;height:100%;background:#b66cff}
+.offline-shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.shop-item{border:1px solid #292929;border-radius:10px;padding:10px;background:#101014}.shop-item.owned{border-color:#67e8a5}.shop-icon{font-size:22px}.shop-name{font-weight:800;font-size:12px;margin-top:3px}.shop-desc{font-size:10px;color:#777;line-height:1.3;min-height:27px;margin-top:3px}.shop-bottom{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:8px;font-size:10px}.shop-bottom button{background:#292335;color:#fff;border:1px solid #4a3b62;border-radius:6px;padding:6px 8px;cursor:pointer}.shop-bottom button:hover{border-color:#b66cff}
+.chest-box{margin-top:10px;padding:10px;border:1px dashed #444;border-radius:9px;text-align:center}.chest-box button{background:#8d4de8;color:#fff;border:0;border-radius:7px;padding:8px 12px;cursor:pointer;font-weight:bold}.achievement-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.achievement-item{display:flex;gap:7px;align-items:center;border:1px solid #292929;border-radius:8px;padding:8px;color:#666}.achievement-item.unlocked{border-color:#ffd84d;color:#ffd84d}.achievement-item span{font-size:18px}.achievement-item b{display:block;font-size:10px}.achievement-item small{font-family:monospace;font-size:8px;opacity:.7}.theme-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.theme-button{background:#19191f;color:#aaa;border:1px solid #333;border-radius:6px;padding:6px 8px;cursor:pointer}.theme-button.active{border-color:#b66cff;color:#fff}
+#offlineToast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:100;background:#111;border:1px solid #b66cff;border-radius:10px;padding:11px 16px;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:.25s;font-family:monospace;font-size:12px}#offlineToast.show{opacity:1;transform:translate(-50%,0)}
+body[data-theme="neon"] #randomButton{background:#00c8ff;box-shadow:0 5px 0 #006b8a,0 0 30px rgba(0,200,255,.25)}
+body[data-theme="neon"] h1{color:#00c8ff;text-shadow:4px 4px 0 #06384a}
+body[data-theme="ocean"] #randomButton{background:#168aad;box-shadow:0 5px 0 #07536b}
+body[data-theme="ocean"] h1{color:#46d9ff;text-shadow:4px 4px 0 #06445a}
+body[data-theme="gold"] #randomButton{background:#b8860b;box-shadow:0 5px 0 #705300}
+body[data-theme="gold"] h1{color:#ffd75a;text-shadow:4px 4px 0 #5e4300}
+@media(max-width:900px){.offline-columns{grid-template-columns:1fr 1fr}.offline-panel:nth-child(2){grid-column:span 2}}
+@media(max-width:600px){.wallet-grid{grid-template-columns:1fr 1fr}.offline-columns{grid-template-columns:1fr}.offline-panel:nth-child(2){grid-column:auto}.offline-shop-grid{grid-template-columns:1fr}.offline-hub-header{flex-direction:column;align-items:flex-start}}
+
+
+/* =========================================================
+   SOCIAL HUB — CHAT / ONLINE / COMMUNITY
+========================================================= */
+.social-hub{margin:24px 0 0;padding:22px;border:1px solid rgba(155,89,255,.28);border-radius:22px;background:linear-gradient(180deg,rgba(25,18,45,.96),rgba(12,12,22,.96));box-shadow:0 14px 45px rgba(0,0,0,.22)}
+.social-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.social-header h2{margin:0 0 5px}.social-sub{color:#aaa;font-size:.9rem}.social-status{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(0,255,150,.08);border:1px solid rgba(0,255,150,.2);font-size:.8rem;white-space:nowrap}.social-dot{width:9px;height:9px;border-radius:50%;background:#35e28a;box-shadow:0 0 12px #35e28a}.social-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:16px}.social-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:15px}.social-card h3{margin:0 0 12px;font-size:1rem}.chat-box{height:330px;overflow-y:auto;padding:8px;border-radius:12px;background:rgba(0,0,0,.22);display:flex;flex-direction:column;gap:8px}.chat-message{max-width:82%;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.06);align-self:flex-start}.chat-message.mine{align-self:flex-end;background:rgba(128,72,255,.2);border:1px solid rgba(155,89,255,.18)}.chat-name{font-size:.75rem;color:#b996ff;font-weight:800;margin-bottom:3px}.chat-time{font-size:.65rem;color:#777;margin-left:6px}.chat-text{font-size:.9rem;word-break:break-word}.chat-report{margin-top:6px;border:0;background:transparent;color:#777;font-size:.65rem;cursor:pointer;padding:2px 0}.chat-report:hover{color:#ff9a9a}.chat-moderation-note{font-size:.68rem;color:#777;margin-top:6px}.admin-chat-reports{margin-top:10px;max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:7px}.admin-report{padding:9px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:.72rem}.admin-report b,.admin-report span,.admin-report small{display:block}.admin-report span{color:#aaa;margin-top:3px}.admin-report small{color:#777;margin-top:2px}.chat-empty{text-align:center;color:#777;padding:60px 10px}.chat-form{display:flex;gap:8px;margin-top:10px}.chat-input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.1);background:#101018;color:#fff;border-radius:10px;padding:11px 12px;outline:none}.chat-input:focus{border-color:#9b59ff}.chat-send{border:0;border-radius:10px;padding:0 17px;background:#7c3aed;color:white;font-weight:800;cursor:pointer}.online-list{display:flex;flex-direction:column;gap:7px;max-height:330px;overflow-y:auto}.online-user{display:flex;align-items:center;gap:9px;padding:9px;border-radius:10px;background:rgba(255,255,255,.035)}.online-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7c3aed,#2dd4bf);font-weight:900}.online-info{min-width:0;flex:1}.online-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.online-meta{font-size:.7rem;color:#777}.online-live{width:8px;height:8px;border-radius:50%;background:#35e28a}.community-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.community-stat{padding:10px;border-radius:10px;text-align:center;background:rgba(255,255,255,.035)}.community-stat b{display:block;font-size:1.1rem}.community-stat span{font-size:.68rem;color:#777}.social-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.social-mini{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#ddd;border-radius:9px;padding:8px 10px;cursor:pointer}.social-mini:hover{background:rgba(255,255,255,.08)}.social-note{font-size:.72rem;color:#777;margin-top:10px;line-height:1.4}.social-users-title{display:flex;justify-content:space-between;align-items:center;gap:10px}.social-count{font-size:.75rem;color:#8d8d9a}.typing-line{height:18px;font-size:.7rem;color:#777;margin-top:4px}
+@media(max-width:900px){.social-grid{grid-template-columns:1fr}.social-header{flex-direction:column}.social-status{align-self:flex-start}}
+@media(max-width:600px){.social-hub{padding:14px}.chat-box{height:280px}.chat-send{padding:0 12px}.community-stats{grid-template-columns:1fr 1fr}.social-message{max-width:92%}}
+
+</style>
+
+
+<style>
+/* =========================================================
+   INTERNET RANDOMIZER ULTIMATE — SOCIAL+ OFFLINE
+========================================================= */
+.social-plus{margin-top:14px;display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.social-plus-card{background:#101010;border:1px solid #303030;border-radius:10px;padding:16px}
+.social-plus-card h3{margin:0 0 8px;color:#c58cff;font-family:monospace}
+.social-plus-muted{color:#777;font-size:12px;font-family:monospace}
+.social-profile{display:flex;gap:12px;align-items:center}
+.social-avatar-big{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;background:#191919;border:1px solid #4b4b4b;font-weight:900;font-family:monospace;font-size:18px}
+.social-profile-main{min-width:0;flex:1}.social-profile-name{font-weight:800;font-size:17px;overflow:hidden;text-overflow:ellipsis}.social-profile-title{color:#aaa;font-size:12px;margin-top:3px}
+.social-profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+.social-profile-stat{background:#0a0a0a;border:1px solid #292929;border-radius:7px;padding:8px;text-align:center}.social-profile-stat b{display:block;color:#fff}.social-profile-stat span{font-size:10px;color:#777;font-family:monospace}
+.quick-chat{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.quick-chat button{background:#171717;border:1px solid #333;color:#ddd;border-radius:999px;padding:6px 9px;cursor:pointer;font-size:12px}.quick-chat button:hover{border-color:#b66cff}
+.social-feed{max-height:190px;overflow:auto;border:1px solid #252525;background:#080808;border-radius:7px;padding:8px}.social-feed-item{padding:8px;border-bottom:1px solid #202020;font-size:12px}.social-feed-item:last-child{border-bottom:0}.social-feed-time{float:right;color:#555;font-family:monospace;font-size:10px}
+.social-tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.social-tool-btn{background:#151515;color:#eee;border:1px solid #333;border-radius:7px;padding:10px;cursor:pointer;text-align:left}.social-tool-btn:hover{border-color:#b66cff;background:#1b1b1b}.social-tool-btn small{display:block;color:#777;margin-top:3px}
+.weekly-box{margin-top:12px;padding:12px;background:linear-gradient(135deg,#111,#17121d);border:1px solid #39264d;border-radius:8px}.weekly-progress{height:8px;background:#070707;border:1px solid #292929;border-radius:99px;overflow:hidden;margin:8px 0}.weekly-fill{height:100%;width:0%;background:#b66cff;transition:width .25s}.theme-button{background:#151515;color:#ddd;border:1px solid #333;border-radius:7px;padding:7px 9px;cursor:pointer}.theme-button.active{border-color:#b66cff;box-shadow:0 0 10px rgba(182,108,255,.15)}.theme-button.locked{opacity:.45;cursor:not-allowed}
+@media(max-width:850px){.social-plus{grid-template-columns:1fr}.social-profile-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 
 </head>
@@ -1089,6 +1440,18 @@ Elige un username para aparecer en el ranking.
 
 <button class="mode-button" onclick="cambiarModo('turbo')" id="modeTurbo">
 ⚡ TURBO
+</button>
+
+<button class="mode-button" onclick="cambiarModo('fortune')" id="modeFortune">
+💰 FORTUNA
+</button>
+
+<button class="mode-button" onclick="cambiarModo('challenge')" id="modeChallenge">
+🧠 DESAFÍO
+</button>
+
+<button class="mode-button" onclick="cambiarModo('infinite')" id="modeInfinite">
+🌌 INFINITO
 </button>
 
 </div>
@@ -1261,6 +1624,68 @@ Cargando ranking...
 
 </section>
 
+<section class="offline-hub">
+<div class="offline-hub-header">
+<div><h2 id="offlineHubTitle">💰 Central del Randomizer</h2><div class="offline-hub-sub" id="offlineHubSub">Economía, misiones y recompensas — todo guardado en este dispositivo.</div></div>
+<div id="offlineModeStats" class="offline-hub-sub">Modos descubiertos: 0</div>
+</div>
+<div class="wallet-grid">
+<div class="wallet-card"><div class="wallet-icon">🪙</div><div class="wallet-value" id="coinCounter">0</div><div class="wallet-label" id="coinLabel">RANDOMCOINS</div></div>
+<div class="wallet-card"><div class="wallet-icon">🎁</div><div class="wallet-value" id="chestCounter">0</div><div class="wallet-label" id="chestLabel">COFRES</div></div>
+<div class="wallet-card"><div class="wallet-icon">🎟️</div><div class="wallet-value" id="rerollCounter">0</div><div class="wallet-label" id="rerollLabel">REROLLS</div></div>
+<div class="wallet-card"><div class="wallet-icon">⚡</div><div class="wallet-value" id="xpBoostCounter">0</div><div class="wallet-label" id="xpBoostLabel">BOOSTS XP</div></div>
+</div>
+<div class="offline-columns">
+<div class="offline-panel"><h3 id="missionsTitle">🎯 Misiones diarias</h3><div class="offline-panel-sub" id="missionsSub">Completa las cuatro para un premio extra.</div><div id="offlineMissionsGrid" class="missions-grid"></div></div>
+<div class="offline-panel"><h3 id="shopTitle">🛒 Tienda</h3><div class="offline-panel-sub" id="shopSub">Gasta tus RandomCoins en objetos y cosméticos.</div><div id="offlineShopGrid" class="offline-shop-grid"></div></div>
+<div class="offline-panel"><h3 id="offlineToolsTitle">🎁 Cofres y personalización</h3><div class="chest-box"><button onclick="abrirCofreOffline()" id="openChestButton">🎁 Abrir cofre</button></div><div class="theme-buttons" id="themeButtons"></div><div class="offline-panel-sub" style="margin-top:10px" id="themeCurrentLabel">Tema actual: <b id="themeCurrent">default</b></div><button class="small-button" onclick="usarRerollOffline()" id="rerollButton">🎟️ Usar reroll</button></div>
+</div>
+<div class="offline-panel" style="margin-top:12px"><h3 id="achievementsTitle">🏆 Logros offline</h3><div id="offlineAchievements" class="achievement-grid"></div></div>
+</section>
+
+
+<section class="social-hub" id="socialHub">
+  <div class="social-header">
+    <div>
+      <h2 id="socialHubTitle">🌐 Central social</h2>
+      <div class="social-sub" id="socialHubSub">Habla con otros exploradores y mira quién está conectado.</div>
+    </div>
+    <div class="social-status"><span class="social-dot"></span><span id="socialConnectionText">Modo local</span></div>
+  </div>
+
+  <div class="social-grid">
+    <div class="social-card">
+      <h3>💬 <span id="chatTitle">Chat global</span></h3>
+      <div id="chatMessages" class="chat-box"></div>
+      <div class="typing-line" id="typingLine"></div>
+      <form class="chat-form" onsubmit="enviarMensajeSocial(event)">
+        <input id="chatInput" class="chat-input" maxlength="240" autocomplete="off" placeholder="Escribe un mensaje...">
+        <button class="chat-send" type="submit">Enviar</button>
+      </form>
+      <div class="social-note" id="chatNote">Chat global conectado a Internet Randomizer.</div>
+      <div class="chat-moderation-note" id="chatModerationNote">🛡️ Moderación activa: anti-spam, lenguaje ofensivo y reportes.</div>
+    </div>
+
+    <div class="social-card">
+      <div class="social-users-title">
+        <h3>🟢 <span id="onlineTitle">Usuarios conectados</span></h3>
+        <span id="onlineCount" class="social-count">0</span>
+      </div>
+      <div id="onlineUsers" class="online-list"></div>
+      <div class="community-stats">
+        <div class="community-stat"><b id="communityOnline">0</b><span>ONLINE</span></div>
+        <div class="community-stat"><b id="communityMessages">0</b><span>MENSAJES</span></div>
+        <div class="community-stat"><b id="communityPlayers">0</b><span>JUGADORES</span></div>
+      </div>
+      <div class="social-tools">
+        <button class="social-mini" onclick="añadirExploradorLocal()">👤 Añadir explorador</button>
+        <button class="social-mini" onclick="limpiarChatLocal()">🧹 Limpiar chat local</button>
+      </div>
+      <div class="social-note" id="onlineNote">Los usuarios locales se muestran en este dispositivo. Con Supabase podrán sincronizarse entre jugadores.</div>
+    </div>
+  </div>
+</section>
+
 <section class="milestones">
 
 <h2 id="milestonesTitle">🏆 Hitos</h2>
@@ -1417,6 +1842,19 @@ MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 
 <div class="admin-section">
 
+<h3>🛡️ Moderación del chat</h3>
+
+<div class="admin-buttons">
+<button class="admin-button" onclick="adminCargarReportes()">📋 Ver reportes</button>
+<button class="admin-button" onclick="adminLimpiarReportesLocales()">🧹 Limpiar reportes locales</button>
+</div>
+
+<div id="adminChatReports" class="admin-chat-reports">No hay reportes cargados.</div>
+
+</div>
+
+<div class="admin-section">
+
 <h3>⚠️ Zona peligrosa</h3>
 
 <div class="admin-buttons">
@@ -1437,6 +1875,51 @@ MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
 admin: desconectado
 </div>
 
+</section>
+
+
+<section class="social-plus" id="socialPlusHub">
+  <div class="social-plus-card">
+    <h3>👤 Tu perfil social</h3>
+    <div class="social-profile">
+      <div class="social-avatar-big" id="socialAvatarBig">EX</div>
+      <div class="social-profile-main">
+        <div class="social-profile-name" id="socialProfileName">Explorador</div>
+        <div class="social-profile-title" id="socialProfileTitle">Conectado · modo local</div>
+      </div>
+    </div>
+    <div class="social-profile-stats">
+      <div class="social-profile-stat"><b id="socialStatRolls">0</b><span>TIRADAS</span></div>
+      <div class="social-profile-stat"><b id="socialStatLevel">1</b><span>NIVEL</span></div>
+      <div class="social-profile-stat"><b id="socialStatCoins">0</b><span>COINS</span></div>
+      <div class="social-profile-stat"><b id="socialStatSecrets">0</b><span>SECRETOS</span></div>
+    </div>
+    <div class="quick-chat" id="quickChatButtons">
+      <button onclick="socialQuickMessage('👋 ¡Buenas!')">👋 ¡Buenas!</button>
+      <button onclick="socialQuickMessage('🎲 ¿Qué te ha salido?')">🎲 ¿Qué te ha salido?</button>
+      <button onclick="socialQuickMessage('🔥 Voy a por la racha')">🔥 A por la racha</button>
+      <button onclick="socialQuickMessage('🦆 El pato ha vuelto')">🦆 El pato</button>
+      <button onclick="socialQuickMessage('🌐 Internet Randomizer')">🌐 Randomizer</button>
+    </div>
+  </div>
+
+  <div class="social-plus-card">
+    <h3>📡 Actividad reciente</h3>
+    <div class="social-feed" id="socialActivityFeed"></div>
+    <div class="social-tools-grid">
+      <button class="social-tool-btn" onclick="socialRefreshLocal()">🔄 Actualizar<small>Refresca usuarios y actividad</small></button>
+      <button class="social-tool-btn" onclick="socialRandomUser()">🎭 Añadir explorador<small>Añade un explorador local</small></button>
+      <button class="social-tool-btn" onclick="socialAnnounceRandom()">📢 Anuncio<small>Genera una actividad local</small></button>
+      <button class="social-tool-btn" onclick="socialExportProfile()">💾 Exportar perfil<small>Guarda tus datos en JSON</small></button>
+    </div>
+  </div>
+</section>
+
+<section class="social-plus-card" style="margin-top:14px" id="weeklyOfflineCard">
+  <h3>📅 Reto semanal offline</h3>
+  <div class="social-plus-muted" id="weeklyOfflineText">Completa objetivos esta semana para ganar RandomCoins y un cofre.</div>
+  <div class="weekly-progress"><div class="weekly-fill" id="weeklyOfflineFill"></div></div>
+  <div id="weeklyOfflineStatus" class="social-plus-muted">0 / 4 objetivos</div>
 </section>
 
 <footer>
@@ -1551,6 +2034,22 @@ localStorage.getItem("randomizerRetoDiarioTexto") || "";
 let rankingOrden = "clicks";
 
 let resultadoNuevo = false;
+
+/* =========================================================
+   ECONOMIA / PROGRESION OFFLINE
+========================================================= */
+let randomCoins = Number(localStorage.getItem("randomizerCoins")) || 0;
+let inventarioOffline = JSON.parse(localStorage.getItem("randomizerOfflineInventory") || "[]");
+let temasDesbloqueados = JSON.parse(localStorage.getItem("randomizerThemes") || '["default"]');
+let temaActual = localStorage.getItem("randomizerTheme") || "default";
+let logrosOffline = JSON.parse(localStorage.getItem("randomizerOfflineAchievements") || "[]");
+let progresoMisiones = JSON.parse(localStorage.getItem("randomizerDailyMissions") || "{}");
+let ultimaFechaMision = localStorage.getItem("randomizerDailyDate") || "";
+let cofresDisponibles = Number(localStorage.getItem("randomizerChests")) || 0;
+let fichasReroll = Number(localStorage.getItem("randomizerRerolls")) || 0;
+let boostXP = Number(localStorage.getItem("randomizerXPBoost")) || 0;
+let modosUsados = JSON.parse(localStorage.getItem("randomizerModesUsed") || "[]");
+
 
 let resultadoActual = {
 
@@ -2296,6 +2795,30 @@ nombreEn:"⚡ TURBO",
 descripcionEs:"Modo rápido con recompensas de XP mejoradas y resultados especiales.",
 descripcionEn:"Fast mode with boosted XP rewards and special results.",
 desbloqueado:7500
+},
+
+fortune:{
+nombreEs:"💰 FORTUNA",
+nombreEn:"💰 FORTUNE",
+descripcionEs:"Ganas muchas más RandomCoins y puedes encontrar premios extra.",
+descripcionEn:"Earn many more RandomCoins and find bonus prizes.",
+desbloqueado:5000
+},
+
+challenge:{
+nombreEs:"🧠 DESAFÍO",
+nombreEn:"🧠 CHALLENGE",
+descripcionEs:"Cada tirada intenta ponerte una pequeña prueba.",
+descripcionEn:"Every roll tries to give you a small challenge.",
+desbloqueado:15000
+},
+
+infinite:{
+nombreEs:"🌌 INFINITO",
+nombreEn:"🌌 INFINITE",
+descripcionEs:"Modo final: resultados especiales, XP extra y caos controlado.",
+descripcionEn:"Endgame mode: special results, bonus XP and controlled chaos.",
+desbloqueado:25000
 }
 
 };
@@ -2305,7 +2828,205 @@ desbloqueado:7500
    GUARDADO LOCAL
 ========================================================= */
 
+function guardarEconomiaOffline(){
+localStorage.setItem("randomizerCoins", randomCoins);
+localStorage.setItem("randomizerOfflineInventory", JSON.stringify(inventarioOffline));
+localStorage.setItem("randomizerThemes", JSON.stringify(temasDesbloqueados));
+localStorage.setItem("randomizerTheme", temaActual);
+localStorage.setItem("randomizerOfflineAchievements", JSON.stringify(logrosOffline));
+localStorage.setItem("randomizerDailyMissions", JSON.stringify(progresoMisiones));
+localStorage.setItem("randomizerDailyDate", ultimaFechaMision);
+localStorage.setItem("randomizerChests", cofresDisponibles);
+localStorage.setItem("randomizerRerolls", fichasReroll);
+localStorage.setItem("randomizerXPBoost", boostXP);
+localStorage.setItem("randomizerModesUsed", JSON.stringify(modosUsados));
+}
+
+function hoyLocal(){ return new Date().toISOString().slice(0,10); }
+
+const misionesOffline = [
+ {id:"rolls", objetivo:25, recompensa:250, icon:"🎲", es:"Haz 25 tiradas", en:"Make 25 rolls"},
+ {id:"secrets", objetivo:3, recompensa:400, icon:"🥚", es:"Encuentra 3 secretos", en:"Find 3 secrets"},
+ {id:"streak", objetivo:10, recompensa:600, icon:"🔥", es:"Alcanza una racha de 10", en:"Reach a streak of 10"},
+ {id:"modes", objetivo:3, recompensa:500, icon:"🎮", es:"Prueba 3 modos diferentes", en:"Try 3 different modes"}
+];
+
+const tiendaOffline = [
+ {id:"reroll", icon:"🎟️", coste:150, es:"Ficha de reroll", en:"Reroll token", descEs:"Permite repetir un resultado sin gastar otra tirada.", descEn:"Lets you reroll a result without spending another roll.", tipo:"consumible"},
+ {id:"chest", icon:"🎁", coste:250, es:"Cofre misterioso", en:"Mystery chest", descEs:"Añade un cofre para abrir más tarde.", descEn:"Adds a chest you can open later.", tipo:"cofre"},
+ {id:"xpboost", icon:"⚡", coste:500, es:"Impulso XP x2", en:"XP Boost x2", descEs:"Duplica la XP de tus próximas 10 tiradas.", descEn:"Doubles XP from your next 10 rolls.", tipo:"xp"},
+ {id:"themeNeon", icon:"🌈", coste:1200, es:"Tema Neon", en:"Neon Theme", descEs:"Desbloquea una interfaz más eléctrica.", descEn:"Unlock a more electric interface.", tipo:"tema", valor:"neon"},
+ {id:"themeOcean", icon:"🌊", coste:1800, es:"Tema Océano", en:"Ocean Theme", descEs:"Un aspecto azul para explorar Internet.", descEn:"A blue look for exploring the Internet.", tipo:"tema", valor:"ocean"},
+ {id:"themeGold", icon:"👑", coste:3000, es:"Tema Dorado", en:"Golden Theme", descEs:"Solo para gente con demasiado estilo.", descEn:"For people with far too much style.", tipo:"tema", valor:"gold"}
+];
+
+const logrosOfflineConfig = [
+ {id:"first", icon:"🎯", es:"Primera tirada", en:"First roll", ok:()=>contador>=1},
+ {id:"coins1k", icon:"🪙", es:"1.000 monedas", en:"1,000 coins", ok:()=>randomCoins>=1000},
+ {id:"modes3", icon:"🎮", es:"Explorador de modos", en:"Mode Explorer", ok:()=>modosUsados.length>=3},
+ {id:"modes7", icon:"🌐", es:"Todos los modos actuales", en:"All current modes", ok:()=>modosUsados.length>=Object.keys(modos).length},
+ {id:"secret5", icon:"🕵️", es:"Cinco secretos", en:"Five secrets", ok:()=>secretosEncontrados>=5},
+ {id:"streak25", icon:"🔥", es:"Racha de 25", en:"25 streak", ok:()=>mejorRacha>=25},
+ {id:"rich", icon:"💰", es:"Pequeño magnate", en:"Tiny tycoon", ok:()=>randomCoins>=10000},
+ {id:"chest5", icon:"🎁", es:"Cazador de cofres", en:"Chest hunter", ok:()=>cofresDisponibles>=5},
+ {id:"million", icon:"🌌", es:"Millonario del Randomizer", en:"Randomizer millionaire", ok:()=>contador>=100000}
+];
+
+function prepararMisiones(){
+ const fecha=hoyLocal();
+ if(ultimaFechaMision!==fecha){
+   ultimaFechaMision=fecha;
+   progresoMisiones={rolls:0,secrets:0,streak:0,modes:0,claimed:false};
+   guardarEconomiaOffline();
+ }
+}
+
+function sumarMonedas(cantidad){
+ randomCoins=Math.max(0,randomCoins+cantidad);
+ guardarEconomiaOffline();
+ actualizarEconomiaOffline();
+ comprobarLogrosOffline();
+}
+
+function actualizarMisionesOffline(){
+ prepararMisiones();
+ progresoMisiones.rolls=Math.max(progresoMisiones.rolls||0, Math.min(25, contador));
+ progresoMisiones.secrets=Math.max(progresoMisiones.secrets||0, Math.min(3, secretosEncontrados));
+ progresoMisiones.streak=Math.max(progresoMisiones.streak||0, Math.min(10, mejorRacha));
+ progresoMisiones.modes=Math.min(3, modosUsados.length);
+ if(!progresoMisiones.claimed && misionesOffline.every(m=>(progresoMisiones[m.id]||0)>=m.objetivo)){
+   progresoMisiones.claimed=true;
+   randomCoins+=1750;
+   cofresDisponibles+=1;
+   mostrarToastOffline(ingles?"🎯 Daily missions complete! +1,750 🪙 and 1 chest.":"🎯 ¡Misiones diarias completas! +1.750 🪙 y 1 cofre.");
+ }
+ guardarEconomiaOffline();
+ renderMisionesOffline();
+}
+
+function comprobarLogrosOffline(){
+ let nuevos=0;
+ logrosOfflineConfig.forEach(a=>{
+   if(a.ok() && !logrosOffline.includes(a.id)){
+     logrosOffline.push(a.id);
+     nuevos++;
+   }
+ });
+ if(nuevos){
+   randomCoins+=nuevos*100;
+   mostrarToastOffline(ingles?`🏆 ${nuevos} achievement(s)! +${nuevos*100} 🪙`:`🏆 ¡${nuevos} logro(s)! +${nuevos*100} 🪙`);
+ }
+ guardarEconomiaOffline();
+ renderLogrosOffline();
+}
+
+function actualizarEconomiaOffline(){
+ const c=document.getElementById("coinCounter"); if(c)c.textContent=randomCoins.toLocaleString();
+ const ch=document.getElementById("chestCounter"); if(ch)ch.textContent=cofresDisponibles;
+ const rr=document.getElementById("rerollCounter"); if(rr)rr.textContent=fichasReroll;
+ const xp=document.getElementById("xpBoostCounter"); if(xp)xp.textContent=boostXP;
+ const theme=document.getElementById("themeCurrent"); if(theme)theme.textContent=temaActual;
+}
+
+function mostrarToastOffline(texto){
+ const t=document.getElementById("offlineToast");
+ if(!t)return; t.textContent=texto; t.classList.add("show");
+ clearTimeout(window._offlineToastTimer);
+ window._offlineToastTimer=setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+function comprarOffline(id){
+ const item=tiendaOffline.find(x=>x.id===id); if(!item)return;
+ if(item.tipo==="tema" && temasDesbloqueados.includes(item.valor)){
+   aplicarTemaOffline(item.valor); return;
+ }
+ if(randomCoins<item.coste){ mostrarToastOffline(ingles?"🪙 Not enough RandomCoins.":"🪙 No tienes suficientes RandomCoins."); return; }
+ randomCoins-=item.coste;
+ if(item.tipo==="consumible") fichasReroll++;
+ if(item.tipo==="cofre") cofresDisponibles++;
+ if(item.tipo==="xp") boostXP+=10;
+ if(item.tipo==="tema" && !temasDesbloqueados.includes(item.valor)) temasDesbloqueados.push(item.valor);
+ guardarEconomiaOffline(); renderTiendaOffline(); actualizarEconomiaOffline();
+ mostrarToastOffline(ingles?`🛒 Purchased: ${item.en}`:`🛒 Comprado: ${item.es}`);
+}
+
+function abrirCofreOffline(){
+ if(cofresDisponibles<=0){mostrarToastOffline(ingles?"🎁 You have no chests.":"🎁 No tienes cofres.");return;}
+ cofresDisponibles--;
+ const roll=Math.random();
+ let premio;
+ if(roll<0.60){ const n=200+Math.floor(Math.random()*501); randomCoins+=n; premio=(ingles?`🪙 ${n} RandomCoins`:`🪙 ${n} RandomCoins`); }
+ else if(roll<0.82){ fichasReroll++; premio=ingles?"🎟️ 1 reroll token":"🎟️ 1 ficha de reroll"; }
+ else if(roll<0.95){ boostXP+=5; premio=ingles?"⚡ 5 XP boosts":"⚡ 5 impulsos de XP"; }
+ else { const locked=tiendaOffline.filter(x=>x.tipo==="tema"&&!temasDesbloqueados.includes(x.valor)); if(locked.length){const t=locked[Math.floor(Math.random()*locked.length)]; temasDesbloqueados.push(t.valor); premio=(ingles?"🌈 Theme unlocked: "+t.en:"🌈 Tema desbloqueado: "+t.es);} else {randomCoins+=2000;premio="💎 +2.000 RandomCoins";} }
+ guardarEconomiaOffline(); actualizarEconomiaOffline(); renderTiendaOffline(); comprobarLogrosOffline(); mostrarToastOffline((ingles?"🎁 CHEST: ":"🎁 COFRE: ")+premio);
+}
+
+function usarRerollOffline(){
+ if(!fichasReroll){mostrarToastOffline(ingles?"🎟️ No reroll tokens.":"🎟️ No tienes fichas de reroll.");return;}
+ fichasReroll--;
+ guardarEconomiaOffline();
+ actualizarEconomiaOffline();
+ const modoActual = modoSeleccionado || "normal";
+ const acciones = {
+   normal: resultadoNormal, duck: resultadoPatito, chaos: resultadoCaos, streak: resultadoRacha,
+   legendary: resultadoNormal, mystery: resultadoMisterio, turbo: resultadoTurbo, fortune: resultadoFortuna,
+   challenge: resultadoDesafio, infinite: resultadoInfinito
+ };
+ (acciones[modoActual] || resultadoNormal)();
+ mostrarToastOffline(ingles?"🎟️ Reroll used in the current mode.":"🎟️ Reroll usado en el modo actual.");
+}
+
+function aplicarTemaOffline(tema){
+ if(!temasDesbloqueados.includes(tema)){ mostrarToastOffline(ingles?"🔒 Theme locked.":"🔒 Tema bloqueado.");return;}
+ temaActual=tema; document.body.dataset.theme=tema; guardarEconomiaOffline(); actualizarEconomiaOffline(); renderTiendaOffline();
+ renderThemeButtons();
+}
+
+function renderThemeButtons(){
+ const box=document.getElementById("themeButtons");
+ if(!box)return;
+ const temas=[
+   {id:"default",icon:"🌑",es:"Original",en:"Original"},
+   {id:"neon",icon:"🌈",es:"Neón",en:"Neon"},
+   {id:"ocean",icon:"🌊",es:"Océano",en:"Ocean"},
+   {id:"gold",icon:"👑",es:"Dorado",en:"Golden"}
+ ];
+ box.innerHTML=temas.map(t=>{
+   const unlocked=temasDesbloqueados.includes(t.id);
+   const active=temaActual===t.id;
+   return `<button class="theme-button ${active?'active':''} ${unlocked?'':'locked'}" onclick="${unlocked?`aplicarTemaOffline('${t.id}')`:''}" ${unlocked?'':'disabled'}>${t.icon} ${ingles?t.en:t.es}${active?' ✓':''}${!unlocked?' 🔒':''}</button>`;
+ }).join("");
+}
+
+function renderTiendaOffline(){
+ const box=document.getElementById("offlineShopGrid"); if(!box)return; box.innerHTML="";
+ tiendaOffline.forEach(item=>{
+   const comprado=item.tipo==="tema"&&temasDesbloqueados.includes(item.valor);
+   const div=document.createElement("div"); div.className="shop-item"+(comprado?" owned":"");
+   const nombre=ingles?item.en:item.es, desc=ingles?item.descEn:item.descEs;
+   div.innerHTML=`<div class="shop-icon">${item.icon}</div><div class="shop-name">${nombre}</div><div class="shop-desc">${desc}</div><div class="shop-bottom"><b>🪙 ${item.coste.toLocaleString()}</b><button onclick="comprarOffline('${item.id}')">${item.tipo==="tema"?(comprado?(ingles?"Equip":"Equipar"):(ingles?"Buy":"Comprar")):(ingles?"Buy":"Comprar")}</button></div>`; box.appendChild(div);
+ });
+ renderThemeButtons();
+}
+
+function renderMisionesOffline(){
+ const box=document.getElementById("offlineMissionsGrid"); if(!box)return; prepararMisiones(); box.innerHTML="";
+ misionesOffline.forEach(m=>{const p=Math.min(m.objetivo,progresoMisiones[m.id]||0); const done=p>=m.objetivo; const d=document.createElement("div"); d.className="mission-item"+(done?" done":""); d.innerHTML=`<div class="mission-icon">${m.icon}</div><div class="mission-main"><b>${ingles?m.en:m.es}</b><div class="mission-bar"><span style="width:${p/m.objetivo*100}%"></span></div><small>${p}/${m.objetivo} · +${m.recompensa} 🪙</small></div>${done?"✅":""}`; box.appendChild(d);});
+}
+
+function renderLogrosOffline(){
+ const box=document.getElementById("offlineAchievements"); if(!box)return; box.innerHTML="";
+ logrosOfflineConfig.forEach(a=>{const ok=logrosOffline.includes(a.id); const d=document.createElement("div"); d.className="achievement-item"+(ok?" unlocked":""); d.innerHTML=`<span>${a.icon}</span><div><b>${ingles?a.en:a.es}</b><small>${ok?(ingles?"UNLOCKED":"DESBLOQUEADO"):(ingles?"Locked":"Bloqueado")}</small></div>`; box.appendChild(d);});
+}
+
+function renderModosOffline(){
+ const el=document.getElementById("offlineModeStats"); if(!el)return; el.textContent=(ingles?"Modes discovered: ":"Modos descubiertos: ")+modosUsados.length+" / "+Object.keys(modos).length;
+}
+
 function guardar(){
+
+guardarEconomiaOffline();
 
 localStorage.setItem(
 "randomizerContador",
@@ -2947,7 +3668,14 @@ function actualizarNivel(){
 }
 
 function ganarXP(cantidad){
-    xpExplorador += cantidad;
+    const multiplicador = boostXP > 0 ? 2 : 1;
+    const ganado = Math.max(0, Math.floor(cantidad * multiplicador));
+    if(boostXP > 0){
+        boostXP--;
+        guardarEconomiaOffline();
+        actualizarEconomiaOffline();
+    }
+    xpExplorador += ganado;
     guardar();
     actualizarNivel();
 }
@@ -3562,7 +4290,10 @@ const botones = [
 "streak",
 "legendary",
 "mystery",
-"turbo"
+"turbo",
+"fortune",
+"challenge",
+"infinite"
 ];
 
 botones.forEach(modo=>{
@@ -3789,6 +4520,11 @@ hito.toLocaleString();
 renderColeccion();
 actualizarModos();
 renderRutaRecompensas();
+actualizarEconomiaOffline();
+renderMisionesOffline();
+renderTiendaOffline();
+renderLogrosOffline();
+renderModosOffline();
 
 }
 
@@ -4602,6 +5338,19 @@ contador++;
 
 racha++;
 
+/* Economia offline */
+let monedasTirada = 8 + Math.floor(Math.random()*8);
+if(modoActual === "fortune") monedasTirada *= 4;
+if(modoActual === "turbo") monedasTirada *= 2;
+if(modoActual === "infinite") monedasTirada *= 3;
+if(racha >= 10) monedasTirada += Math.min(100, racha);
+randomCoins += monedasTirada;
+if(boostXP > 0) boostXP--;
+if(!modosUsados.includes(modoActual)) modosUsados.push(modoActual);
+actualizarMisionesOffline();
+comprobarLogrosOffline();
+
+
 
 if(
 racha > mejorRacha
@@ -4855,6 +5604,30 @@ await sincronizarSupabase();
 return;
 }
 
+/* FORTUNA */
+if(modoActual === "fortune"){
+ resultadoFortuna();
+ if(boton) boton.classList.remove("rolling");
+ await sincronizarSupabase();
+ return;
+}
+
+/* DESAFÍO */
+if(modoActual === "challenge"){
+ resultadoDesafio();
+ if(boton) boton.classList.remove("rolling");
+ await sincronizarSupabase();
+ return;
+}
+
+/* INFINITO */
+if(modoActual === "infinite"){
+ resultadoInfinito();
+ if(boton) boton.classList.remove("rolling");
+ await sincronizarSupabase();
+ return;
+}
+
 /* NORMAL */
 
 if(
@@ -4930,6 +5703,43 @@ function resultadoTurbo(){
     renderResultado();
 }
 
+
+function resultadoFortuna(){
+ const n=150+Math.floor(Math.random()*851);
+ randomCoins+=n;
+ const mensajes=[
+  {es:`💰 FORTUNA: Has encontrado ${n} RandomCoins.`,en:`💰 FORTUNE: You found ${n} RandomCoins.`},
+  {es:"🍀 FORTUNA: Hoy el algoritmo está de tu lado.",en:"🍀 FORTUNE: Today the algorithm is on your side."},
+  {es:"💎 FORTUNA: Algo brillante acaba de caer de Internet.",en:"💎 FORTUNE: Something shiny just fell out of the Internet."}
+ ];
+ const m=mensajes[Math.floor(Math.random()*mensajes.length)];
+ resultadoActual={es:m.es,en:m.en,categoriaEs:"💰 FORTUNA",categoriaEn:"💰 FORTUNE",url:null,secreto:false,hito:false,compartible:true,rareza:"FORTUNA",clase:"fortune"};
+ resultadoNuevo=true; guardarEconomiaOffline(); renderResultado();
+}
+
+function resultadoDesafio(){
+ const retos=[
+  {es:"🧠 DESAFÍO: Haz otra tirada usando un modo diferente.",en:"🧠 CHALLENGE: Roll again using a different mode."},
+  {es:"🎯 DESAFÍO: Intenta encontrar un secreto.",en:"🎯 CHALLENGE: Try to find a secret."},
+  {es:"🔥 DESAFÍO: Mantén tu racha viva.",en:"🔥 CHALLENGE: Keep your streak alive."},
+  {es:"🌐 DESAFÍO: El próximo resultado debe llevarte a otra web.",en:"🌐 CHALLENGE: Your next result must take you to another website."}
+ ];
+ const r=retos[Math.floor(Math.random()*retos.length)];
+ resultadoActual={es:r.es,en:r.en,categoriaEs:"🧠 DESAFÍO",categoriaEn:"🧠 CHALLENGE",url:null,secreto:false,hito:false,compartible:true,rareza:"DESAFÍO",clase:"challenge"};
+ resultadoNuevo=true; renderResultado();
+}
+
+function resultadoInfinito(){
+ if(intentarSecreto()) return;
+ const especiales=[
+  {es:"🌌 INFINITO: Has cruzado una frontera que no existe.",en:"🌌 INFINITE: You crossed a boundary that doesn't exist."},
+  {es:"🌀 INFINITO: El Randomizer acaba de generar una posibilidad imposible.",en:"🌀 INFINITE: The Randomizer just generated an impossible possibility."},
+  {es:"👁️ INFINITO: Internet parece no tener final.",en:"👁️ INFINITE: The Internet appears to have no end."}
+ ];
+ const r=especiales[Math.floor(Math.random()*especiales.length)];
+ resultadoActual={es:r.es,en:r.en,categoriaEs:"🌌 INFINITO",categoriaEn:"🌌 INFINITE",url:null,secreto:false,hito:false,compartible:true,rareza:"INFINITO",clase:"infinite"};
+ resultadoNuevo=true; renderResultado();
+}
 
 const recompensasEspeciales = [
 {n:500, id:"veterano", icon:"🏅", es:"Veterano", en:"Veteran", descEs:"Tu primer título especial.", descEn:"Your first special title."},
@@ -5405,6 +6215,14 @@ actualizarModos();
 actualizarBotonCompartir();
 
 actualizarTextosExtra();
+actualizarTextosOffline();
+prepararMisiones();
+document.body.dataset.theme = temaActual;
+actualizarEconomiaOffline();
+renderMisionesOffline();
+renderTiendaOffline();
+renderLogrosOffline();
+renderModosOffline();
 
 cargarRanking();
 
@@ -5420,6 +6238,17 @@ renderResultado();
 
 }
 
+
+function actualizarTextosOffline(){
+ const set=(id,es,en)=>{const e=document.getElementById(id);if(e)e.textContent=ingles?en:es;};
+ set("offlineHubTitle","💰 Central del Randomizer","💰 Randomizer Hub");
+ set("offlineHubSub","Economía, misiones y recompensas — todo guardado en este dispositivo.","Economy, missions and rewards — all saved on this device.");
+ set("coinLabel","RANDOMCOINS","RANDOMCOINS"); set("chestLabel","COFRES","CHESTS"); set("rerollLabel","REROLLS","REROLLS"); set("xpBoostLabel","BOOSTS XP","XP BOOSTS");
+ set("missionsTitle","🎯 Misiones diarias","🎯 Daily missions"); set("missionsSub","Completa las cuatro para un premio extra.","Complete all four for an extra prize.");
+ set("shopTitle","🛒 Tienda","🛒 Shop"); set("shopSub","Gasta tus RandomCoins en objetos y cosméticos.","Spend your RandomCoins on items and cosmetics.");
+ set("offlineToolsTitle","🎁 Cofres y personalización","🎁 Chests & customization"); set("openChestButton","🎁 Abrir cofre","🎁 Open chest"); set("rerollButton","🎟️ Usar reroll","🎟️ Use reroll"); set("achievementsTitle","🏆 Logros offline","🏆 Offline achievements");
+ const tc=document.getElementById("themeCurrentLabel"); if(tc)tc.firstChild.textContent=ingles?"Current theme: ":"Tema actual: ";
+}
 
 /* =========================================================
    ADMIN
@@ -5822,6 +6651,50 @@ secreto
    ADMIN RESET
 ========================================================= */
 
+async function adminCargarReportes(){
+  if(!comprobarAdmin()) return;
+  const box=document.getElementById("adminChatReports");
+  if(!box)return;
+
+  if(!supabaseClient){
+    box.textContent=ingles?"Supabase is not connected.":"Supabase no está conectado.";
+    return;
+  }
+
+  const {data,error}=await supabaseClient
+    .from("chat_reports")
+    .select("id,message_id,reporter,reported_username,reason,created_at,status")
+    .order("created_at",{ascending:false})
+    .limit(50);
+
+  if(error){
+    console.warn("Chat reports:",error);
+    box.textContent=ingles?"Could not load reports.":"No se pudieron cargar los reportes.";
+    return;
+  }
+
+  if(!data?.length){
+    box.textContent=ingles?"No reports.":"No hay reportes.";
+    return;
+  }
+
+  box.innerHTML=data.map(r=>`
+    <div class="admin-report">
+      <b>#${socialEscape(r.id)} · ${socialEscape(r.reported_username)}</b>
+      <span>${socialEscape(r.reporter)} · ${socialTime(r.created_at)}</span>
+      <small>${socialEscape(r.reason||"user_report")}</small>
+      <small>message_id: ${socialEscape(r.message_id)}</small>
+    </div>
+  `).join("");
+}
+
+function adminLimpiarReportesLocales(){
+  if(!comprobarAdmin())return;
+  chatReportedMessages=[];
+  guardarChatReports();
+  chatModerationToast(ingles?"Local report history cleared.":"Historial local de reportes limpiado.");
+}
+
 async function adminResetEstadisticas(){
 
 if(!comprobarAdmin())
@@ -5844,6 +6717,17 @@ secretosEncontrados = 0;
 
 recompensasDesbloqueadas = [];
 recompensasEquipadas = "";
+randomCoins = 0;
+inventarioOffline = [];
+temasDesbloqueados = ["default"];
+temaActual = "default";
+logrosOffline = [];
+progresoMisiones = {};
+cofresDisponibles = 0;
+fichasReroll = 0;
+boostXP = 0;
+modosUsados = [];
+document.body.dataset.theme = "default";
 
 secretosDescubiertos = [];
 
@@ -5958,6 +6842,8 @@ ingles
    INICIO
 ========================================================= */
 
+iniciarSocialHub();
+
 crearAdminSecretos();
 
 crearAdminHitos();
@@ -5974,6 +6860,11 @@ actualizarNivel();
 mostrarRetoDiario(false);
 renderHistorial();
 actualizarTextosExtra();
+actualizarTextosOffline();
+actualizarEconomiaOffline();
+renderMisionesOffline();
+renderTiendaOffline();
+renderLogrosOffline();
 
 cargarRanking();
 
@@ -5991,6 +6882,127 @@ ingles
 
 }
 
+</script>
+
+<div id="offlineToast"></div>
+
+
+<script>
+/* =========================================================
+   ULTIMATE OFFLINE SOCIAL EXTRAS
+========================================================= */
+const SOCIAL_ACTIVITY_KEY = "randomizerSocialActivity";
+const SOCIAL_WEEK_KEY = "randomizerSocialWeekly";
+let socialActivity = JSON.parse(localStorage.getItem(SOCIAL_ACTIVITY_KEY) || "[]");
+let socialWeekly = JSON.parse(localStorage.getItem(SOCIAL_WEEK_KEY) || "{}");
+
+function socialLocalWeek(){
+  const d=new Date();
+  const first=new Date(d.getFullYear(),0,1);
+  const week=Math.ceil((((d-first)/86400000)+first.getDay()+1)/7);
+  return d.getFullYear()+"-W"+week;
+}
+function socialSaveExtras(){
+  localStorage.setItem(SOCIAL_ACTIVITY_KEY,JSON.stringify(socialActivity.slice(-50)));
+  localStorage.setItem(SOCIAL_WEEK_KEY,JSON.stringify(socialWeekly));
+}
+function socialAddActivity(text){
+  socialActivity.push({text,at:new Date().toISOString()});
+  socialSaveExtras();
+  renderSocialExtras();
+}
+function socialTimeShort(iso){
+  try{return new Date(iso).toLocaleTimeString(ingles?"en-US":"es-ES",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}
+}
+function renderSocialExtras(){
+  const name=socialCurrentName();
+  const avatar=document.getElementById("socialAvatarBig");
+  if(avatar)avatar.textContent=name.slice(0,2).toUpperCase();
+  const n=document.getElementById("socialProfileName"); if(n)n.textContent=name;
+  const title=document.getElementById("socialProfileTitle"); if(title)title.textContent=(ingles?(SOCIAL_USE_SUPABASE?"Connected · online":"Connected · local mode"):(SOCIAL_USE_SUPABASE?"Conectado · online":"Conectado · modo local"))+(temaActual?" · "+temaActual:"");
+  const r=document.getElementById("socialStatRolls"); if(r)r.textContent=Number(contador||0).toLocaleString();
+  const l=document.getElementById("socialStatLevel"); if(l)l.textContent=obtenerNivel();
+  const c=document.getElementById("socialStatCoins"); if(c)c.textContent=Number(randomCoins||0).toLocaleString();
+  const se=document.getElementById("socialStatSecrets"); if(se)se.textContent=Number(secretosEncontrados||0).toLocaleString();
+  const feed=document.getElementById("socialActivityFeed");
+  if(feed){
+    const list=socialActivity.slice(-10).reverse();
+    feed.innerHTML=list.length?list.map(a=>`<div class="social-feed-item">${socialEscape(a.text)}<span class="social-feed-time">${socialTimeShort(a.at)}</span></div>`).join(""):"<div class='social-plus-muted'>Todavía no hay actividad.</div>";
+  }
+  renderWeeklyOffline();
+}
+function socialQuickMessage(text){
+  const input=document.getElementById("chatInput");
+  if(input){input.value=text;input.focus();}
+  enviarMensajeSocial({preventDefault:()=>{}});
+  socialAddActivity((ingles?"You sent: ":"Has enviado: ")+text);
+}
+function socialRefreshLocal(){
+  renderSocialChat();renderSocialUsers();renderSocialExtras();mostrarToastOffline(ingles?"📡 Social hub refreshed.":"📡 Central social actualizada.");
+}
+function socialRandomUser(){
+  añadirExploradorLocal();
+  socialAddActivity(ingles?"A new explorer joined.":"Un nuevo explorador ha entrado.");
+}
+function socialAnnounceRandom(){
+  const arr=ingles?["🎲 The Randomizer never sleeps.","🦆 Duck protocol activated.","🔥 Someone is building a huge streak.","🌐 New discoveries are waiting."]:["🎲 El Randomizer nunca duerme.","🦆 Protocolo pato activado.","🔥 Alguien está construyendo una racha enorme.","🌐 Hay nuevos descubrimientos esperando."];
+  socialAddActivity(arr[Math.floor(Math.random()*arr.length)]);
+  mostrarToastOffline(ingles?"📢 Announcement added.":"📢 Anuncio añadido.");
+}
+function socialExportProfile(){
+  const data={username:socialCurrentName(),rolls:contador,secrets:secretosEncontrados,bestStreak:mejorRacha,level:obtenerNivel(),xp:xpExplorador,coins:randomCoins,chests:cofresDisponibles,rerolls:fichasReroll,xpBoosts:boostXP,theme:temaActual,unlockedThemes:temasDesbloqueados,achievements:logrosOffline,rewards:inventarioRecompensas};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="internet-randomizer-profile.json";a.click();URL.revokeObjectURL(a.href);
+  socialAddActivity(ingles?"Profile exported.":"Perfil exportado.");
+}
+function renderWeeklyOffline(){
+  const key=socialLocalWeek();
+  if(socialWeekly.week!==key){socialWeekly={week:key,rolls:0,secrets:0,coins:0,modes:0,claimed:false};socialSaveExtras();}
+  socialWeekly.rolls=Math.min(100,Number(socialWeekly.rolls||0));
+  socialWeekly.secrets=Math.min(10,Number(socialWeekly.secrets||0));
+  socialWeekly.coins=Math.min(5000,Number(socialWeekly.coins||0));
+  socialWeekly.modes=Math.min(5,Number(socialWeekly.modes||0));
+  const done=[socialWeekly.rolls>=100,socialWeekly.secrets>=10,socialWeekly.coins>=5000,socialWeekly.modes>=5];
+  const count=done.filter(Boolean).length;
+  const fill=document.getElementById("weeklyOfflineFill"); if(fill)fill.style.width=(count*25)+"%";
+  const st=document.getElementById("weeklyOfflineStatus"); if(st)st.textContent=(ingles?`${count} / 4 objectives`:`${count} / 4 objetivos`)+(socialWeekly.claimed?(ingles?" · Claimed":" · Completado"):"");
+  const tx=document.getElementById("weeklyOfflineText"); if(tx)tx.textContent=ingles?"100 rolls · 10 secrets · 5,000 coins · 5 modes. Complete all four for +3,000 coins and 2 chests.":"100 tiradas · 10 secretos · 5.000 coins · 5 modos. Completa los cuatro para +3.000 coins y 2 cofres.";
+  if(count===4&&!socialWeekly.claimed){socialWeekly.claimed=true;randomCoins+=3000;cofresDisponibles+=2;guardarEconomiaOffline();actualizarEconomiaOffline();mostrarToastOffline(ingles?"📅 Weekly challenge complete! +3,000 🪙 +2 chests.":"📅 ¡Reto semanal completado! +3.000 🪙 +2 cofres.");socialAddActivity(ingles?"Weekly challenge completed.":"Reto semanal completado.");}
+}
+
+// Track weekly progress after each roll/result without changing the existing game logic.
+const _socialOriginalActualizarExtrasTrasResultado = actualizarExtrasTrasResultado;
+actualizarExtrasTrasResultado = function(){
+  _socialOriginalActualizarExtrasTrasResultado.apply(this,arguments);
+  const key=socialLocalWeek();
+  if(socialWeekly.week!==key)socialWeekly={week:key,rolls:0,secrets:0,coins:0,modes:0,claimed:false};
+  socialWeekly.rolls=Math.min(100,Number(socialWeekly.rolls||0)+1);
+  socialWeekly.secrets=Math.min(10,Number(socialWeekly.secrets||0)+(resultadoActual.secreto?1:0));
+  socialWeekly.coins=Math.min(5000,Number(socialWeekly.coins||0)+Math.max(0,Number(randomCoins||0)-Number(socialWeekly._lastCoins||0)));
+  socialWeekly._lastCoins=Number(randomCoins||0);
+  socialWeekly.modes=Math.min(5,new Set([...(modosUsados||[])]).size);
+  socialSaveExtras();
+  renderWeeklyOffline();
+  renderSocialExtras();
+};
+
+const _socialOriginalGuardarUsername = guardarUsername;
+guardarUsername = function(){
+  const r=_socialOriginalGuardarUsername.apply(this,arguments);
+  renderSocialExtras();renderSocialUsers();
+  return r;
+};
+
+const _socialOriginalCambiarIdioma = cambiarIdioma;
+cambiarIdioma = function(){
+  const r=_socialOriginalCambiarIdioma.apply(this,arguments);
+  renderSocialExtras();renderWeeklyOffline();renderThemeButtons();
+  return r;
+};
+
+window.addEventListener("DOMContentLoaded",()=>{
+  setTimeout(()=>{renderThemeButtons();renderSocialExtras();renderWeeklyOffline();},80);
+});
 </script>
 
 </body>
