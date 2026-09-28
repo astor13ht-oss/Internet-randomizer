@@ -181,23 +181,57 @@ async function reportarMensajeChat(id, username, text){
 function renderSocialChat(){
   const box=document.getElementById("chatMessages");
   if(!box)return;
+
   if(!socialMessages.length){
     box.innerHTML='<div class="chat-empty">Todavía no hay mensajes.<br>¡Sé el primero en escribir!</div>';
   }else{
     box.innerHTML=socialMessages.slice(-100).map(m=>{
       const mine=(m.username||m.user)===socialCurrentName();
+      const isAdminMessage=!!(m.author_id && adminUser && m.author_id===adminUser.id);
       const mid=socialEscape(m.id);
       const uname=socialEscape(m.username||m.user);
-      return `<div class="chat-message ${mine?'mine':''}">
-        <div class="chat-name">${uname} <span class="chat-time">${socialTime(m.created_at)}</span></div>
+      const adminBadge=isAdminMessage ? '<span class="chat-admin-badge">ADMIN</span>' : '';
+      const deleteButton=(esAdminAutenticado() && !String(m.id).startsWith("local-"))
+        ? `<button class="chat-delete" onclick="eliminarMensajeChat('${mid}')">🗑️ ${ingles?"Delete":"Eliminar"}</button>`
+        : "";
+      const reportButton=(!mine && !String(m.id).startsWith("local-") && !esAdminAutenticado())
+        ? `<button class="chat-report" onclick="reportarMensajeChat('${mid}','${uname.replace(/'/g,"&#39;")}','${socialEscape(m.text).replace(/'/g,"&#39;")}')">⚑ ${ingles?"Report":"Reportar"}</button>`
+        : "";
+
+      return `<div class="chat-message ${mine?'mine ':''}${isAdminMessage?'admin-message':''}">
+        <div class="chat-name">${uname}${adminBadge} <span class="chat-time">${socialTime(m.created_at)}</span></div>
         <div class="chat-text">${socialEscape(m.text)}</div>
-        ${!mine && !String(m.id).startsWith("local-") ? `<button class="chat-report" onclick="reportarMensajeChat('${mid}','${uname.replace(/'/g,"&#39;")}','${socialEscape(m.text).replace(/'/g,"&#39;")}')">⚑ ${ingles?"Report":"Reportar"}</button>` : ""}
+        ${deleteButton}
+        ${reportButton}
       </div>`;
     }).join("");
     box.scrollTop=box.scrollHeight;
   }
+
   const stat=document.getElementById("communityMessages");
   if(stat)stat.textContent=socialMessages.length;
+}
+
+async function eliminarMensajeChat(id){
+  if(!esAdminAutenticado() || !supabaseClient || !id)return;
+
+  const confirmado=confirm(ingles?"Delete this chat message?":"¿Eliminar este mensaje del chat?");
+  if(!confirmado)return;
+
+  const {error}=await supabaseClient
+    .from("chat_messages")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+    console.warn("Chat delete:",error);
+    chatModerationToast(ingles?"The message could not be deleted.":"No se pudo eliminar el mensaje.");
+    return;
+  }
+
+  socialMessages=socialMessages.filter(m=>String(m.id)!==String(id));
+  renderSocialChat();
+  actualizarAdminStatus("mensaje eliminado");
 }
 
 function renderSocialUsers(){
@@ -241,7 +275,7 @@ function enviarMensajeSocial(event){
 }
 
 async function enviarMensajeSupabase(msg){
-  const {error}=await supabaseClient.from("chat_messages").insert({username:msg.user,text:msg.text});
+  const {error}=await supabaseClient.from("chat_messages").insert({username:msg.user,text:msg.text,author_id:adminUser?.id || null});
   if(error){
     console.warn("Chat Supabase:",error);
     chatModerationToast(ingles?"The message could not be sent.":"No se pudo enviar el mensaje.");
@@ -265,7 +299,7 @@ function limpiarChatLocal(){
 
 async function cargarChatSupabase(){
   if(!supabaseClient)return;
-  const {data,error}=await supabaseClient.from("chat_messages").select("id,username,text,created_at").order("created_at",{ascending:true}).limit(100);
+  const {data,error}=await supabaseClient.from("chat_messages").select("id,username,text,created_at,author_id").order("created_at",{ascending:true}).limit(100);
   if(error){console.warn("Chat Supabase:",error);return;}
   socialMessages=data||[];renderSocialChat();
 }
@@ -302,6 +336,13 @@ function iniciarSocialSupabase(){
       if(!socialMessages.some(m=>String(m.id)===String(row.id))){
         socialMessages.push(row);
         socialMessages=socialMessages.slice(-100);
+        renderSocialChat();
+      }
+    })
+    .on("postgres_changes",{event:"DELETE",schema:"public",table:"chat_messages"},payload=>{
+      const deletedId=payload.old?.id;
+      if(deletedId!==undefined){
+        socialMessages=socialMessages.filter(m=>String(m.id)!==String(deletedId));
         renderSocialChat();
       }
     })
@@ -976,6 +1017,19 @@ h1{
 .admin-danger{
     border-color:#ff5555;
 }
+
+
+.admin-auth-box{margin-top:12px;padding:14px;border:1px solid #333;border-radius:10px;background:#080808}
+.admin-auth-row{display:flex;gap:8px;flex-wrap:wrap}
+.admin-auth-input{flex:1;min-width:190px;background:#101010;color:#fff;border:1px solid #444;border-radius:7px;padding:10px;outline:none}
+.admin-auth-input:focus{border-color:#ff4d8d}
+.admin-auth-button{background:#191919;color:#fff;border:1px solid #555;border-radius:7px;padding:10px 13px;cursor:pointer;font-family:monospace}
+.admin-auth-button:hover{border-color:#ff4d8d}
+.admin-auth-state{margin-top:9px;color:#888;font-family:monospace;font-size:11px}
+.chat-admin-badge{display:inline-block;margin-left:5px;padding:2px 5px;border-radius:5px;background:#ff4d8d;color:#fff;font-size:.62rem;font-weight:900}
+.chat-delete{margin-top:6px;border:0;background:transparent;color:#ff7777;font-size:.65rem;cursor:pointer;padding:2px 0}
+.chat-delete:hover{color:#fff}
+.chat-message.admin-message{border-color:rgba(255,77,141,.45);box-shadow:0 0 12px rgba(255,77,141,.08)}
 
 .admin-status{
     margin-top:15px;
@@ -1789,8 +1843,19 @@ result: probably not useful
 
 <h2 id="adminTitle">🔐 INTERNET RANDOMIZER ADMIN</h2>
 
+
+<div class="admin-auth-box">
+  <div class="admin-auth-row">
+    <input id="adminEmail" class="admin-auth-input" type="email" autocomplete="username" placeholder="Email de administrador">
+    <input id="adminPassword" class="admin-auth-input" type="password" autocomplete="current-password" placeholder="Contraseña">
+    <button class="admin-auth-button" onclick="iniciarSesionAdmin()">🔐 Iniciar sesión</button>
+    <button class="admin-auth-button" onclick="cerrarSesionAdmin()">🚪 Cerrar sesión</button>
+  </div>
+  <div id="adminAuthState" class="admin-auth-state">Cuenta admin: no autenticada</div>
+</div>
+
 <div class="admin-warning" id="adminWarning">
-MODO DE DESARROLLO — las pruebas NO cuentan como tiradas.
+AUTENTICACIÓN SEGURA — inicia sesión con tu cuenta admin de Supabase. Las pruebas NO cuentan como tiradas.
 </div>
 
 <div class="admin-section">
@@ -3400,7 +3465,7 @@ rankingOrden,
 ascending:false
 }
 )
-.limit(10);
+.limit(20);
 
 
 if(error){
@@ -3572,8 +3637,8 @@ if(estado){
 
 estado.textContent =
 ingles
-? "☁️ Top 10 players"
-: "☁️ Top 10 jugadores";
+? "☁️ Top 20 players"
+: "☁️ Top 20 jugadores";
 
 }
 
@@ -6254,109 +6319,159 @@ function actualizarTextosOffline(){
    ADMIN
 ========================================================= */
 
-const ADMIN_PASSWORD =
-"PATO-4869-ADMIN";
 
+let adminAuthSession = null;
+let adminUser = null;
+let adminRole = null;
+
+function esAdminAutenticado(){
+  return !!(adminAuthSession && adminUser && adminRole === "admin");
+}
 
 function comprobarAdmin(){
-
-return adminActivo;
-
+  return esAdminAutenticado();
 }
 
+function actualizarEstadoAdminUI(){
+  const estado=document.getElementById("adminAuthState");
+  if(!estado)return;
+  if(esAdminAutenticado()){
+    estado.textContent="👑 Cuenta admin conectada: "+(adminUser.email||"admin");
+  }else if(adminAuthSession){
+    estado.textContent="⚠️ La cuenta está iniciada pero no tiene rol admin.";
+  }else{
+    estado.textContent="Cuenta admin: no autenticada";
+  }
+}
+
+async function cargarRolAdmin(){
+  if(!supabaseClient || !adminUser){
+    adminRole=null;
+    actualizarEstadoAdminUI();
+    return false;
+  }
+
+  const {data,error}=await supabaseClient
+    .from("admin_users")
+    .select("role")
+    .eq("user_id",adminUser.id)
+    .maybeSingle();
+
+  if(error){
+    console.warn("Admin role:",error);
+    adminRole=null;
+    actualizarEstadoAdminUI();
+    return false;
+  }
+
+  adminRole=data?.role || null;
+  actualizarEstadoAdminUI();
+  return adminRole==="admin";
+}
+
+async function iniciarSesionAdmin(){
+  if(!supabaseClient){
+    alert("Supabase no está conectado.");
+    return;
+  }
+
+  const email=(document.getElementById("adminEmail")?.value||"").trim();
+  const password=document.getElementById("adminPassword")?.value||"";
+
+  if(!email || !password){
+    alert(ingles?"Enter your admin email and password.":"Introduce el email y la contraseña de administrador.");
+    return;
+  }
+
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+
+  if(error){
+    console.warn("Admin login:",error);
+    adminAuthSession=null;
+    adminUser=null;
+    adminRole=null;
+    actualizarEstadoAdminUI();
+    alert(ingles?"Admin login failed.":"No se pudo iniciar sesión como administrador.");
+    return;
+  }
+
+  adminAuthSession=data.session;
+  adminUser=data.user;
+  const ok=await cargarRolAdmin();
+
+  if(!ok){
+    await supabaseClient.auth.signOut();
+    adminAuthSession=null;
+    adminUser=null;
+    adminRole=null;
+    actualizarEstadoAdminUI();
+    alert(ingles?"This account is not an admin.":"Esta cuenta no tiene permisos de administrador.");
+    return;
+  }
+
+  adminActivo=true;
+  document.getElementById("adminPanel").style.display="block";
+  actualizarAdminStatus("cuenta autenticada");
+  renderSocialChat();
+}
+
+async function cerrarSesionAdmin(){
+  if(supabaseClient){
+    const {error}=await supabaseClient.auth.signOut();
+    if(error)console.warn("Admin logout:",error);
+  }
+  adminAuthSession=null;
+  adminUser=null;
+  adminRole=null;
+  adminActivo=false;
+  actualizarEstadoAdminUI();
+  actualizarAdminStatus("desconectado");
+  renderSocialChat();
+}
+
+async function restaurarSesionAdmin(){
+  if(!supabaseClient){
+    actualizarEstadoAdminUI();
+    return;
+  }
+
+  const {data}=await supabaseClient.auth.getSession();
+  adminAuthSession=data?.session || null;
+  adminUser=adminAuthSession?.user || null;
+
+  if(adminUser){
+    const ok=await cargarRolAdmin();
+    adminActivo=ok;
+  }else{
+    actualizarEstadoAdminUI();
+  }
+
+  renderSocialChat();
+}
 
 function abrirAdmin(){
+  const panel=document.getElementById("adminPanel");
+  if(panel)panel.style.display="block";
+  actualizarEstadoAdminUI();
 
-if(adminActivo){
-
-document.getElementById(
-"adminPanel"
-).style.display =
-"block";
-
-return;
-
+  if(esAdminAutenticado()){
+    actualizarAdminStatus("cuenta autenticada");
+    adminCargarReportes();
+  }else{
+    actualizarAdminStatus("esperando inicio de sesión");
+  }
 }
-
-
-const password =
-prompt(
-ingles
-? "🔐 Enter admin password:"
-: "🔐 Introduce la contraseña de administrador:"
-);
-
-
-if(
-password === ADMIN_PASSWORD
-){
-
-adminActivo = true;
-
-document.getElementById(
-"adminPanel"
-).style.display =
-"block";
-
-
-actualizarAdminStatus(
-"autenticado"
-);
-
-
-if(typeof gtag === "function"){
-
-gtag(
-"event",
-"admin_login"
-);
-
-}
-
-}else if(
-password !== null
-){
-
-alert(
-ingles
-? "❌ Incorrect password."
-: "❌ Contraseña incorrecta."
-);
-
-}
-
-}
-
 
 function cerrarAdmin(){
-
-adminActivo =
-false;
-
-document.getElementById(
-"adminPanel"
-).style.display =
-"none";
-
+  const panel=document.getElementById("adminPanel");
+  if(panel)panel.style.display="none";
+  actualizarAdminStatus("desconectado");
 }
-
 
 function actualizarAdminStatus(texto){
-
-const elemento =
-document.getElementById(
-"adminStatus"
-);
-
-if(elemento){
-
-elemento.textContent =
-"admin: " + texto;
-
+  const elemento=document.getElementById("adminStatus");
+  if(elemento)elemento.textContent="admin: "+texto;
 }
-
-}
-
 
 /* =========================================================
    ADMIN SECRETOS
@@ -6843,6 +6958,8 @@ ingles
 ========================================================= */
 
 iniciarSocialHub();
+
+restaurarSesionAdmin();
 
 crearAdminSecretos();
 
