@@ -1377,7 +1377,7 @@ body[data-theme="gold"] h1{color:#ffd75a;text-shadow:4px 4px 0 #5e4300}
 @media(max-width:900px){.social-grid{grid-template-columns:1fr}.social-header{flex-direction:column}.social-status{align-self:flex-start}}
 @media(max-width:600px){.social-hub{padding:14px}.chat-box{height:280px}.chat-send{padding:0 12px}.community-stats{grid-template-columns:1fr 1fr}.social-message{max-width:92%}}
 
-</style>
+.ir3-main-title{margin:0 0 14px;text-align:center;font-size:clamp(30px,5vw,54px);font-weight:1000;letter-spacing:-1px;background:linear-gradient(90deg,#ffffff,#8cc8ff,#c58cff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 35px rgba(100,160,255,.16)}.ir3-clean-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:210px;text-align:center}.ir3-clean-hero .ir3-primary{font-size:20px;padding:18px 34px;min-width:250px}.ir3-clean-hero #result{display:none}.ir3-topbar .ir3-logo{width:1px;min-width:1px;overflow:hidden}.game-layout{align-items:start}.game-layout .random-box{min-width:0}.game-layout .ranking{height:max-content}.game-layout #result{margin-top:18px}.game-layout #result .result-text{font-size:clamp(20px,3vw,30px)}</style>
 
 
 <style>
@@ -1400,9 +1400,260 @@ body[data-theme="gold"] h1{color:#ffd75a;text-shadow:4px 4px 0 #5e4300}
 @media(max-width:850px){.social-plus{grid-template-columns:1fr}.social-profile-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+
+<style>
+/* =========================================================
+   UPDATE 2.0 — SOCIAL / WORLD / EVENTS
+========================================================= */
+.social2{margin-top:16px;display:grid;grid-template-columns:1.35fr .65fr;gap:14px}
+.social2-card{background:linear-gradient(145deg,#12101a,#0d0d12);border:1px solid #33264d;border-radius:16px;padding:16px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+.social2-card h3{margin:0 0 10px;color:#c58cff}
+.social2-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.social2-tab{background:#17151d;color:#aaa;border:1px solid #333;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:700}
+.social2-tab.active{border-color:#b66cff;color:#fff;background:#21172e}
+.social2-panel{display:none}.social2-panel.active{display:block}
+.social2-search{display:flex;gap:7px}.social2-input{flex:1;min-width:0;background:#09090c;color:#fff;border:1px solid #333;border-radius:8px;padding:10px;outline:none}.social2-input:focus{border-color:#b66cff}
+.social2-btn{background:#21182e;color:#fff;border:1px solid #4a3860;border-radius:8px;padding:9px 12px;cursor:pointer;font-weight:700}.social2-btn:hover{border-color:#b66cff}
+.social2-list{display:flex;flex-direction:column;gap:7px;margin-top:10px;max-height:270px;overflow:auto}
+.social2-item{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #292929;border-radius:10px;background:#0d0d11}
+.social2-avatar{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#7c3aed,#2dd4bf);font-weight:900;flex:none}
+.social2-main{min-width:0;flex:1}.social2-name{font-weight:800}.social2-meta{font-size:10px;color:#777;margin-top:2px}.social2-actions{display:flex;gap:5px;flex-wrap:wrap}.social2-small{background:#171717;color:#ddd;border:1px solid #333;border-radius:6px;padding:6px 8px;cursor:pointer;font-size:11px}.social2-small:hover{border-color:#b66cff}
+.social2-empty{color:#666;font-family:monospace;font-size:12px;padding:18px;text-align:center;border:1px dashed #333;border-radius:9px}
+.social2-conversation{height:220px;overflow:auto;padding:8px;background:#08080b;border:1px solid #282828;border-radius:9px;display:flex;flex-direction:column;gap:7px}
+.social2-msg{max-width:82%;padding:8px 10px;border-radius:10px;background:#17171d;align-self:flex-start}.social2-msg.mine{align-self:flex-end;background:#28183d;border:1px solid #50356b}.social2-msg small{display:block;color:#666;font-size:9px;margin-top:3px}
+.social2-compose{display:flex;gap:7px;margin-top:8px}.social2-note{font-size:10px;color:#666;line-height:1.4;margin-top:8px}
+.social2-notification{padding:9px;border:1px solid #292929;border-radius:9px;background:#101014}.social2-notification.unread{border-color:#b66cff;background:#17101f}.social2-notification b{display:block}.social2-notification span{display:block;color:#999;font-size:11px;margin-top:3px}
+.social2-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px}.social2-statbox{padding:14px;border:1px solid #292929;border-radius:12px;background:#101014}.social2-statbox .big{font-size:28px;font-weight:900}.social2-statbox small{color:#777;font-family:monospace}
+.streak-fire{font-size:28px}.streak-progress{height:8px;background:#060609;border:1px solid #292929;border-radius:99px;overflow:hidden;margin:8px 0}.streak-progress span{display:block;height:100%;width:0;background:#ff704d;transition:width .3s}
+.challenge-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}.challenge-item{padding:8px;border:1px solid #292929;border-radius:8px;font-size:11px}.challenge-item.done{border-color:#67e8a5;color:#67e8a5}.challenge-item b{display:block}.challenge-item small{color:#777}
+.global-event{background:linear-gradient(135deg,#16101f,#0e1218);border:1px solid #6d3e9d;border-radius:14px;padding:14px}.event-title{font-size:18px;font-weight:900}.event-desc{color:#aaa;font-size:12px;margin-top:4px}.event-bar{height:10px;background:#060609;border-radius:99px;overflow:hidden;border:1px solid #333;margin:10px 0}.event-bar span{display:block;height:100%;width:0;background:#b66cff;transition:width .3s}.event-meta{display:flex;justify-content:space-between;color:#777;font-family:monospace;font-size:10px}.season-badge{display:inline-block;padding:5px 8px;border:1px solid #b66cff;border-radius:999px;color:#d7b8ff;font-size:10px;font-weight:800}
+.social2-warning{font-size:10px;color:#777;margin-top:9px}.social2-warning strong{color:#aaa}
+@media(max-width:900px){.social2{grid-template-columns:1fr}.social2-grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.social2-grid3{grid-template-columns:1fr}.social2-compose,.social2-search{flex-direction:column}.social2-btn{width:100%}.social2-msg{max-width:94%}}
+</style>
+
+
+<style id="ir3-cinematic-css">
+:root{--ir-bg:#050816;--ir-panel:rgba(12,18,39,.82);--ir-panel2:rgba(18,27,54,.72);--ir-line:rgba(130,160,255,.18);--ir-blue:#4f8cff;--ir-cyan:#43e6ff;--ir-purple:#9b6cff;--ir-pink:#ff4fd8;--ir-green:#45f0a0;--ir-gold:#ffd45a;--ir-text:#eef4ff;--ir-muted:#91a4c8;--ir-shadow:0 25px 70px rgba(0,0,0,.38)}
+body.ir3-active{background:radial-gradient(circle at 20% 0%,rgba(74,111,255,.16),transparent 30%),radial-gradient(circle at 85% 10%,rgba(192,70,255,.13),transparent 28%),linear-gradient(135deg,#03050d,#080d1e 48%,#050816);color:var(--ir-text)}
+body.ir3-active:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:45px 45px;mask-image:linear-gradient(to bottom,black,transparent 90%);z-index:-1}
+.ir3-shell{width:min(1450px,94vw);margin:25px auto 70px;position:relative;z-index:2}
+.ir3-topbar{position:sticky;top:12px;z-index:40;display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--ir-line);background:rgba(5,9,23,.78);backdrop-filter:blur(22px);border-radius:22px;box-shadow:0 15px 50px rgba(0,0,0,.28)}
+.ir3-logo{font-weight:1000;letter-spacing:-.04em;font-size:19px;white-space:nowrap}.ir3-logo span{filter:drop-shadow(0 0 12px rgba(79,140,255,.8))}
+.ir3-nav{display:flex;gap:7px;overflow:auto;scrollbar-width:none;flex:1}.ir3-nav::-webkit-scrollbar{display:none}.ir3-nav button{border:1px solid transparent;background:transparent;color:#aebfe0;padding:9px 11px;border-radius:12px;white-space:nowrap;font-weight:800;cursor:pointer}.ir3-nav button:hover,.ir3-nav button.active{color:#fff;background:rgba(79,140,255,.13);border-color:rgba(79,140,255,.24)}
+.ir3-minihud{display:flex;gap:7px;align-items:center}.ir3-chip{padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;white-space:nowrap}.ir3-chip b{color:#fff}
+.ir3-page{display:none;animation:ir3In .35s ease}.ir3-page.active{display:block}@keyframes ir3In{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.ir3-hero{margin-top:22px;min-height:440px;border-radius:34px;border:1px solid rgba(115,151,255,.24);overflow:hidden;position:relative;background:radial-gradient(circle at 50% 35%,rgba(79,140,255,.20),transparent 28%),linear-gradient(135deg,rgba(16,27,61,.9),rgba(6,9,24,.92));box-shadow:var(--ir-shadow)}
+.ir3-hero:before,.ir3-hero:after{content:"";position:absolute;border-radius:50%;filter:blur(1px);pointer-events:none}.ir3-hero:before{width:340px;height:340px;right:-100px;top:-110px;background:radial-gradient(circle,rgba(155,108,255,.25),transparent 68%)}.ir3-hero:after{width:300px;height:300px;left:-110px;bottom:-140px;background:radial-gradient(circle,rgba(67,230,255,.18),transparent 68%)}
+.ir3-stars{position:absolute;inset:0;overflow:hidden;opacity:.65}.ir3-stars i{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:ir3Twinkle 3s infinite ease-in-out}.ir3-stars i:nth-child(1){left:8%;top:18%;animation-delay:.1s}.ir3-stars i:nth-child(2){left:18%;top:72%;animation-delay:1s}.ir3-stars i:nth-child(3){left:31%;top:12%;animation-delay:1.7s}.ir3-stars i:nth-child(4){left:47%;top:26%;animation-delay:.5s}.ir3-stars i:nth-child(5){left:59%;top:11%;animation-delay:2s}.ir3-stars i:nth-child(6){left:76%;top:35%;animation-delay:.8s}.ir3-stars i:nth-child(7){left:88%;top:17%;animation-delay:1.3s}.ir3-stars i:nth-child(8){left:70%;top:76%;animation-delay:.2s}.ir3-stars i:nth-child(9){left:42%;top:83%;animation-delay:1.8s}.ir3-stars i:nth-child(10){left:12%;top:46%;animation-delay:2.2s}@keyframes ir3Twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.8)}}
+.ir3-hero-content{position:relative;z-index:2;padding:54px clamp(22px,6vw,80px);display:grid;grid-template-columns:1.1fr .9fr;gap:45px;align-items:center;height:100%}.ir3-kicker{color:var(--ir-cyan);font-size:12px;letter-spacing:.18em;font-weight:1000;text-transform:uppercase}.ir3-hero h1{font-size:clamp(42px,6vw,82px);line-height:.92;margin:10px 0 18px;letter-spacing:-.07em}.ir3-hero h1 span{background:linear-gradient(90deg,#fff,#75c8ff,#b48cff);-webkit-background-clip:text;background-clip:text;color:transparent}.ir3-hero p{color:#aab9d8;font-size:17px;line-height:1.55;max-width:700px}.ir3-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.ir3-primary{border:0;cursor:pointer;border-radius:18px;padding:16px 25px;font-weight:1000;font-size:16px;color:white;background:linear-gradient(135deg,#397cff,#8d57ff);box-shadow:0 0 35px rgba(79,140,255,.35);transition:.25s;position:relative;overflow:hidden}.ir3-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 55px rgba(79,140,255,.52)}.ir3-primary:active{transform:scale(.98)}.ir3-secondary{border:1px solid rgba(255,255,255,.12);cursor:pointer;border-radius:18px;padding:15px 20px;font-weight:900;color:#d8e5ff;background:rgba(255,255,255,.045)}
+.ir3-orb-wrap{display:grid;place-items:center;min-height:280px}.ir3-orb{width:min(280px,65vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle at 38% 30%,#ffffff,rgba(104,190,255,.9) 7%,rgba(79,140,255,.35) 28%,rgba(70,45,170,.22) 55%,transparent 70%);filter:drop-shadow(0 0 50px rgba(79,140,255,.55));animation:ir3Float 5s ease-in-out infinite}.ir3-orb:before,.ir3-orb:after{content:"";position:absolute;border:1px solid rgba(112,213,255,.42);border-radius:50%;inset:10%;transform:rotate(28deg) scaleY(.36)}.ir3-orb:after{inset:18%;transform:rotate(-35deg) scaleY(.3)}.ir3-dice{font-size:88px;filter:drop-shadow(0 0 20px rgba(255,255,255,.7));animation:ir3Spin 9s linear infinite}@keyframes ir3Float{50%{transform:translateY(-13px)}}@keyframes ir3Spin{to{transform:rotate(360deg)}}
+.ir3-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:18px}.ir3-card{grid-column:span 3;border:1px solid var(--ir-line);background:linear-gradient(145deg,rgba(16,26,52,.86),rgba(7,11,27,.84));border-radius:22px;padding:18px;box-shadow:0 15px 40px rgba(0,0,0,.2);position:relative;overflow:hidden}.ir3-card:after{content:"";position:absolute;width:100px;height:100px;right:-55px;top:-55px;border-radius:50%;background:rgba(79,140,255,.12);filter:blur(5px)}.ir3-card.wide{grid-column:span 6}.ir3-card.full{grid-column:1/-1}.ir3-card h3{margin:0 0 8px;font-size:16px}.ir3-muted{color:var(--ir-muted);font-size:12px}.ir3-value{font-size:28px;font-weight:1000;margin-top:8px}.ir3-progress{height:9px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-top:11px}.ir3-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ir-blue),var(--ir-cyan));border-radius:inherit;transition:width .7s}.ir3-statrow{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:12px;color:#9fb0d0}
+.ir3-section-title{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:35px 0 13px}.ir3-section-title h2{margin:0;font-size:28px;letter-spacing:-.04em}.ir3-section-title p{margin:0;color:#8295bb;font-size:13px}
+.ir3-world{min-height:650px;border-radius:30px;border:1px solid rgba(92,144,255,.25);overflow:hidden;position:relative;background:linear-gradient(#091833 0 37%,#10283a 37% 45%,#12391f 45% 100%);box-shadow:var(--ir-shadow)}.ir3-sky{position:absolute;inset:0 0 63% 0;background:radial-gradient(circle at 70% 35%,rgba(255,236,167,.9) 0 2%,rgba(255,236,167,.12) 9%,transparent 17%),linear-gradient(180deg,#081126,#10264c);overflow:hidden}.ir3-moon{position:absolute;right:11%;top:13%;width:82px;height:82px;border-radius:50%;background:#e6f1ff;box-shadow:0 0 50px rgba(211,235,255,.45)}.ir3-horizon{position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(180deg,transparent,#0a1820 20%),repeating-linear-gradient(90deg,rgba(0,0,0,.13) 0 4px,transparent 4px 24px);clip-path:polygon(0 58%,7% 45%,14% 56%,22% 31%,30% 53%,40% 36%,49% 52%,59% 29%,70% 49%,80% 33%,90% 52%,100% 38%,100% 100%,0 100%)}
+.ir3-ground{position:absolute;left:0;right:0;bottom:0;height:55%;background:radial-gradient(circle at 50% 50%,rgba(75,206,100,.17),transparent 45%),linear-gradient(180deg,rgba(14,60,35,.55),#071d15);clip-path:polygon(0 17%,100% 8%,100% 100%,0 100%)}.ir3-path{position:absolute;left:0;right:0;bottom:9%;height:35%;background:linear-gradient(168deg,transparent 47%,#a18c63 48% 57%,transparent 58%);opacity:.65}.ir3-world-content{position:relative;z-index:2;min-height:650px;padding:24px}.ir3-world-head{display:flex;justify-content:space-between;gap:15px;align-items:start}.ir3-world-title h2{margin:0;font-size:34px}.ir3-world-title p{margin:6px 0;color:#a4b5cf}.ir3-world-badges{display:flex;gap:8px;flex-wrap:wrap}.ir3-world-badges span{padding:8px 11px;border-radius:12px;background:rgba(4,10,25,.65);border:1px solid rgba(255,255,255,.1);font-size:11px;font-weight:900}.ir3-map-grid{position:absolute;inset:125px 25px 35px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr);gap:11px}.ir3-tile{border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(6,20,24,.28);backdrop-filter:blur(3px);position:relative;display:flex;align-items:center;justify-content:center;font-size:35px;cursor:pointer;transition:.22s}.ir3-tile:hover{transform:translateY(-5px) scale(1.02);background:rgba(79,140,255,.18);border-color:rgba(125,180,255,.38);box-shadow:0 12px 30px rgba(0,0,0,.3)}.ir3-tile.locked{filter:grayscale(1);opacity:.42;cursor:not-allowed}.ir3-tile .tile-label{position:absolute;bottom:6px;left:7px;right:7px;text-align:center;font-size:9px;font-weight:900;color:#c9d8f0;text-transform:uppercase;letter-spacing:.08em}.ir3-tile .tile-level{position:absolute;top:5px;right:7px;font-size:9px;color:#fff;background:rgba(0,0,0,.35);border-radius:8px;padding:3px 5px}
+.ir3-world-panel{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.ir3-tool{padding:16px;border:1px solid rgba(255,255,255,.09);background:rgba(4,10,25,.72);border-radius:18px}.ir3-tool strong{display:block;margin-bottom:5px}.ir3-tool button{margin-top:10px;width:100%;padding:10px;border:1px solid rgba(255,255,255,.1);background:rgba(79,140,255,.13);color:#fff;border-radius:11px;font-weight:900;cursor:pointer}
+.ir3-inventory{display:grid;grid-template-columns:280px 1fr;gap:15px}.ir3-filter{padding:18px;border:1px solid var(--ir-line);border-radius:22px;background:var(--ir-panel)}.ir3-filter button{width:100%;padding:10px;margin-top:7px;text-align:left;border:1px solid transparent;border-radius:11px;background:rgba(255,255,255,.035);color:#adc0e2;cursor:pointer;font-weight:800}.ir3-filter button.active,.ir3-filter button:hover{background:rgba(79,140,255,.13);color:white;border-color:rgba(79,140,255,.2)}.ir3-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:11px}.ir3-item{min-height:145px;border:1px solid rgba(255,255,255,.09);background:var(--ir-panel);border-radius:19px;padding:14px;cursor:pointer;transition:.2s;position:relative}.ir3-item:hover{transform:translateY(-4px);border-color:rgba(105,172,255,.4)}.ir3-item .big{font-size:45px}.ir3-item .qty{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.4);border-radius:9px;padding:4px 7px;font-size:10px}.ir3-item small{color:#8fa2c4}.rar-common{box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}.rar-rare{box-shadow:inset 0 0 0 1px rgba(67,230,255,.16)}.rar-epic{box-shadow:inset 0 0 0 1px rgba(155,108,255,.25)}.rar-legendary{box-shadow:inset 0 0 0 1px rgba(255,212,90,.3),0 0 25px rgba(255,212,90,.05)}
+.ir3-collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:13px}.ir3-discovery{min-height:190px;border-radius:22px;padding:17px;border:1px solid var(--ir-line);background:var(--ir-panel);position:relative;overflow:hidden}.ir3-discovery.locked{opacity:.55;filter:saturate(.3)}.ir3-discovery .disc-icon{font-size:43px}.ir3-discovery h3{margin:10px 0 4px}.ir3-tag{display:inline-block;padding:4px 7px;border-radius:7px;background:rgba(255,255,255,.06);color:#91a8d0;font-size:9px;font-weight:1000;text-transform:uppercase}.ir3-discovery p{font-size:12px;color:#8da0c2;line-height:1.5}
+.ir3-missions{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.ir3-mission{padding:18px;border-radius:21px;border:1px solid var(--ir-line);background:var(--ir-panel);position:relative}.ir3-mission .mission-icon{font-size:30px}.ir3-mission h3{margin:8px 0 4px}.ir3-reward{margin-top:12px;color:#c4d5f3;font-size:11px}.ir3-complete{border-color:rgba(69,240,160,.35);box-shadow:0 0 25px rgba(69,240,160,.07)}
+.ir3-event{border-radius:28px;border:1px solid rgba(255,100,214,.22);background:radial-gradient(circle at 80% 20%,rgba(255,79,216,.14),transparent 30%),linear-gradient(135deg,rgba(40,18,56,.86),rgba(10,13,31,.92));padding:30px;position:relative;overflow:hidden}.ir3-event h2{font-size:35px;margin:0}.ir3-event .event-number{font-size:52px;font-weight:1000;margin:14px 0 4px}.ir3-event .event-bar{height:16px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}.ir3-event .event-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff4fd8,#9b6cff,#43e6ff);width:0;transition:width 1s}.ir3-event .event-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:18px}.ir3-event .event-stat{padding:14px;border-radius:15px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.ir3-profile{display:grid;grid-template-columns:300px 1fr;gap:15px}.ir3-profile-card,.ir3-statboard{border:1px solid var(--ir-line);background:var(--ir-panel);border-radius:25px;padding:22px}.ir3-avatar{width:95px;height:95px;border-radius:28px;display:grid;place-items:center;font-size:48px;background:linear-gradient(135deg,#347cff,#9b6cff);box-shadow:0 0 35px rgba(79,140,255,.25)}.ir3-profile h2{margin:15px 0 3px}.ir3-rank{color:#74c9ff;font-weight:900;font-size:12px}.ir3-statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.ir3-stat{padding:15px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.ir3-stat b{font-size:24px;display:block}.ir3-stat span{font-size:10px;color:#879abe;text-transform:uppercase}
+.ir3-modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:20px;background:rgba(1,3,10,.72);backdrop-filter:blur(10px)}.ir3-modal.open{display:grid}.ir3-modal-card{width:min(650px,95vw);max-height:85vh;overflow:auto;border:1px solid rgba(120,170,255,.3);border-radius:27px;background:#091127;padding:24px;box-shadow:0 35px 100px rgba(0,0,0,.65);animation:ir3In .25s}.ir3-close{float:right;border:0;background:rgba(255,255,255,.07);color:white;border-radius:10px;padding:8px;cursor:pointer}.ir3-toast{position:fixed;right:22px;bottom:22px;z-index:120;max-width:340px;padding:14px 17px;border-radius:15px;background:rgba(9,16,37,.94);border:1px solid rgba(105,169,255,.28);box-shadow:0 15px 45px rgba(0,0,0,.4);font-weight:800;transform:translateY(30px);opacity:0;pointer-events:none;transition:.3s}.ir3-toast.show{transform:none;opacity:1}
+.ir3-rarity-common{color:#b8c4d9}.ir3-rarity-rare{color:#43e6ff}.ir3-rarity-epic{color:#b08cff}.ir3-rarity-legendary{color:#ffd45a}.ir3-rarity-mythic{color:#ff72dc}
+@media(max-width:1050px){.ir3-hero-content{grid-template-columns:1fr}.ir3-orb-wrap{display:none}.ir3-card{grid-column:span 6}.ir3-world-panel{grid-template-columns:1fr}.ir3-map-grid{grid-template-columns:repeat(4,1fr)}.ir3-inventory,.ir3-profile{grid-template-columns:1fr}.ir3-statgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.ir3-shell{width:96vw}.ir3-topbar{border-radius:16px}.ir3-minihud{display:none}.ir3-hero{border-radius:23px;min-height:420px}.ir3-hero h1{font-size:47px}.ir3-card,.ir3-card.wide{grid-column:1/-1}.ir3-grid{grid-template-columns:1fr}.ir3-map-grid{inset:125px 12px 20px;gap:6px}.ir3-tile{font-size:25px;border-radius:12px}.ir3-event .event-grid{grid-template-columns:1fr}.ir3-missions{grid-template-columns:1fr}.ir3-world{min-height:590px}.ir3-world-content{min-height:590px}.ir3-section-title{align-items:start;flex-direction:column}.ir3-nav button{padding:8px 9px;font-size:11px}}
+</style>
+
+
+<style id="ir3-fusion-css">
+/* FUSIÓN VISUAL: título + interfaz principal */
+.ir3-main-title{
+  margin:0 auto 12px;
+  width:min(1046px,94vw);
+  padding:8px 0 4px;
+  position:relative;
+  z-index:5;
+}
+#ir3App{
+  width:min(1046px,94vw);
+  margin:18px auto 0;
+}
+#ir3App .ir3-topbar{
+  width:100%;
+  margin-bottom:10px;
+}
+#ir3App .ir3-page#ir3Page-nexus{
+  display:none !important;
+}
+#ir3App .ir3-topbar{
+  position:relative;
+  top:auto;
+  border-radius:12px;
+}
+#ir3App + .page{
+  width:min(1046px,94vw);
+  margin:-2px auto 70px;
+  padding:0 0 60px;
+}
+#ir3App + .page header{
+  margin:0;
+  padding:16px 22px 14px;
+  border-radius:14px 14px 0 0;
+  border-bottom:1px solid #2b2140;
+}
+#ir3App + .page .interface-strip{
+  margin:0;
+  border-radius:0 0 8px 8px;
+  border-top:0;
+}
+#ir3App + .page .game-layout{
+  margin-top:0;
+}
+#ir3App + .page .random-box{
+  border-top-left-radius:0;
+}
+#ir3App + .page .ranking{
+  border-top-right-radius:0;
+}
+@media(max-width:700px){
+  .ir3-main-title,#ir3App,#ir3App + .page{width:96vw}
+}
+</style>
+
+
+<style id="ir3-polish-v4">
+/* POLISH V4 — portada + mundo */
+.ir3-main-title{font-size:clamp(36px,5.6vw,66px)!important;letter-spacing:-.065em!important;text-shadow:0 0 28px rgba(110,150,255,.18);padding-top:12px!important;margin-bottom:16px!important}
+#ir3App{margin-top:6px!important}
+#ir3App .ir3-home-tab{display:none}
+#ir3App .ir3-topbar{background:linear-gradient(180deg,rgba(13,19,43,.94),rgba(7,11,25,.92));border-color:rgba(126,153,255,.18);box-shadow:0 16px 45px rgba(0,0,0,.22)}
+#ir3App .ir3-nav button.active{background:linear-gradient(135deg,rgba(79,140,255,.18),rgba(157,93,255,.13));box-shadow:inset 0 0 18px rgba(100,130,255,.08)}
+#ir3App + .page{background:linear-gradient(180deg,rgba(10,14,31,.55),rgba(5,7,17,.88));border:1px solid rgba(126,153,255,.12);border-radius:0 0 28px 28px;box-shadow:0 25px 90px rgba(0,0,0,.35);overflow:hidden}
+#ir3App + .page header{background:linear-gradient(135deg,rgba(18,24,52,.98),rgba(8,12,27,.98));border-color:rgba(126,153,255,.16);padding:20px 24px 18px}
+#ir3App + .page .subtitle{font-size:15px;letter-spacing:.01em;color:#b8c6e6}
+#ir3App + .page .interface-strip{background:rgba(4,7,17,.9);border-color:rgba(126,153,255,.13);color:#8293b8}
+#ir3App + .page .game-layout{gap:14px;padding:0 0 2px}
+#ir3App + .page .random-box{background:linear-gradient(145deg,rgba(18,20,31,.98),rgba(10,12,20,.98));border-color:rgba(126,153,255,.16);padding:28px;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+#ir3App + .page .profile-box{background:linear-gradient(145deg,rgba(29,23,45,.75),rgba(13,15,25,.7));border-color:rgba(181,111,255,.18);border-radius:18px;box-shadow:0 12px 35px rgba(0,0,0,.2)}
+.ir3-main-roll{margin:24px auto 20px;max-width:650px;text-align:center;position:relative}
+.ir3-roll-kicker{font-size:10px;letter-spacing:.22em;font-weight:1000;color:#91a6d4;margin-bottom:8px;text-transform:uppercase}
+.ir3-roll-button{width:100%;min-height:88px;border:1px solid rgba(157,112,255,.55);border-radius:22px;padding:13px 20px;display:grid;grid-template-columns:58px 1fr 35px;align-items:center;text-align:left;gap:12px;cursor:pointer;color:#fff;background:linear-gradient(110deg,#5531bd 0%,#7046e6 45%,#3f8fff 100%);box-shadow:0 14px 35px rgba(81,65,210,.32),inset 0 1px 0 rgba(255,255,255,.25);transition:.22s;position:relative;overflow:hidden}
+.ir3-roll-button:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.16) 48%,transparent 75%);transform:translateX(-100%);transition:.6s}
+.ir3-roll-button:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(81,65,210,.43),0 0 35px rgba(76,139,255,.16)}
+.ir3-roll-button:hover:before{transform:translateX(100%)}
+.ir3-roll-button:active{transform:translateY(1px) scale(.99)}
+.ir3-roll-icon{font-size:36px;text-align:center;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
+.ir3-roll-button b{display:block;font-size:23px;letter-spacing:-.02em}
+.ir3-roll-button small{display:block;margin-top:3px;color:rgba(255,255,255,.75);font-weight:700;font-size:11px}
+.ir3-roll-arrow{font-size:26px;text-align:center;opacity:.75}
+#ir3App + .page .mode-buttons{margin-top:12px;padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:18px;background:rgba(255,255,255,.018)}
+#ir3App + .page .mode-button{border-color:rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:11px}
+#ir3App + .page .mode-button:hover{background:rgba(123,94,220,.12);border-color:rgba(159,119,255,.25)}
+#ir3App + .page .mode-button.active{background:linear-gradient(135deg,rgba(141,77,232,.2),rgba(86,113,255,.1));border-color:#a76cff;box-shadow:0 0 18px rgba(167,108,255,.13)}
+#ir3App + .page #result{margin-top:20px;border-radius:20px;border:1px dashed rgba(145,161,207,.24);background:radial-gradient(circle at 50% 0%,rgba(119,86,222,.1),transparent 45%),rgba(255,255,255,.018);min-height:170px;display:flex;flex-direction:column;justify-content:center}
+#ir3App + .page .ranking{background:linear-gradient(145deg,rgba(18,20,31,.98),rgba(9,11,19,.98));border-color:rgba(126,153,255,.16);border-radius:0;box-shadow:inset 1px 0 0 rgba(255,255,255,.025)}
+#ir3App + .page .ranking h2{letter-spacing:-.03em}
+/* Mundo */
+#ir3App #ir3Page-world{padding-bottom:28px}
+#ir3App .ir3-world-zones{display:flex;gap:8px;overflow:auto;padding:3px 2px 12px;scrollbar-width:none}
+#ir3App .ir3-world-zones::-webkit-scrollbar{display:none}
+#ir3App .ir3-world-zones span{flex:0 0 auto;padding:9px 12px;border-radius:999px;border:1px solid rgba(117,153,255,.16);background:rgba(9,16,36,.72);color:#c5d3f1;font-size:11px;font-weight:900;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+#ir3App .ir3-world-zones span:first-child{border-color:rgba(131,102,255,.38);background:linear-gradient(135deg,rgba(109,77,219,.18),rgba(20,30,65,.72))}
+#ir3App .ir3-world{min-height:720px;border-radius:28px;border-color:rgba(117,153,255,.28);background:linear-gradient(#071126 0 34%,#0b2136 34% 43%,#0d351f 43% 100%);box-shadow:0 25px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)}
+#ir3App .ir3-sky{background:radial-gradient(circle at 76% 27%,rgba(255,229,159,.95) 0 1.8%,rgba(255,229,159,.16) 9%,transparent 18%),radial-gradient(circle at 20% 35%,rgba(75,148,255,.13),transparent 25%),linear-gradient(180deg,#050a18,#102a51 70%,#0b2030)}
+#ir3App .ir3-moon{box-shadow:0 0 80px rgba(211,235,255,.48),0 0 150px rgba(93,147,255,.13)}
+#ir3App .ir3-ground{background:radial-gradient(circle at 50% 48%,rgba(78,218,111,.2),transparent 42%),linear-gradient(180deg,rgba(14,70,40,.6),#061a12)}
+#ir3App .ir3-world-content{background:linear-gradient(180deg,rgba(4,9,20,.04),rgba(3,8,15,.28));padding:24px}
+#ir3App .ir3-world-head{background:linear-gradient(135deg,rgba(5,11,27,.76),rgba(8,17,31,.5));border:1px solid rgba(145,174,255,.18);border-radius:20px;padding:15px 17px;backdrop-filter:blur(12px);box-shadow:0 14px 35px rgba(0,0,0,.22)}
+#ir3App .ir3-world-title h2{font-size:28px;text-shadow:0 4px 25px rgba(0,0,0,.4)}
+#ir3App .ir3-world-badges span{background:rgba(7,12,28,.78);border-color:rgba(132,166,255,.2);box-shadow:0 5px 18px rgba(0,0,0,.18)}
+#ir3App .ir3-map-grid{top:128px;inset-inline:20px;bottom:24px;gap:10px}
+#ir3App .ir3-tile{border:1px solid rgba(137,175,255,.2);background:linear-gradient(145deg,rgba(15,27,55,.72),rgba(7,14,28,.62));box-shadow:0 10px 25px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(4px);transition:.2s}
+#ir3App .ir3-tile:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(121,183,255,.52);box-shadow:0 16px 32px rgba(0,0,0,.3),0 0 24px rgba(73,140,255,.12)}
+#ir3App .ir3-tile.locked{opacity:.42;filter:saturate(.5)}
+#ir3App .ir3-world-panel{margin-top:14px;gap:12px}
+#ir3App .ir3-tool{background:linear-gradient(145deg,rgba(17,26,51,.92),rgba(8,13,28,.92));border-color:rgba(126,153,255,.15);border-radius:20px;box-shadow:0 15px 35px rgba(0,0,0,.2)}
+#ir3App .ir3-tool button{border-radius:12px;background:linear-gradient(135deg,#347cff,#8259e8);border:0;box-shadow:0 7px 20px rgba(61,110,235,.2)}
+@media(max-width:700px){.ir3-roll-button{min-height:80px;grid-template-columns:46px 1fr 25px}.ir3-roll-icon{font-size:30px}.ir3-roll-button b{font-size:19px}#ir3App + .page .random-box{padding:18px}.ir3-main-title{font-size:38px!important}.ir3-world-content{padding:14px!important}.ir3-world{min-height:650px!important}.ir3-map-grid{top:145px!important;inset-inline:10px!important}}
+</style><style id="ir3-collection-css">.ir3-collection-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.ir3-collection-tools input{flex:1;min-width:240px;padding:13px 15px;border-radius:14px;border:1px solid rgba(126,153,255,.16);background:rgba(5,10,25,.72);color:#fff;outline:none}.ir3-collection-filters{display:flex;gap:7px;flex-wrap:wrap}.ir3-collection-filters button{border:1px solid rgba(126,153,255,.14);background:rgba(255,255,255,.035);color:#b9c8e8;padding:9px 11px;border-radius:11px;cursor:pointer;font-weight:800}.ir3-collection-filters button.active{background:linear-gradient(135deg,rgba(112,76,230,.25),rgba(62,133,255,.13));border-color:rgba(160,113,255,.45);color:#fff}.ir3-result-card{min-height:180px;border-radius:21px;padding:17px;border:1px solid rgba(126,153,255,.13);background:linear-gradient(145deg,rgba(14,22,44,.9),rgba(7,11,25,.92));position:relative;overflow:hidden;transition:.2s}.ir3-result-card:hover{transform:translateY(-3px);border-color:rgba(145,120,255,.35);box-shadow:0 15px 35px rgba(0,0,0,.25)}.ir3-result-card.locked{opacity:.48;filter:saturate(.35)}.ir3-result-card .result-icon{font-size:32px}.ir3-result-card h3{font-size:14px;margin:9px 0 6px;line-height:1.35}.ir3-result-card p{font-size:11px;color:#8fa2c7;line-height:1.5;margin:0}.ir3-result-card a{color:#82c8ff;text-decoration:none}.ir3-result-card .result-meta{display:flex;justify-content:space-between;gap:8px;margin-top:13px;font-size:9px;color:#7588aa;font-weight:900;text-transform:uppercase}.ir3-result-card .found-mark{position:absolute;right:12px;top:12px;padding:5px 7px;border-radius:8px;background:rgba(57,220,151,.1);color:#68e9ad;border:1px solid rgba(57,220,151,.16)}.ir3-result-card .lock-mark{position:absolute;right:12px;top:12px}.ir3-result-card.special{border-color:rgba(190,112,255,.18)}</style>
+
+
+<style id="ir3-world-unified-css">
+#ir3App .ir3-world-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#ir3App .ir3-world-actions .ir3-secondary{padding:10px 13px}
+#ir3App .ir3-world-zones span{cursor:default}
+#ir3App .ir3-world .ir3-map-grid{grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr)}
+#ir3App .ir3-tile{overflow:hidden}
+#ir3App .ir3-tile .tile-object{font-size:40px;line-height:1;filter:drop-shadow(0 7px 10px rgba(0,0,0,.35));transform:translateY(-2px);transition:.2s}
+#ir3App .ir3-tile:hover .tile-object{transform:translateY(-7px) scale(1.08)}
+#ir3App .ir3-tile .tile-region{position:absolute;top:7px;left:8px;font-size:10px;opacity:.72}
+#ir3App .ir3-tile .tile-empty{font-size:28px;opacity:.5}
+#ir3App .ir3-tile.has-object{background:radial-gradient(circle at 50% 35%,rgba(120,150,255,.2),transparent 42%),linear-gradient(145deg,rgba(26,39,75,.8),rgba(7,14,28,.68));border-color:rgba(137,182,255,.36);box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07)}
+#ir3App .ir3-world-panel{grid-template-columns:1.2fr .9fr .9fr}
+#ir3App .ir3-world-inventory{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;max-height:86px;overflow:auto}
+#ir3App .ir3-world-item{min-width:54px;padding:7px 6px;border:1px solid rgba(126,153,255,.14);background:rgba(255,255,255,.035);border-radius:11px;color:#fff;cursor:pointer;text-align:center;transition:.18s}
+#ir3App .ir3-world-item:hover{transform:translateY(-2px);border-color:rgba(126,170,255,.5);background:rgba(89,126,255,.13)}
+#ir3App .ir3-world-item .icon{font-size:24px;display:block}
+#ir3App .ir3-world-item small{font-size:8px;color:#9fb1d2}
+#ir3App .ir3-tool button+button{margin-left:7px}
+@media(max-width:1050px){#ir3App .ir3-world-panel{grid-template-columns:1fr 1fr}#ir3App .ir3-world-panel .ir3-tool:first-child{grid-column:1/-1}}
+@media(max-width:700px){#ir3App .ir3-world-actions{width:100%;justify-content:flex-start}#ir3App .ir3-world-actions .ir3-secondary{flex:1}#ir3App .ir3-world .ir3-map-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr)}#ir3App .ir3-world-panel{grid-template-columns:1fr}#ir3App .ir3-world-panel .ir3-tool:first-child{grid-column:auto}#ir3App .ir3-tile .tile-object{font-size:30px}}
+</style>
+
+<style id="ir3-cleanup-old-world">
+/* El Mundo vive exclusivamente en IR3; no quedan tarjetas de mundo antiguas. */
+#ir3App .ir3-world-panel .ir3-tool{min-height:150px}
+</style>
 </head>
 
 <body>
+
+<div id="ir3App" class="ir3-shell">
+  <h1 class="ir3-main-title">🎲 INTERNET RANDOMIZER</h1>
+  <div class="ir3-topbar">
+    <div class="ir3-logo" aria-hidden="true"></div>
+    <nav class="ir3-nav" id="ir3Nav">
+      <button class="active ir3-home-tab" data-page="nexus">⚡ Inicio</button><button data-page="world">🌍 Mundo</button><button data-page="inventory">🎒 Inventario</button><button data-page="collection">📖 Colección</button><button data-page="missions">🎯 Misiones</button><button data-page="event">🌐 Evento</button><button data-page="profile">👤 Perfil</button>
+    </nav>
+    <div class="ir3-minihud"><div class="ir3-chip">⭐ <b id="ir3HudLevel">1</b></div><div class="ir3-chip">🪙 <b id="ir3HudCoins">0</b></div></div>
+  </div>
+
+  <section class="ir3-page active" id="ir3Page-nexus">
+    <div class="ir3-hero">
+      <div class="ir3-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="ir3-clean-hero"><div class="ir3-nexus-placeholder">Tu centro de exploración</div></div>
+    </div>
+    <div class="ir3-grid">
+      <div class="ir3-card"><h3>⭐ Nivel</h3><div class="ir3-value" id="ir3LevelBig">1</div><div class="ir3-progress"><i id="ir3XpBar"></i></div><div class="ir3-statrow"><span id="ir3XpText">0 XP</span><span id="ir3NextText">Siguiente nivel</span></div></div>
+      <div class="ir3-card"><h3>🪙 RandomCoins</h3><div class="ir3-value" id="ir3CoinsBig">0</div><div class="ir3-muted">Tu economía de explorador</div></div>
+      <div class="ir3-card"><h3>🔥 Racha</h3><div class="ir3-value" id="ir3StreakBig">0</div><div class="ir3-muted">Mantén la actividad diaria</div></div>
+      <div class="ir3-card"><h3>🗺️ Exploración</h3><div class="ir3-value" id="ir3ExploreBig">0%</div><div class="ir3-muted">Descubrimientos registrados</div></div>
+      <div class="ir3-card wide"><h3>🎯 Objetivo del día</h3><div id="ir3DailyObjective" class="ir3-muted">Preparando misión...</div><div class="ir3-progress"><i id="ir3DailyBar"></i></div></div>
+      <div class="ir3-card wide"><h3>📡 Estado del Nexus</h3><div id="ir3Feed" class="ir3-muted">Conectando con el universo Randomizer...</div></div>
+    </div>
+  </section>
+
+  <section class="ir3-page" id="ir3Page-world">
+    <div class="ir3-section-title"><div><h2>🌍 Tu Mundo Randomizer</h2><p>Un solo mundo: descubre regiones, consigue objetos y colócalos donde quieras.</p></div><div class="ir3-world-actions"><button class="ir3-secondary" onclick="ir3PlaceBuild()">🎁 Colocar objeto</button><button class="ir3-secondary" onclick="ir3ExploreWorld()">🧭 Explorar</button><button class="ir3-secondary" onclick="ir3UpgradeWorld()">⬆️ Mejorar</button></div></div>
+    <div class="ir3-world-zones">
+      <span>🏠 Base Random</span><span>🌲 Bosque de Enlaces</span><span>🌊 Lago del Algoritmo</span><span>🏙️ Ciudad Digital</span><span>🌌 Órbita Random</span><span>🌀 Zona Glitch</span><span>📚 Archivo Perdido</span><span>🕳️ El Vacío</span><span>🚪 Portal Infinito</span><span>🏛️ Museo</span><span>🛒 Mercado</span><span>🧪 Laboratorio</span>
+    </div>
+    <div class="ir3-world"><div class="ir3-sky"><div class="ir3-moon"></div></div><div class="ir3-horizon"></div><div class="ir3-ground"></div><div class="ir3-path"></div><div class="ir3-world-content"><div class="ir3-world-head"><div class="ir3-world-title"><h2 id="ir3WorldName">Distrito Random</h2><p id="ir3WorldSub">Nivel 1 · 8 espacios · 0 objetos colocados</p></div><div class="ir3-world-badges"><span id="ir3WorldLevel">LVL 1</span><span id="ir3WorldPower">⚡ 0 PODER</span><span id="ir3WorldSlots">0/8 OBJETOS</span></div></div><div class="ir3-map-grid" id="ir3MapGrid"></div></div></div>
+    <div class="ir3-world-panel"><div class="ir3-tool"><strong>🎒 Objetos disponibles</strong><span class="ir3-muted">Haz clic en una casilla para elegir un objeto de tu inventario.</span><div id="ir3WorldInventory" class="ir3-world-inventory"></div></div><div class="ir3-tool"><strong>🧭 Exploración</strong><span class="ir3-muted" id="ir3WorldExploreText">Explora para desbloquear regiones y encontrar objetos.</span><button onclick="ir3ExploreWorld()">Explorar una expedición</button></div><div class="ir3-tool"><strong>🏗️ Construcción</strong><span class="ir3-muted" id="ir3WorldBuildText">Los espacios desbloqueados se pueden decorar.</span><button onclick="ir3PlaceBuild()">🎁 Colocar aleatorio</button><button onclick="ir3UpgradeWorld()">⬆️ Ampliar espacios</button></div></div>
+  </section>
+
+  <section class="ir3-page" id="ir3Page-inventory"><div class="ir3-section-title"><div><h2>🎒 Inventario</h2><p>Todo lo que has encontrado durante tus expediciones.</p></div></div><div class="ir3-inventory"><aside class="ir3-filter"><h3>Filtrar</h3><button class="active" onclick="ir3FilterItems('all',this)">🌐 Todo</button><button onclick="ir3FilterItems('common',this)">⚪ Común</button><button onclick="ir3FilterItems('rare',this)">🔵 Raro</button><button onclick="ir3FilterItems('epic',this)">🟣 Épico</button><button onclick="ir3FilterItems('legendary',this)">🟡 Legendario</button><button onclick="ir3FilterItems('mythic',this)">🩷 Mítico</button></aside><div class="ir3-items" id="ir3InventoryGrid"></div></div></section>
+
+  <section class="ir3-page" id="ir3Page-collection"><div class="ir3-section-title"><div><h2>📖 Colección de Resultados</h2><p>Todos los resultados posibles: webs, datos, secretos y resultados especiales.</p></div><div class="ir3-chip"><b id="ir3CollectionFound">0</b> / <b id="ir3CollectionTotal">0</b> DESCUBIERTOS</div></div><div class="ir3-progress"><i id="ir3CollectionBar"></i></div><div class="ir3-collection-tools"><input id="ir3CollectionSearch" type="search" placeholder="🔎 Buscar web, dato o resultado..." oninput="ir3CollectionSearch(this.value)"><div id="ir3CollectionFilters" class="ir3-collection-filters"><button class="active" onclick="ir3CollectionSetFilter('all',this)">🌐 Todo</button><button onclick="ir3CollectionSetFilter('WEB',this)">🌐 Webs</button><button onclick="ir3CollectionSetFilter('DATO',this)">🧠 Datos</button><button onclick="ir3CollectionSetFilter('SECRETO',this)">🥚 Secretos</button><button onclick="ir3CollectionSetFilter('ESPECIAL',this)">⚡ Especiales</button></div></div><div class="ir3-collection" id="ir3CollectionGrid" style="margin-top:15px"></div></section>
+
+  <section class="ir3-page" id="ir3Page-missions"><div class="ir3-section-title"><div><h2>🎯 Centro de Misiones</h2><p>Misiones diarias, semanales y cadenas especiales.</p></div><div class="ir3-chip">TEMPORADA <b id="ir3SeasonNumber">2026</b></div></div><div class="ir3-missions" id="ir3MissionsGrid"></div></section>
+
+  <section class="ir3-page" id="ir3Page-event"><div class="ir3-section-title"><div><h2>🌐 Evento Global</h2><p>El progreso de toda la comunidad alimenta este evento.</p></div></div><div class="ir3-event"><div class="ir3-kicker">GLOBAL EVENT // LIVE</div><h2>⚡ EL CAOS RANDOM</h2><p id="ir3EventDesc" class="ir3-muted">Toda acción cuenta.</p><div class="event-number" id="ir3EventNumber">0 / 10.000</div><div class="event-bar"><i id="ir3EventBar"></i></div><div class="event-grid"><div class="event-stat"><b id="ir3EventPercent">0%</b><br><small>PROGRESO</small></div><div class="event-stat"><b>🎁 Cofre</b><br><small>RECOMPENSA</small></div><div class="event-stat"><b id="ir3EventTime">ACTIVO</b><br><small>ESTADO</small></div></div></div></section>
+
+  <section class="ir3-page" id="ir3Page-profile"><div class="ir3-section-title"><div><h2>👤 Expediente de Explorador</h2><p>Tu identidad y estadísticas dentro del universo.</p></div></div><div class="ir3-profile"><div class="ir3-profile-card"><div class="ir3-avatar" id="ir3Avatar">🎲</div><h2 id="ir3ProfileName">Explorador</h2><div class="ir3-rank" id="ir3ProfileRank">NOVATO</div><div class="ir3-progress"><i id="ir3ProfileXpBar"></i></div><p class="ir3-muted" id="ir3ProfileBio">Todavía no has dejado muchas huellas...</p><button class="ir3-primary" style="width:100%;margin-top:10px" onclick="ir3OpenProfileModal()">✏️ Personalizar</button></div><div class="ir3-statboard"><h3>📊 Estadísticas</h3><div class="ir3-statgrid"><div class="ir3-stat"><b id="ir3StatRolls">0</b><span>Tiradas</span></div><div class="ir3-stat"><b id="ir3StatSecrets">0</b><span>Secretos</span></div><div class="ir3-stat"><b id="ir3StatObjects">0</b><span>Objetos</span></div><div class="ir3-stat"><b id="ir3StatZones">1</b><span>Zonas</span></div></div><div style="margin-top:18px"><h3>🏅 Títulos</h3><div id="ir3Titles" class="ir3-collection"></div></div></div></div></section>
+</div>
+<div class="ir3-modal" id="ir3Modal"><div class="ir3-modal-card"><button class="ir3-close" onclick="ir3CloseModal()">✕</button><div id="ir3ModalContent"></div></div></div><div class="ir3-toast" id="ir3Toast"></div>
+
 
 <div class="page">
 
@@ -1412,9 +1663,7 @@ body[data-theme="gold"] h1{color:#ffd75a;text-shadow:4px 4px 0 #5e4300}
 
 <header>
 
-<div class="logo">🌐🎲</div>
-
-<h1>INTERNET RANDOMIZER</h1>
+<div class="logo" aria-hidden="true"></div>
 
 <div class="subtitle" id="subtitle">
 No sabes qué va a salir. Ni yo tampoco.
@@ -1462,9 +1711,14 @@ Elige un username para aparecer en el ranking.
 
 </div>
 
-<button id="randomButton" onclick="sorprendeme()">
-🎲 SORPRÉNDEME
-</button>
+<div class="ir3-main-roll">
+  <div class="ir3-roll-kicker">🎲 MOTOR ALEATORIO</div>
+  <button id="randomButton" class="ir3-roll-button" onclick="sorprendeme()">
+    <span class="ir3-roll-icon">🎲</span>
+    <span><b>SORPRÉNDEME</b><small>Descubre algo nuevo de Internet</small></span>
+    <span class="ir3-roll-arrow">↗</span>
+  </button>
+</div>
 
 <div class="mode-buttons">
 
@@ -1740,6 +1994,86 @@ Cargando ranking...
   </div>
 </section>
 
+
+<!-- =========================================================
+     INTERNET RANDOMIZER 2.0 — SOCIAL NETWORK + WORLD
+========================================================= -->
+<section class="social2" id="social2Hub">
+  <div class="social2-card">
+    <h3>👥 Internet Randomizer Social 2.0</h3>
+    <div class="social2-tabs">
+      <button class="social2-tab active" onclick="social2Tab('friends',this)">🤝 Amigos</button>
+      <button class="social2-tab" onclick="social2Tab('requests',this)">📨 Solicitudes <span id="friendRequestCount">0</span></button>
+      <button class="social2-tab" onclick="social2Tab('dm',this)">💬 MD <span id="dmUnreadCount">0</span></button>
+      <button class="social2-tab" onclick="social2Tab('notifications',this)">🔔 Notificaciones <span id="socialNotificationCount">0</span></button>
+    </div>
+
+    <div class="social2-panel active" id="social2Panel-friends">
+      <div class="social2-search">
+        <input id="friendSearchInput" class="social2-input" maxlength="20" placeholder="Buscar username...">
+        <button class="social2-btn" onclick="social2SendFriendRequest()">➕ Añadir amigo</button>
+      </div>
+      <div class="social2-list" id="friendsList"></div>
+      <div class="social2-note">Los amigos se sincronizan con Supabase cuando la conexión está disponible.</div>
+    </div>
+
+    <div class="social2-panel" id="social2Panel-requests">
+      <div class="social2-list" id="friendRequestsList"></div>
+    </div>
+
+    <div class="social2-panel" id="social2Panel-dm">
+      <div class="social2-search">
+        <input id="dmTargetInput" class="social2-input" maxlength="20" placeholder="Username del amigo...">
+        <button class="social2-btn" onclick="social2OpenDMFromInput()">Abrir MD</button>
+      </div>
+      <div id="dmConversationTitle" class="social2-note">Selecciona un amigo para empezar.</div>
+      <div id="dmConversation" class="social2-conversation"><div class="social2-empty">No hay conversación seleccionada.</div></div>
+      <div class="social2-compose">
+        <input id="dmInput" class="social2-input" maxlength="500" placeholder="Escribe un mensaje privado..." disabled>
+        <button id="dmSendButton" class="social2-btn" onclick="social2SendDM()" disabled>Enviar</button>
+      </div>
+      <div class="social2-warning">🔒 <strong>Nota:</strong> los MD usan la identidad de tu username actual; no compartas información personal.</div>
+    </div>
+
+    <div class="social2-panel" id="social2Panel-notifications">
+      <div class="social2-list" id="socialNotificationsList"></div>
+      <button class="social2-small" onclick="social2MarkNotificationsRead()">✓ Marcar todo como leído</button>
+    </div>
+  </div>
+
+  <div class="social2-card">
+    <h3>📊 Tu vida en Randomizer</h3>
+    <div class="social2-statbox"><div class="big" id="social2Level">1</div><small>NIVEL</small></div>
+    <div class="social2-statbox" style="margin-top:8px"><div class="big" id="social2Coins">0 🪙</div><small>RANDOMCOINS</small></div>
+    <div class="social2-statbox" style="margin-top:8px"><div class="big" id="social2SeasonPoints">0</div><small>PUNTOS DE TEMPORADA</small></div>
+  </div>
+</section>
+
+<section class="social2-grid3">
+  <div class="social2-card">
+    <h3>🎯 Retos de hoy</h3>
+    <div id="dailyChallenges2" class="challenge-list"></div>
+  </div>
+  <div class="social2-card">
+    <h3>🔥 Racha de acceso</h3>
+    <div class="streak-fire" id="social2StreakEmoji">🔥 0 días</div>
+    <div class="streak-progress"><span id="social2StreakFill"></span></div>
+    <div class="social2-note" id="social2StreakText">Entra mañana para mantener tu racha.</div>
+    <div style="margin-top:9px"><span class="season-badge" id="seasonBadge">TEMPORADA 1</span></div>
+  </div>
+  <div class="social2-card">
+    <h3>🌎 Evento global</h3>
+    <div class="global-event">
+      <div class="event-title" id="globalEventTitle">⚡ EL CAOS RANDOM</div>
+      <div class="event-desc" id="globalEventDesc">La comunidad tiene un objetivo común.</div>
+      <div class="event-bar"><span id="globalEventFill"></span></div>
+      <div class="event-meta"><span id="globalEventProgress">0 / 10000</span><span id="globalEventTimer">ACTIVO</span></div>
+    </div>
+  </div>
+</section>
+
+
+
 <section class="milestones">
 
 <h2 id="milestonesTitle">🏆 Hitos</h2>
@@ -1765,7 +2099,7 @@ Cargando ranking...
 
 </section>
 
-<section class="collection">
+<section class="collection" style="display:none">
 
 <h2 id="collectionTitle">🥚 Colección de secretos</h2>
 
@@ -2069,6 +2403,9 @@ let modoActual =
 localStorage.getItem("randomizerModo") || "normal";
 
 let ultimoIndice = null;
+let ir3ResultCollection = JSON.parse(localStorage.getItem("randomizerResultCollection") || "[]");
+let ir3CollectionFilter = "all";
+let ir3CollectionQuery = "";
 
 let adminActivo = false;
 
@@ -2638,6 +2975,56 @@ categoriaEn:"TECH",
 es:"El primer sitio web fue creado en el CERN.",
 en:"The first website was created at CERN."
 }
+,
+{tipo:"link",categoriaEs:"CIENCIA",categoriaEn:"SCIENCE",es:"CERN: descubre física de partículas y el origen de la Web.",en:"CERN: explore particle physics and the birthplace of the Web.",url:"https://home.cern/"},
+{tipo:"link",categoriaEs:"ESPACIO",categoriaEn:"SPACE",es:"ESA: misiones, astronautas y ciencia espacial europea.",en:"ESA: European space missions, astronauts and science.",url:"https://www.esa.int/"},
+{tipo:"link",categoriaEs:"CIENCIA",categoriaEn:"SCIENCE",es:"NOAA: océanos, clima y ciencia de la Tierra.",en:"NOAA: oceans, weather and Earth science.",url:"https://www.noaa.gov/"},
+{tipo:"link",categoriaEs:"HISTORIA",categoriaEn:"HISTORY",es:"Library of Congress: colecciones digitales de historia y cultura.",en:"Library of Congress: digital collections of history and culture.",url:"https://www.loc.gov/"},
+{tipo:"link",categoriaEs:"HISTORIA",categoriaEn:"HISTORY",es:"Europeana: arte, historia y patrimonio cultural europeo.",en:"Europeana: European art, history and cultural heritage.",url:"https://www.europeana.eu/"},
+{tipo:"link",categoriaEs:"LIBROS",categoriaEn:"BOOKS",es:"Open Library: una biblioteca abierta con millones de libros catalogados.",en:"Open Library: an open library catalog with millions of books.",url:"https://openlibrary.org/"},
+{tipo:"link",categoriaEs:"APRENDER",categoriaEn:"LEARNING",es:"MIT OpenCourseWare: cursos y materiales educativos abiertos.",en:"MIT OpenCourseWare: free open course materials.",url:"https://ocw.mit.edu/"},
+{tipo:"link",categoriaEs:"APRENDER",categoriaEn:"LEARNING",es:"Stanford Encyclopedia of Philosophy: una enorme enciclopedia filosófica.",en:"Stanford Encyclopedia of Philosophy: a huge philosophy encyclopedia.",url:"https://plato.stanford.edu/"},
+{tipo:"link",categoriaEs:"INVESTIGACIÓN",categoriaEn:"RESEARCH",es:"arXiv: millones de artículos científicos en acceso abierto.",en:"arXiv: millions of open-access scientific papers.",url:"https://arxiv.org/"},
+{tipo:"link",categoriaEs:"INVESTIGACIÓN",categoriaEn:"RESEARCH",es:"Semantic Scholar: busca literatura científica con herramientas de IA.",en:"Semantic Scholar: search scientific literature with AI tools.",url:"https://www.semanticscholar.org/"},
+{tipo:"link",categoriaEs:"INVESTIGACIÓN",categoriaEn:"RESEARCH",es:"PubMed: una enorme base de datos de literatura biomédica.",en:"PubMed: a huge database of biomedical literature.",url:"https://pubmed.ncbi.nlm.nih.gov/"},
+{tipo:"link",categoriaEs:"DATOS",categoriaEn:"DATA",es:"Our World in Data: gráficos y datos sobre el mundo.",en:"Our World in Data: charts and data about the world.",url:"https://ourworldindata.org/"},
+{tipo:"link",categoriaEs:"DATOS",categoriaEn:"DATA",es:"Gapminder: explora datos y tendencias globales de forma visual.",en:"Gapminder: explore global data and trends visually.",url:"https://www.gapminder.org/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"MDN Web Docs: referencia para HTML, CSS y JavaScript.",en:"MDN Web Docs: reference for HTML, CSS and JavaScript.",url:"https://developer.mozilla.org/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"Stack Overflow: preguntas y respuestas sobre programación.",en:"Stack Overflow: programming questions and answers.",url:"https://stackoverflow.com/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"CodePen: experimentos y proyectos front-end en el navegador.",en:"CodePen: front-end experiments and projects in the browser.",url:"https://codepen.io/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"npm: descubre paquetes del ecosistema JavaScript.",en:"npm: discover packages from the JavaScript ecosystem.",url:"https://www.npmjs.com/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"PyPI: el índice oficial de paquetes de Python.",en:"PyPI: the official Python package index.",url:"https://pypi.org/"},
+{tipo:"link",categoriaEs:"CÓDIGO",categoriaEn:"CODE",es:"GitLab: repositorios y herramientas para desarrollar software.",en:"GitLab: repositories and tools for building software.",url:"https://gitlab.com/"},
+{tipo:"link",categoriaEs:"IA",categoriaEn:"AI",es:"Hugging Face: modelos, datasets y herramientas de inteligencia artificial.",en:"Hugging Face: AI models, datasets and tools.",url:"https://huggingface.co/"},
+{tipo:"link",categoriaEs:"DATOS",categoriaEn:"DATA",es:"Kaggle: datasets, notebooks y competiciones de datos.",en:"Kaggle: datasets, notebooks and data competitions.",url:"https://www.kaggle.com/"},
+{tipo:"link",categoriaEs:"JUEGOS",categoriaEn:"GAMES",es:"GeoGuessr: intenta reconocer lugares del mundo.",en:"GeoGuessr: try to recognize places around the world.",url:"https://www.geoguessr.com/"},
+{tipo:"link",categoriaEs:"JUEGOS",categoriaEn:"GAMES",es:"OpenGameArt: recursos para crear videojuegos.",en:"OpenGameArt: assets for making games.",url:"https://opengameart.org/"},
+{tipo:"link",categoriaEs:"JUEGOS",categoriaEn:"GAMES",es:"BoardGameGeek: descubre juegos de mesa de todo tipo.",en:"BoardGameGeek: discover board games of all kinds.",url:"https://boardgamegeek.com/"},
+{tipo:"link",categoriaEs:"JUEGOS",categoriaEn:"GAMES",es:"Speedrun.com: récords y comunidades de speedrunning.",en:"Speedrun.com: speedrunning records and communities.",url:"https://www.speedrun.com/"},
+{tipo:"link",categoriaEs:"MÚSICA",categoriaEn:"MUSIC",es:"MusicBrainz: una base de datos abierta de música y artistas.",en:"MusicBrainz: an open database of music and artists.",url:"https://musicbrainz.org/"},
+{tipo:"link",categoriaEs:"MÚSICA",categoriaEn:"MUSIC",es:"Last.fm: descubre música a partir de tus gustos.",en:"Last.fm: discover music based on your listening tastes.",url:"https://www.last.fm/"},
+{tipo:"link",categoriaEs:"MÚSICA",categoriaEn:"MUSIC",es:"SoundCloud: música y audio de creadores de todo el mundo.",en:"SoundCloud: music and audio from creators worldwide.",url:"https://soundcloud.com/"},
+{tipo:"link",categoriaEs:"ARTE",categoriaEn:"ART",es:"Wikimedia Commons: imágenes, audio y vídeos con licencias abiertas.",en:"Wikimedia Commons: openly licensed images, audio and video.",url:"https://commons.wikimedia.org/"},
+{tipo:"link",categoriaEs:"ARTE",categoriaEn:"ART",es:"The Pudding: historias interactivas basadas en datos.",en:"The Pudding: interactive stories powered by data.",url:"https://pudding.cool/"},
+{tipo:"link",categoriaEs:"CINE",categoriaEn:"MOVIES",es:"IMDb: información sobre películas, series y personas del cine.",en:"IMDb: information about movies, shows and film people.",url:"https://www.imdb.com/"},
+{tipo:"link",categoriaEs:"CINE",categoriaEn:"MOVIES",es:"Letterboxd: registra y descubre películas.",en:"Letterboxd: log and discover movies.",url:"https://letterboxd.com/"},
+{tipo:"link",categoriaEs:"TV",categoriaEn:"TV",es:"TV Tropes: explora recursos narrativos y tropos de ficción.",en:"TV Tropes: explore storytelling devices and fiction tropes.",url:"https://tvtropes.org/"},
+{tipo:"link",categoriaEs:"INTERNET",categoriaEn:"INTERNET",es:"XKCD: cómics sobre ciencia, tecnología e Internet.",en:"XKCD: comics about science, technology and the Internet.",url:"https://xkcd.com/"},
+{tipo:"link",categoriaEs:"INTERNET RARO",categoriaEn:"WEIRD WEB",es:"Pointer Pointer: coloca el cursor y descubre algo absurdo.",en:"Pointer Pointer: move your cursor and discover something absurd.",url:"https://pointerpointer.com/"},
+{tipo:"link",categoriaEs:"INTERNET RARO",categoriaEn:"WEIRD WEB",es:"WindowSwap: mira vistas desde ventanas de otras partes del mundo.",en:"WindowSwap: watch window views from around the world.",url:"https://window-swap.com/"},
+{tipo:"link",categoriaEs:"CIENCIA",categoriaEn:"SCIENCE",es:"Chrome Music Lab: experimentos musicales interactivos.",en:"Chrome Music Lab: interactive music experiments.",url:"https://musiclab.chromeexperiments.com/"},
+{tipo:"link",categoriaEs:"ESPACIO",categoriaEn:"SPACE",es:"NASA APOD: una imagen astronómica destacada cada día.",en:"NASA APOD: a featured astronomy image every day.",url:"https://apod.nasa.gov/"},
+{tipo:"link",categoriaEs:"ESPACIO",categoriaEn:"SPACE",es:"Stellarium Web: explora el cielo desde el navegador.",en:"Stellarium Web: explore the sky from your browser.",url:"https://stellarium-web.org/"},
+{tipo:"link",categoriaEs:"ESPACIO",categoriaEn:"SPACE",es:"100,000 Stars: un viaje visual por nuestra vecindad galáctica.",en:"100,000 Stars: a visual journey through our galactic neighborhood.",url:"https://stars.chromeexperiments.com/"},
+{tipo:"link",categoriaEs:"TIERRA",categoriaEn:"EARTH",es:"Earth Nullschool: visualiza viento, océanos y clima global.",en:"Earth Nullschool: visualize global wind, oceans and weather.",url:"https://earth.nullschool.net/"},
+{tipo:"link",categoriaEs:"TIERRA",categoriaEn:"EARTH",es:"Open-Meteo: datos meteorológicos y previsiones.",en:"Open-Meteo: weather data and forecasts.",url:"https://open-meteo.com/"},
+{tipo:"link",categoriaEs:"TIERRA",categoriaEn:"EARTH",es:"Timeanddate: horas, calendarios y datos temporales del mundo.",en:"Timeanddate: world clocks, calendars and time data.",url:"https://www.timeanddate.com/"},
+{tipo:"link",categoriaEs:"CONOCIMIENTO",categoriaEn:"KNOWLEDGE",es:"Britannica: enciclopedia y recursos de referencia.",en:"Britannica: encyclopedia and reference resources.",url:"https://www.britannica.com/"},
+{tipo:"link",categoriaEs:"CONAN",categoriaEn:"CONAN",es:"MundoConan: descubre noticias, manga, anime y más de Conan.",en:"MundoConan: discover Detective Conan news, manga, anime and more.",url:"https://www.mundoconan.com/"},
+{tipo:"link",categoriaEs:"CONAN",categoriaEn:"CONAN",es:"Detective Conan: sitio oficial de la franquicia en Japón.",en:"Detective Conan: the franchise's official Japanese website.",url:"https://www.ytv.co.jp/conan/"},
+{tipo:"link",categoriaEs:"ANIME",categoriaEn:"ANIME",es:"Crunchyroll: anime y entretenimiento japonés en streaming.",en:"Crunchyroll: anime and Japanese entertainment streaming.",url:"https://www.crunchyroll.com/"},
+{tipo:"link",categoriaEs:"TECNOLOGÍA",categoriaEn:"TECH",es:"Can I Use: comprueba el soporte de funciones web en navegadores.",en:"Can I Use: check browser support for web features.",url:"https://caniuse.com/"},
+{tipo:"link",categoriaEs:"NATURALEZA",categoriaEn:"NATURE",es:"iNaturalist: explora y registra observaciones de naturaleza.",en:"iNaturalist: explore and record observations of nature.",url:"https://www.inaturalist.org/"}
 
 ];
 
@@ -3112,6 +3499,7 @@ localStorage.setItem(
 "randomizerSecretosLista",
 JSON.stringify(secretosDescubiertos)
 );
+localStorage.setItem("randomizerResultCollection",JSON.stringify(ir3ResultCollection));
 
 localStorage.setItem(
 "randomizerRacha",
@@ -4101,6 +4489,9 @@ mostrarPerfilRecompensa();
 
 function actualizarExtrasTrasResultado(){
     registrarHistorial();
+    if(typeof window.ir3RegisterCurrentResult === "function"){
+        try{ window.ir3RegisterCurrentResult(resultadoActual); }catch(e){}
+    }
 
     let xp = 5;
 
@@ -6845,6 +7236,8 @@ modosUsados = [];
 document.body.dataset.theme = "default";
 
 secretosDescubiertos = [];
+ir3ResultCollection = [];
+localStorage.removeItem("randomizerResultCollection");
 
 racha = 0;
 
@@ -7120,6 +7513,354 @@ cambiarIdioma = function(){
 window.addEventListener("DOMContentLoaded",()=>{
   setTimeout(()=>{renderThemeButtons();renderSocialExtras();renderWeeklyOffline();},80);
 });
+</script>
+
+
+<script>
+/* =========================================================
+   INTERNET RANDOMIZER 2.0 — SOCIAL / FRIENDS / DM / WORLD
+========================================================= */
+const SOCIAL2_STATE_KEY="randomizerSocial2State";
+let social2Friends=[];
+let social2Requests=[];
+let social2Notifications=[];
+let social2DMs=[];
+let social2CurrentFriend="";
+let social2RefreshTimer=null;
+let social2State=JSON.parse(localStorage.getItem(SOCIAL2_STATE_KEY)||"{}");
+
+function social2Today(){return new Date().toISOString().slice(0,10)}
+function social2Week(){
+  const d=new Date(), first=new Date(d.getFullYear(),0,1);
+  return d.getFullYear()+"-W"+Math.ceil((((d-first)/86400000)+first.getDay()+1)/7);
+}
+function social2Save(){localStorage.setItem(SOCIAL2_STATE_KEY,JSON.stringify(social2State));}
+function social2Me(){return String(jugadorUsername||"").trim()}
+function social2Toast(t){if(typeof mostrarToastOffline==="function")mostrarToastOffline(t);else alert(t)}
+function social2Initials(n){return socialEscape(String(n||"??").slice(0,2).toUpperCase())}
+
+function social2EnsureState(){
+  const today=social2Today();
+  if(social2State.day!==today){
+    const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    social2State.streak=(social2State.lastDay===yesterday)?Number(social2State.streak||0)+1:1;
+    social2State.day=today;social2State.lastDay=today;social2State.dailyRolls=0;social2State.dailySecrets=0;social2State.dailyMessages=0;social2State.dailyFriends=0;social2State.dailyClaimed=[];
+  }
+  if(social2State.seasonWeek!==social2Week()){social2State.seasonWeek=social2Week();social2State.seasonPoints=0}
+  social2State.seasonPoints=Number(social2State.seasonPoints||0);
+  social2State.dailyRolls=Number(social2State.dailyRolls||0);
+  social2State.dailySecrets=Number(social2State.dailySecrets||0);
+  social2State.dailyMessages=Number(social2State.dailyMessages||0);
+  social2State.dailyFriends=Number(social2State.dailyFriends||0);
+  social2State.dailyClaimed=Array.isArray(social2State.dailyClaimed)?social2State.dailyClaimed:[];
+  social2Save();
+}
+
+function social2Tab(name,button){
+  document.querySelectorAll(".social2-tab").forEach(b=>b.classList.remove("active"));
+  if(button)button.classList.add("active");
+  document.querySelectorAll(".social2-panel").forEach(p=>p.classList.remove("active"));
+  const panel=document.getElementById("social2Panel-"+name);if(panel)panel.classList.add("active");
+  if(name==="friends")social2LoadFriends();
+  if(name==="requests")social2LoadRequests();
+  if(name==="dm")social2LoadDMs();
+  if(name==="notifications")social2LoadNotifications();
+}
+
+async function social2FindPlayer(username){
+  if(!supabaseClient)return null;
+  const {data,error}=await supabaseClient.from("players").select("username,clicks,secrets,best_streak").eq("username",username).maybeSingle();
+  if(error){console.warn("Social player:",error);return null}
+  return data||null;
+}
+
+async function social2SendFriendRequest(){
+  const me=social2Me(), target=String(document.getElementById("friendSearchInput")?.value||"").trim();
+  if(me.length<3){social2Toast(ingles?"Choose your username first.":"Elige primero tu username.");return}
+  if(!target||target.length<3){social2Toast(ingles?"Enter a username.":"Escribe un username.");return}
+  if(target.toLowerCase()===me.toLowerCase()){social2Toast(ingles?"You cannot add yourself.":"No puedes añadirte a ti mismo.");return}
+  if(!supabaseClient){
+    social2Toast(ingles?"Friends need the online connection.":"Los amigos necesitan la conexión online.");return;
+  }
+  const player=await social2FindPlayer(target);
+  if(!player){social2Toast(ingles?"That username was not found.":"No se encontró ese username.");return}
+  const {data:existing}=await supabaseClient.from("social_friendships").select("id,status,requester,addressee").or(`and(requester.eq.${me},addressee.eq.${target}),and(requester.eq.${target},addressee.eq.${me})`).limit(1);
+  if(existing&&existing.length){social2Toast(ingles?"There is already a friendship request or friendship.":"Ya existe una solicitud o amistad.");return}
+  const {error}=await supabaseClient.from("social_friendships").insert({requester:me,addressee:target,status:"pending"});
+  if(error){console.warn(error);social2Toast(ingles?"Could not send the request.":"No se pudo enviar la solicitud.");return}
+  await supabaseClient.from("social_notifications").insert({username:target,type:"friend_request",title:"🤝 Nueva solicitud de amistad",body:me+" quiere ser tu amigo.",related_username:me,is_read:false});
+  social2State.dailyFriends=Math.min(1,Number(social2State.dailyFriends||0)+1);social2State.seasonPoints+=25;social2Save();
+  document.getElementById("friendSearchInput").value="";social2Toast(ingles?"Friend request sent!":"¡Solicitud de amistad enviada!");
+}
+
+async function social2LoadFriends(){
+  const box=document.getElementById("friendsList");if(!box)return;
+  const me=social2Me();
+  if(!me){box.innerHTML='<div class="social2-empty">👤 Elige un username arriba para usar Social 2.0.</div>';return}
+  if(!supabaseClient){box.innerHTML='<div class="social2-empty">☁️ Conecta Supabase para sincronizar amigos.</div>';return}
+  const {data,error}=await supabaseClient.from("social_friendships").select("id,requester,addressee,status,created_at").eq("status","accepted").or(`requester.eq.${me},addressee.eq.${me}`).order("created_at",{ascending:false});
+  if(error){console.warn(error);box.innerHTML='<div class="social2-empty">No se pudieron cargar los amigos.</div>';return}
+  social2Friends=(data||[]).map(x=>x.requester===me?x.addressee:x.requester);
+  if(!social2Friends.length){box.innerHTML='<div class="social2-empty">🤝 Todavía no tienes amigos. Busca un username arriba.</div>';return}
+  box.innerHTML=social2Friends.map(name=>`<div class="social2-item"><div class="social2-avatar">${social2Initials(name)}</div><div class="social2-main"><div class="social2-name">${socialEscape(name)}</div><div class="social2-meta">Explorador · amigo</div></div><div class="social2-actions"><button class="social2-small" onclick="social2OpenDM('${socialEscape(name).replace(/'/g,"&#39;")}')">💬 MD</button></div></div>`).join("");
+}
+
+async function social2LoadRequests(){
+  const box=document.getElementById("friendRequestsList");if(!box)return;
+  const me=social2Me();if(!me){box.innerHTML='<div class="social2-empty">👤 Elige un username.</div>';return}
+  if(!supabaseClient){box.innerHTML='<div class="social2-empty">☁️ Las solicitudes requieren conexión online.</div>';return}
+  const {data,error}=await supabaseClient.from("social_friendships").select("id,requester,addressee,status,created_at").eq("addressee",me).eq("status","pending").order("created_at",{ascending:false});
+  if(error){console.warn(error);box.innerHTML='<div class="social2-empty">No se pudieron cargar las solicitudes.</div>';return}
+  social2Requests=data||[];const count=document.getElementById("friendRequestCount");if(count)count.textContent=social2Requests.length;
+  if(!social2Requests.length){box.innerHTML='<div class="social2-empty">📭 No tienes solicitudes pendientes.</div>';return}
+  box.innerHTML=social2Requests.map(r=>`<div class="social2-item"><div class="social2-avatar">${social2Initials(r.requester)}</div><div class="social2-main"><div class="social2-name">${socialEscape(r.requester)}</div><div class="social2-meta">Quiere añadirte como amigo.</div></div><div class="social2-actions"><button class="social2-small" onclick="social2AnswerRequest(${Number(r.id)},true,'${socialEscape(r.requester).replace(/'/g,"&#39;")}')">✅</button><button class="social2-small" onclick="social2AnswerRequest(${Number(r.id)},false,'${socialEscape(r.requester).replace(/'/g,"&#39;")}')">❌</button></div></div>`).join("");
+}
+
+async function social2AnswerRequest(id,accept,requester){
+  if(!supabaseClient)return;
+  const status=accept?"accepted":"rejected";
+  const {error}=await supabaseClient.from("social_friendships").update({status}).eq("id",id).eq("addressee",social2Me());
+  if(error){console.warn(error);social2Toast("No se pudo actualizar la solicitud.");return}
+  if(accept){
+    await supabaseClient.from("social_notifications").insert({username:requester,type:"friend_accepted",title:"🤝 Solicitud aceptada",body:social2Me()+" ha aceptado tu solicitud.",related_username:social2Me(),is_read:false});
+    social2State.seasonPoints+=50;social2Save();
+  }
+  social2LoadRequests();social2LoadFriends();social2UpdateCounters();
+}
+
+async function social2OpenDMFromInput(){const target=String(document.getElementById("dmTargetInput")?.value||"").trim();if(target)social2OpenDM(target)}
+async function social2OpenDM(target){
+  social2CurrentFriend=String(target||"").trim();
+  const title=document.getElementById("dmConversationTitle");if(title)title.textContent="💬 MD con "+social2CurrentFriend;
+  const input=document.getElementById("dmInput"),btn=document.getElementById("dmSendButton");if(input)input.disabled=!social2CurrentFriend;if(btn)btn.disabled=!social2CurrentFriend;
+  const targetInput=document.getElementById("dmTargetInput");if(targetInput)targetInput.value=social2CurrentFriend;
+  await social2LoadDMs();
+}
+
+async function social2LoadDMs(){
+  const box=document.getElementById("dmConversation");if(!box)return;
+  const me=social2Me();if(!me||!social2CurrentFriend){box.innerHTML='<div class="social2-empty">💬 Selecciona un amigo para empezar.</div>';return}
+  if(!supabaseClient){box.innerHTML='<div class="social2-empty">☁️ Los MD requieren conexión online.</div>';return}
+  const {data,error}=await supabaseClient.from("social_dms").select("id,sender_username,receiver_username,text,created_at,read_at").or(`and(sender_username.eq.${me},receiver_username.eq.${social2CurrentFriend}),and(sender_username.eq.${social2CurrentFriend},receiver_username.eq.${me})`).order("created_at",{ascending:true}).limit(100);
+  if(error){console.warn(error);box.innerHTML='<div class="social2-empty">No se pudo cargar la conversación.</div>';return}
+  social2DMs=data||[];
+  if(!social2DMs.length){box.innerHTML='<div class="social2-empty">No hay mensajes todavía. ¡Empieza tú!</div>';return}
+  box.innerHTML=social2DMs.map(m=>`<div class="social2-msg ${m.sender_username===me?'mine':''}"><div>${socialEscape(m.text)}</div><small>${socialEscape(m.sender_username)} · ${socialTime(m.created_at)}</small></div>`).join("");box.scrollTop=box.scrollHeight;
+  await supabaseClient.from("social_dms").update({read_at:new Date().toISOString()}).eq("receiver_username",me).eq("sender_username",social2CurrentFriend).is("read_at",null);
+  social2LoadNotifications();
+}
+
+async function social2SendDM(){
+  const me=social2Me(), target=social2CurrentFriend, input=document.getElementById("dmInput"), text=String(input?.value||"").trim();
+  if(!me||!target||!text)return;
+  if(text.length>500){social2Toast("Máximo 500 caracteres.");return}
+  if(!supabaseClient){social2Toast("Los MD requieren conexión online.");return}
+  const {error}=await supabaseClient.from("social_dms").insert({sender_username:me,receiver_username:target,text:text});
+  if(error){console.warn(error);social2Toast(ingles?"The DM could not be sent.":"No se pudo enviar el MD.");return}
+  await supabaseClient.from("social_notifications").insert({username:target,type:"dm",title:"💬 Nuevo mensaje privado",body:"Tienes un nuevo MD de "+me+".",related_username:me,is_read:false});
+  social2State.dailyMessages=Math.min(1,Number(social2State.dailyMessages||0)+1);social2State.seasonPoints+=10;social2Save();
+  input.value="";await social2LoadDMs();social2UpdateCounters();
+}
+
+async function social2LoadNotifications(){
+  const box=document.getElementById("socialNotificationsList");if(!box)return;
+  const me=social2Me();if(!me){box.innerHTML='<div class="social2-empty">👤 Elige un username.</div>';return}
+  if(!supabaseClient){box.innerHTML='<div class="social2-empty">☁️ Las notificaciones requieren conexión online.</div>';return}
+  const {data,error}=await supabaseClient.from("social_notifications").select("id,type,title,body,related_username,is_read,created_at").eq("username",me).order("created_at",{ascending:false}).limit(50);
+  if(error){console.warn(error);box.innerHTML='<div class="social2-empty">No se pudieron cargar las notificaciones.</div>';return}
+  social2Notifications=data||[];const unread=social2Notifications.filter(n=>!n.is_read).length;const c=document.getElementById("socialNotificationCount");if(c)c.textContent=unread;
+  if(!social2Notifications.length){box.innerHTML='<div class="social2-empty">🔔 No tienes notificaciones.</div>';return}
+  box.innerHTML=social2Notifications.map(n=>`<div class="social2-notification ${n.is_read?'':'unread'}"><b>${socialEscape(n.title)}</b><span>${socialEscape(n.body)}</span><span>${socialTime(n.created_at)}</span></div>`).join("");
+  social2UpdateCounters();
+}
+async function social2MarkNotificationsRead(){if(!supabaseClient||!social2Me())return;await supabaseClient.from("social_notifications").update({is_read:true}).eq("username",social2Me()).eq("is_read",false);social2LoadNotifications()}
+async function social2UpdateCounters(){
+  if(!supabaseClient||!social2Me())return;
+  const {count:rc}=await supabaseClient.from("social_friendships").select("id",{count:"exact",head:true}).eq("addressee",social2Me()).eq("status","pending");
+  const {count:dc}=await supabaseClient.from("social_dms").select("id",{count:"exact",head:true}).eq("receiver_username",social2Me()).is("read_at",null);
+  const {count:nc}=await supabaseClient.from("social_notifications").select("id",{count:"exact",head:true}).eq("username",social2Me()).eq("is_read",false);
+  const a=document.getElementById("friendRequestCount"),b=document.getElementById("dmUnreadCount"),c=document.getElementById("socialNotificationCount");if(a)a.textContent=rc||0;if(b)b.textContent=dc||0;if(c)c.textContent=nc||0;
+}
+
+function social2CheckDailyReward(){
+  const done=Number(social2State.dailyRolls||0)>=5 && Number(social2State.dailySecrets||0)>=1 && (Number(social2State.dailyMessages||0)+Number(social2State.dailyFriends||0))>=1;
+  if(done && !social2State.dailyRewardClaimed){
+    social2State.dailyRewardClaimed=true;
+    xpExplorador=Number(xpExplorador||0)+100;
+    randomCoins=Number(randomCoins||0)+250;
+    if(typeof guardar==='function')guardar();
+    if(typeof actualizarEconomiaOffline==='function')actualizarEconomiaOffline();
+    if(typeof actualizarNivel==='function')actualizarNivel();
+    social2State.seasonPoints=Number(social2State.seasonPoints||0)+100;
+    social2Save();
+    social2Toast(ingles?"🎁 Daily challenge complete! +100 XP +250 coins.":"🎁 ¡Retos diarios completados! +100 XP +250 coins.");
+  }
+}
+
+function social2RenderChallenges(){
+  social2EnsureState();social2CheckDailyReward();const box=document.getElementById("dailyChallenges2");if(!box)return;
+  const challenges=[
+    ["rolls",5,social2State.dailyRolls||0,"🎲","Haz 5 tiradas","+100 XP"],
+    ["secrets",1,social2State.dailySecrets||0,"🥚","Encuentra 1 secreto","+150 🪙"],
+    ["social",1,(social2State.dailyMessages||0)+(social2State.dailyFriends||0),"👥","Haz una acción social","+25 XP"]
+  ];
+  box.innerHTML=challenges.map(([id,goal,progress,icon,title,reward])=>{const done=progress>=goal;return `<div class="challenge-item ${done?'done':''}"><b>${icon} ${done?'✓ ':''}${title}</b><small>${Math.min(goal,progress)} / ${goal} · ${reward}</small></div>`}).join("");
+}
+
+function social2RenderStreak(){
+  social2EnsureState();const days=Number(social2State.streak||0),f=document.getElementById("social2StreakFill"),e=document.getElementById("social2StreakEmoji"),t=document.getElementById("social2StreakText");if(f)f.style.width=Math.min(100,(days%7||7)/7*100)+"%";if(e)e.textContent="🔥 "+days+" "+(days===1?"día":"días");if(t)t.textContent=days>=7?"🔥 ¡Racha de una semana! Sigue mañana.":"Entra mañana para mantener tu racha.";
+}
+
+async function social2LoadGlobalEvent(){
+  const fallback={title:"⚡ EL CAOS RANDOM",description:"La comunidad tiene un objetivo común.",goal:10000,progress:Math.min(10000,Number(contador||0)),active:true};
+  let ev=fallback;
+  if(supabaseClient){const {data,error}=await supabaseClient.from("social_global_events").select("id,title,description,goal,progress,active,ends_at,reward_coins").eq("active",true).order("id",{ascending:false}).limit(1).maybeSingle();if(!error&&data)ev=data}
+  const pct=Math.min(100,(Number(ev.progress||0)/Math.max(1,Number(ev.goal||10000)))*100);const a=document.getElementById("globalEventTitle"),b=document.getElementById("globalEventDesc"),c=document.getElementById("globalEventFill"),d=document.getElementById("globalEventProgress"),e=document.getElementById("globalEventTimer");if(a)a.textContent=ev.title;if(b)b.textContent=ev.description;if(c)c.style.width=pct+"%";if(d)d.textContent=Number(ev.progress||0).toLocaleString()+" / "+Number(ev.goal||10000).toLocaleString();if(e)e.textContent=ev.ends_at?new Date(ev.ends_at).toLocaleString():"ACTIVO";
+}
+async function social2AddGlobalProgress(amount){
+  if(!supabaseClient)return;
+  const {data}=await supabaseClient.from("social_global_events").select("id,progress,goal").eq("active",true).order("id",{ascending:false}).limit(1).maybeSingle();if(!data)return;
+  await supabaseClient.from("social_global_events").update({progress:Math.min(Number(data.goal||10000),Number(data.progress||0)+Math.max(1,Number(amount||1)))}).eq("id",data.id);social2LoadGlobalEvent();
+}
+
+function social2RenderStats(){social2EnsureState();const l=document.getElementById("social2Level"),c=document.getElementById("social2Coins"),s=document.getElementById("social2SeasonPoints");if(l)l.textContent=obtenerNivel();if(c)c.textContent=Number(randomCoins||0).toLocaleString()+" 🪙";if(s)s.textContent=Number(social2State.seasonPoints||0).toLocaleString();const badge=document.getElementById("seasonBadge");if(badge)badge.textContent="TEMPORADA "+(new Date().getFullYear())+" · "+social2Week();}
+async function social2RefreshAll(){social2EnsureState();social2RenderChallenges();social2RenderStreak();social2RenderStats();social2LoadGlobalEvent();if(social2Me()&&supabaseClient){social2LoadFriends();social2LoadRequests();social2LoadNotifications();social2UpdateCounters();}}
+
+async function social2Init(){
+  social2EnsureState();social2RenderChallenges();social2RenderStreak();social2RenderStats();social2LoadGlobalEvent();
+  if(social2RefreshTimer)clearInterval(social2RefreshTimer);social2RefreshTimer=setInterval(()=>social2RefreshAll(),15000);
+  setTimeout(()=>{if(social2Me())social2RefreshAll()},500);
+}
+
+/* Existing roll system -> Social 2.0 progression. */
+const _social2OriginalExtras=actualizarExtrasTrasResultado;
+actualizarExtrasTrasResultado=function(){
+  _social2OriginalExtras.apply(this,arguments);
+  social2EnsureState();
+  social2State.dailyRolls=Math.min(5,Number(social2State.dailyRolls||0)+1);
+  social2State.dailySecrets=Math.min(1,Number(social2State.dailySecrets||0)+(resultadoActual.secreto?1:0));
+  social2State.seasonPoints+=5+(resultadoActual.secreto?20:0);
+  social2Save();social2RenderChallenges();social2RenderStats();social2AddGlobalProgress(1);
+};
+
+
+
+
+window.addEventListener("beforeunload",()=>{if(social2RefreshTimer)clearInterval(social2RefreshTimer)});
+setTimeout(social2Init,120);
+</script>
+
+
+<script id="ir3-engine">
+(()=>{
+const K='ir3_universe_state_v1';
+let S=JSON.parse(localStorage.getItem(K)||'{}');
+const defaults={worldLevel:1,worldPower:0,worldSlots:8,placed:{},worldObjects:[],items:{},discoveries:{},titles:[],missions:{},rolls:0,secrets:0,zones:1,explore:0,streak:0,lastDay:'',profileEmoji:'🎲',bio:'Explorador de Internet Randomizer.',eventLocal:0};
+S={...defaults,...S,placed:S.placed||{},worldObjects:Array.isArray(S.worldObjects)?S.worldObjects:[],items:S.items||{},discoveries:S.discoveries||{},missions:S.missions||{},titles:S.titles||[]};
+// Migración única del Mundo antiguo: se conserva lo que había colocado, pero desde ahora todo vive en el Mundo 3.0.
+try{const oldWorld=JSON.parse(localStorage.getItem('randomizerWorld')||'null');if(oldWorld&&Array.isArray(oldWorld.slots)&&!S.worldObjects.length){S.worldObjects=oldWorld.slots.map((icon,i)=>icon?({slot:i,icon,source:'legacy'}):null).filter(Boolean);save();}}catch(e){}
+const items=[
+ ['dice','🎲','Dado del Nexus','common','Una pieza del sistema central.'],['duck','🦆','Patito del Algoritmo','common','Nadie sabe por qué está aquí.'],['portal','🌀','Fragmento de Portal','rare','Parece conectar dos resultados.'],['orb','🔮','Orbe de Misterio','rare','Vibra cuando aparece algo extraño.'],['rocket','🚀','Motor de Exploración','epic','Permite alcanzar regiones lejanas.'],['globe','🌐','Núcleo Web','epic','Una representación física de Internet.'],['crown','👑','Corona del Explorador','legendary','Solo aparece tras grandes descubrimientos.'],['crystal','💎','Cristal de Datos','legendary','Contiene información imposible de clasificar.'],['glitch','👾','Núcleo Glitch','mythic','No debería existir.'],['galaxy','🌌','Semilla Galáctica','mythic','Una pequeña galaxia para tu mundo.'],['chest','🎁','Cofre Perdido','rare','Todavía no sabes qué contiene.'],['satellite','🛰️','Satélite Random','epic','Vigila las fronteras del mundo.']
+];
+const zones=[['home','🏠','Base Random','common'],['forest','🌲','Bosque de Enlaces','common'],['lake','🌊','Lago del Algoritmo','rare'],['city','🏙️','Ciudad Digital','rare'],['space','🌌','Órbita Random','epic'],['glitch','🌀','Zona Glitch','legendary'],['archive','📚','Archivo Perdido','legendary'],['void','🕳️','El Vacío','mythic'],['portal','🚪','Portal Infinito','mythic'],['museum','🏛️','Museo de Internet','epic'],['market','🛒','Mercado Random','rare'],['lab','🧪','Laboratorio','epic']];
+const missions=[['roll','🎲','Cinco saltos','Haz 5 tiradas','rolls',5,120],['secret','🔐','Detective digital','Encuentra 1 secreto','secrets',1,250],['world','🏗️','Arquitecto','Coloca 3 objetos','objects',3,180],['explore','🧭','Sin fronteras','Explora 3 veces','explore',3,220],['collect','🎒','Coleccionista','Consigue 4 objetos','items',4,300],['zone','🌍','Cartógrafo','Desbloquea 2 zonas','zones',2,500]];
+function save(){localStorage.setItem(K,JSON.stringify(S))}
+function today(){return new Date().toISOString().slice(0,10)}
+function me(){return String(typeof jugadorUsername!=='undefined'?jugadorUsername:'').trim()||'Explorador'}
+function lvl(){return Number(typeof obtenerNivel==='function'?obtenerNivel():1)||1}
+function xp(){return Number(typeof xpExplorador!=='undefined'?xpExplorador:0)||0}
+function coins(){return Number(typeof randomCoins!=='undefined'?randomCoins:0)||0}
+function toast(t){const e=document.getElementById('ir3Toast');if(!e)return;e.textContent=t;e.classList.add('show');clearTimeout(window.__ir3toast);window.__ir3toast=setTimeout(()=>e.classList.remove('show'),2600)}
+function go(page){document.querySelectorAll('.ir3-page').forEach(x=>x.classList.toggle('active',x.id==='ir3Page-'+page));document.querySelectorAll('#ir3Nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));render()}
+window.ir3Go=go;
+document.querySelectorAll('#ir3Nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+function addItem(id,n=1){S.items[id]=(S.items[id]||0)+n;save()}
+function itemCount(){return Object.values(S.items).reduce((a,b)=>a+Number(b||0),0)}
+function discoveredCount(){return Object.keys(S.discoveries).length}
+function xpNeed(){return 100+lvl()*75}
+function sync(){
+ S.rolls=Number(typeof contador!=='undefined'?contador:S.rolls)||0;S.secrets=Number(typeof secretosEncontrados!=='undefined'?secretosEncontrados:S.secrets)||0;S.streak=Number(typeof mejorRacha!=='undefined'?mejorRacha:S.streak)||S.streak;
+ if(!S.lastDay)S.lastDay=today(); save()
+}
+function ensureDaily(){if(S.lastDay!==today()){let d=new Date(S.lastDay);let now=new Date(today());let diff=Math.round((now-d)/86400000);S.streak=diff===1?S.streak+1:1;S.lastDay=today();S.missions={};save()}}
+function award(){/* La progresión económica pertenece al sistema principal del Randomizer. No se crea una segunda economía aquí. */}
+function surprise(){ensureDaily();let found=items[Math.floor(Math.random()*items.length)];addItem(found[0]);S.eventLocal++;let discovered=zones[Math.floor(Math.random()*zones.length)];if(Math.random()<.38){S.discoveries[discovered[0]]=true;if(!S.placed[discovered[0]])S.placed[discovered[0]]=1}if(Math.random()<.08){S.discoveries['special-'+Date.now()]=true}save();render();toast('🎲 '+found[1]+' '+found[2]+' añadido al universo.');}
+window.ir3Surprise=()=>{try{if(typeof sorprendeme==='function')sorprendeme();else surprise()}catch(e){surprise()}};
+function worldObjectCount(){return S.worldObjects.filter(Boolean).length}
+function ownedWorldItems(){return items.filter(x=>Number(S.items[x[0]]||0)>0)}
+function firstEmptyWorldSlot(){for(let i=0;i<S.worldSlots;i++){if(!S.worldObjects.some(o=>o&&o.slot===i))return i}return -1}
+function ensureStarterWorldItem(){if(!ownedWorldItems().length){S.items.dice=Number(S.items.dice||0)+1;save();return items[0]}return null}
+function placeObjectAt(slot,id){if(slot<0||slot>=S.worldSlots){toast('🔒 Ese espacio todavía está bloqueado.');return}const item=items.find(x=>x[0]===id);if(!item)return;if(Number(S.items[id]||0)<=0){toast('🎒 No tienes ese objeto en el inventario.');return}const existing=S.worldObjects.find(o=>o&&o.slot===slot);if(existing){existing.id=id;existing.icon=item[1];existing.name=item[2];existing.rarity=item[3]}else{S.worldObjects.push({slot,id,icon:item[1],name:item[2],rarity:item[3]});}S.worldPower+=10;save();closeModal();render();toast('🏗️ '+item[1]+' colocado en tu mundo.')}
+window.ir3PlaceAt=placeObjectAt;
+function openWorldSlot(slot){if(slot>=S.worldSlots){toast('🔒 Desbloquea más espacios mejorando tu mundo.');return}const current=S.worldObjects.find(o=>o&&o.slot===slot);const available=ownedWorldItems();if(!available.length)ensureStarterWorldItem();const pool=ownedWorldItems();const z=zones[slot%zones.length];const itemsHtml=pool.map(x=>`<button class="ir3-world-item" onclick="ir3PlaceAt(${slot},'${x[0]}')"><span class="icon">${x[1]}</span><small>x${S.items[x[0]]||0}</small></button>`).join('');openModal(`<h2>${z[1]} ${z[2]}</h2><p>${current?'Objeto actual: '+current.icon+' '+current.name:'Este espacio está vacío.'}</p><div class="ir3-world-inventory">${itemsHtml||'<span class="ir3-muted">Haz una tirada para conseguir objetos.</span>'}</div>${current?`<button class="ir3-secondary" style="margin-top:12px" onclick="ir3RemoveObject(${slot})">🗑️ Vaciar espacio</button>`:''}`)}
+window.ir3Tile=window.ir3Tile||openWorldSlot;
+window.ir3RemoveObject=slot=>{S.worldObjects=S.worldObjects.filter(o=>o&&o.slot!==slot);save();closeModal();render();toast('🧹 Espacio liberado.')};
+function place(){let slot=firstEmptyWorldSlot();if(slot<0){toast('🏠 No quedan espacios vacíos. Mejora tu mundo para ampliar el mapa.');return}let starter=ensureStarterWorldItem();let pool=ownedWorldItems();let item=starter||pool[Math.floor(Math.random()*pool.length)];placeObjectAt(slot,item[0])}
+window.ir3PlaceBuild=place;
+function explore(){S.explore++;S.worldPower+=8;let z=zones[Math.floor(Math.random()*zones.length)];S.discoveries[z[0]]=true;S.placed[z[0]]=1;let found=items[Math.floor(Math.random()*items.length)];addItem(found[0]);save();render();toast('🧭 Expedición completada · '+z[1]+' descubierta y '+found[1]+' encontrado.')}
+window.ir3ExploreWorld=explore;
+function upgrade(){const required=S.worldLevel*2;if(lvl()<required){toast('🔒 Necesitas nivel '+required+' de explorador para ampliar el mundo.');return}if(S.worldSlots>=24){toast('🌌 Tu mundo ya está al máximo de 24 espacios.');return}S.worldLevel++;S.worldSlots=Math.min(24,8+S.worldLevel*2);S.worldPower+=50;save();render();toast('⬆️ Tu mundo ha alcanzado el nivel '+S.worldLevel+' y tiene '+S.worldSlots+' espacios.')}
+window.ir3UpgradeWorld=upgrade;
+window.ir3WorldVisit=()=>{go('world');toast('✨ Bienvenido a tu mundo Randomizer.')};
+function filterItems(filter,btn){document.querySelectorAll('.ir3-filter button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderInventory(filter)}
+window.ir3FilterItems=filterItems;
+function renderInventory(filter='all'){const el=document.getElementById('ir3InventoryGrid');if(!el)return;el.innerHTML=items.filter(x=>filter==='all'||x[3]===filter).map(x=>`<div class="ir3-item rar-${x[3]}" onclick="ir3ItemInfo('${x[0]}')"><span class="qty">x${S.items[x[0]]||0}</span><div class="big">${x[1]}</div><b>${x[2]}</b><br><small class="ir3-rarity-${x[3]}">${x[3].toUpperCase()}</small></div>`).join('')}
+window.ir3ItemInfo=id=>{const x=items.find(a=>a[0]===id);if(!x)return;openModal(`<h2>${x[1]} ${x[2]}</h2><p>${x[4]}</p><div class="ir3-chip">Rareza: ${x[3]}</div><div class="ir3-chip">Cantidad: ${S.items[id]||0}</div>`)};
+function renderWorld(){const g=document.getElementById('ir3MapGrid');if(!g)return;const placedCount=worldObjectCount();g.innerHTML=Array.from({length:24},(_,i)=>{const z=zones[i%zones.length],unlocked=i<S.worldSlots,obj=S.worldObjects.find(o=>o&&o.slot===i);return `<div class="ir3-tile ${unlocked?'':'locked'} ${obj?'has-object':''}" onclick="${unlocked?`ir3Tile(${i})`:''}">${unlocked?`<span class="tile-region">${z[1]}</span>${obj?`<span class="tile-object">${obj.icon}</span>`:'<span class="tile-empty">＋</span>'}`:'🔒'}<span class="tile-level">${unlocked?'ESPACIO '+(i+1):'LOCK'}</span><span class="tile-label">${unlocked?(obj?obj.name:'Espacio vacío'):z[2]}</span></div>`}).join('');const a=document.getElementById('ir3WorldLevel'),b=document.getElementById('ir3WorldPower'),c=document.getElementById('ir3WorldSlots'),d=document.getElementById('ir3WorldSub');if(a)a.textContent='LVL '+S.worldLevel;if(b)b.textContent='⚡ '+S.worldPower+' PODER';if(c)c.textContent=placedCount+'/'+S.worldSlots+' OBJETOS';if(d)d.textContent='Nivel '+S.worldLevel+' · '+S.worldSlots+' espacios · '+placedCount+' objetos colocados';const inv=document.getElementById('ir3WorldInventory');if(inv){const owned=ownedWorldItems();inv.innerHTML=owned.length?owned.slice(0,12).map(x=>`<button class="ir3-world-item" onclick="ir3PlaceBuildFrom('${x[0]}')"><span class="icon">${x[1]}</span><small>x${S.items[x[0]]||0}</small></button>`).join(''):'<span class="ir3-muted">🎲 Haz una tirada para conseguir tu primer objeto.</span>'}const et=document.getElementById('ir3WorldExploreText');if(et)et.textContent='Has hecho '+S.explore+' expediciones · '+discoveredCount()+' regiones descubiertas.';const bt=document.getElementById('ir3WorldBuildText');if(bt)bt.textContent=placedCount+' objetos colocados · '+Math.max(0,S.worldSlots-placedCount)+' espacios libres.'}
+window.ir3PlaceBuildFrom=id=>{let slot=firstEmptyWorldSlot();if(slot<0){toast('🏠 No quedan espacios vacíos.');return}placeObjectAt(slot,id)};
+function missionProgress(m){if(m[4]==='rolls')return S.rolls%10; if(m[4]==='secrets')return S.secrets; if(m[4]==='objects')return worldObjectCount(); if(m[4]==='explore')return S.explore; if(m[4]==='items')return itemCount(); if(m[4]==='zones')return discoveredCount();return 0}
+function renderMissions(){const g=document.getElementById('ir3MissionsGrid');if(!g)return;g.innerHTML=missions.map((m,i)=>{let p=Math.min(m[5],missionProgress(m)),done=p>=m[5],claimed=S.missions[i];return `<div class="ir3-mission ${done?'ir3-complete':''}"><div class="mission-icon">${m[1]}</div><h3>${m[2]}</h3><div class="ir3-muted">${m[3]}</div><div class="ir3-progress"><i style="width:${p/m[5]*100}%"></i></div><div class="ir3-statrow"><span>${p}/${m[5]}</span><span>+${m[6]} 🪙</span></div><div class="ir3-reward">${claimed?'✅ Recompensa reclamada':done?`<button class="ir3-primary" style="padding:8px 11px;font-size:11px" onclick="ir3ClaimMission(${i})">🎁 Reclamar</button>`:'Completa el objetivo'}</div></div>`}).join('')}
+window.ir3ClaimMission=i=>{let m=missions[i];if(missionProgress(m)<m[5]||S.missions[i])return;S.missions[i]=true;try{randomCoins+=m[6];guardarEconomiaOffline();actualizarEconomiaOffline()}catch(e){}save();render();toast('🎁 Recompensa de misión: +'+m[6]+' 🪙')};
+function ir3CollectionCatalog(){
+ const out=[]; const push=(id,type,icon,cat,es,en,url)=>out.push({id,type,icon,cat,es,en,url:url||null});
+ cosas.forEach((c,i)=>push('web-'+i,c.tipo==='link'?'WEB':'DATO',c.tipo==='link'?'🌐':'🧠',c.categoriaEs,c.es,c.en,c.url));
+ secretos.forEach(x=>push('secret-'+x.id,'SECRETO','🥚',x.categoriaEs,x.es,x.en,null));
+ resultadosPatito.forEach((x,i)=>push('duck-'+i,'ESPECIAL','🦆','MODO PATITO',x,x,null));
+ const chaos=[['EL CAOS HA DECIDIDO QUE ESTO ERA LO QUE NECESITABAS.','CHAOS HAS DECIDED THIS IS WHAT YOU NEEDED.'],['No sabemos qué acaba de pasar.','We don\'t know what just happened.'],['El algoritmo ha tirado una moneda y ha perdido la moneda.','The algorithm flipped a coin and lost the coin.'],['El Randomizer ha dejado de seguir las normas durante 3 segundos.','The Randomizer stopped following the rules for 3 seconds.'],['Has recibido exactamente lo contrario de lo que esperabas.','You received exactly the opposite of what you expected.']]; chaos.forEach((x,i)=>push('chaos-'+i,'ESPECIAL','🌪️','🌪️ CAOS',x[0],x[1],null));
+ const turbo=[['⚡ TURBO: El Randomizer ha acelerado Internet durante exactamente 3 segundos.','⚡ TURBO: The Randomizer accelerated the Internet for exactly 3 seconds.'],['⚡ TURBO: Has obtenido un resultado a velocidad ilegalmente rápida.','⚡ TURBO: You got a result at illegally fast speed.'],['🚀 TURBO: Ni el algoritmo sabe qué acaba de ocurrir.','🚀 TURBO: Even the algorithm doesn\'t know what just happened.']]; turbo.forEach((x,i)=>push('turbo-'+i,'ESPECIAL','⚡','⚡ TURBO',x[0],x[1],null));
+ const challenge=[['🧠 DESAFÍO: Haz otra tirada usando un modo diferente.','🧠 CHALLENGE: Roll again using a different mode.'],['🎯 DESAFÍO: Intenta encontrar un secreto.','🎯 CHALLENGE: Try to find a secret.'],['🔥 DESAFÍO: Mantén tu racha viva.','🔥 CHALLENGE: Keep your streak alive.'],['🌐 DESAFÍO: El próximo resultado debe llevarte a otra web.','🌐 CHALLENGE: Your next result must take you to another website.']]; challenge.forEach((x,i)=>push('challenge-'+i,'ESPECIAL','🎯','🧠 DESAFÍO',x[0],x[1],null));
+ const infinite=[['🌌 INFINITO: Has cruzado una frontera que no existe.','🌌 INFINITE: You crossed a boundary that doesn\'t exist.'],['🌀 INFINITO: El Randomizer acaba de generar una posibilidad imposible.','🌀 INFINITE: The Randomizer just generated an impossible possibility.'],['👁️ INFINITO: Internet parece no tener final.','👁️ INFINITE: The Internet appears to have no end.']]; infinite.forEach((x,i)=>push('infinite-'+i,'ESPECIAL','🌌','🌌 INFINITO',x[0],x[1],null));
+ const legendary=[['👑 Has entrado en territorio legendario. Pero el Randomizer no tiene nada que decir.','👑 You entered legendary territory. But the Randomizer has nothing to say.'],['💎 Resultado raro. No tanto como esperabas, pero raro.','💎 Rare result. Not as rare as expected, but still rare.'],['🕳️ El algoritmo miró al vacío. El vacío devolvió la mirada.','🕳️ The algorithm stared into the void. The void stared back.'],['👁️ Algo en Internet sabe que has llegado hasta aquí.','👁️ Something on the Internet knows you made it this far.']]; legendary.forEach((x,i)=>push('legendary-'+i,'ESPECIAL','👑','👑 LEGENDARIO',x[0],x[1],null));
+ const fortune=[['🍀 FORTUNA: Hoy el algoritmo está de tu lado.','🍀 FORTUNE: Today the algorithm is on your side.'],['💎 FORTUNA: Algo brillante acaba de caer de Internet.','💎 FORTUNE: Something shiny just fell out of the Internet.']]; fortune.forEach((x,i)=>push('fortune-'+i,'ESPECIAL','💰','💰 FORTUNA',x[0],x[1],null));
+ [100,500,1000,2000,3000,5000,7500,10000,15000,20000,30000,50000,75000,100000].forEach(n=>{const m=mensajesHitos[n];if(m)push('milestone-'+n,'ESPECIAL','🏆','🏆 HITO',m.es,m.en,null)});
+ push('fortune-coins','ESPECIAL','💰','💰 FORTUNA','Encontrar RandomCoins en una tirada de Fortuna.','Find RandomCoins on a Fortune roll.',null);
+ return out;
+}
+function ir3ResultCollectionId(current){
+ if(!current || !current.es) return null;
+ const cat=ir3CollectionCatalog();
+ const exact=cat.find(x=>x.es===current.es||x.en===current.en);
+ if(exact) return exact.id;
+ if((current.categoriaEs||'').includes('FORTUNA') && String(current.es).startsWith('💰 FORTUNA: Has encontrado')) return 'fortune-coins';
+ if((current.categoriaEs||'').includes('HITO')) return 'milestone-'+contador;
+ return null;
+}
+window.ir3RegisterCurrentResult=function(current){
+ try{
+   const id=ir3ResultCollectionId(current);
+   if(id && !ir3ResultCollection.includes(id)){
+     ir3ResultCollection.push(id);
+     localStorage.setItem('randomizerResultCollection',JSON.stringify(ir3ResultCollection));
+   }
+ }catch(e){ console.warn('IR3 collection registration skipped:',e); }
+};
+window.ir3CollectionSetFilter=(filter,btn)=>{ir3CollectionFilter=filter;document.querySelectorAll('#ir3CollectionFilters button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderCollection()};
+window.ir3CollectionSearch=q=>{ir3CollectionQuery=String(q||'').toLowerCase().trim();renderCollection()};
+function renderCollection(){
+ const g=document.getElementById('ir3CollectionGrid');if(!g)return;const catalog=ir3CollectionCatalog(),found=new Set(ir3ResultCollection);
+ const filtered=catalog.filter(x=>{const hay=(x.es+' '+x.en+' '+x.cat).toLowerCase();return (ir3CollectionFilter==='all'||x.type===ir3CollectionFilter)&&(!ir3CollectionQuery||hay.includes(ir3CollectionQuery));});
+ g.innerHTML=filtered.map(x=>{const yes=found.has(x.id),title=ingles?x.en:x.es,cat=ingles?(x.type==='WEB'?'WEB':x.type==='DATO'?'DATA':x.type==='SECRETO'?'SECRET':'SPECIAL'):x.cat;return `<article class="ir3-result-card ${yes?'found':'locked'} ${x.type==='ESPECIAL'?'special':''}">${yes?'<span class="found-mark">✓ DESCUBIERTO</span>':'<span class="lock-mark">🔒</span>'}<div class="result-icon">${yes?x.icon:'❔'}</div><span class="ir3-tag">${cat}</span><h3>${yes?title:(ingles?'Undiscovered result':'Resultado aún no descubierto')}</h3><p>${yes?(x.url?`<a href="${x.url}" target="_blank" rel="noopener noreferrer">Abrir web ↗</a>`:title):(ingles?'Press SURPRISE ME to discover it.':'Pulsa SORPRÉNDEME para descubrirlo.')}</p><div class="result-meta"><span>${x.type}</span><span>${yes?'ENCONTRADO':'PENDIENTE'}</span></div></article>`;}).join('');
+ const total=catalog.length,got=catalog.filter(x=>found.has(x.id)).length,pct=total?Math.round(got/total*100):0;const f=document.getElementById('ir3CollectionFound'),t=document.getElementById('ir3CollectionTotal'),b=document.getElementById('ir3CollectionBar');if(f)f.textContent=got;if(t)t.textContent=total;if(b)b.style.width=pct+'%';
+}
+function renderProfile(){let name=me(),L=lvl(),e=xp();document.getElementById('ir3ProfileName').textContent=name;document.getElementById('ir3ProfileRank').textContent=L>=25?'MAESTRO DEL NEXUS':L>=15?'EXPLORADOR AVANZADO':L>=8?'EXPLORADOR': 'NOVATO';document.getElementById('ir3Avatar').textContent=S.profileEmoji;document.getElementById('ir3ProfileBio').textContent=S.bio;document.getElementById('ir3StatRolls').textContent=S.rolls;document.getElementById('ir3StatSecrets').textContent=S.secrets;document.getElementById('ir3StatObjects').textContent=itemCount();document.getElementById('ir3StatZones').textContent=discoveredCount()+1;document.getElementById('ir3ProfileXpBar').style.width=Math.min(100,(e%xpNeed())/xpNeed()*100)+'%';let titleList=[['🎲','Primer salto'],['🧭','Explorador'],['🏗️','Arquitecto'],['📚','Archivista'],['🌌','Más allá']];document.getElementById('ir3Titles').innerHTML=titleList.map((t,i)=>`<div class="ir3-discovery ${i<Math.min(titleList.length,Math.max(1,Math.floor(L/4)+1))?'':'locked'}"><div class="disc-icon">${t[0]}</div><b>${t[1]}</b></div>`).join('')}
+function openModal(html){document.getElementById('ir3ModalContent').innerHTML=html;document.getElementById('ir3Modal').classList.add('open')}function closeModal(){document.getElementById('ir3Modal').classList.remove('open')}window.ir3CloseModal=closeModal;
+window.ir3OpenProfileModal=()=>openModal(`<h2>👤 Personalizar explorador</h2><p>Elige tu icono:</p><div style="display:flex;gap:10px;flex-wrap:wrap">${['🎲','🦆','🧭','🚀','👾','🌌','👑','💎'].map(e=>`<button class="ir3-secondary" onclick="ir3SetEmoji('${e}')" style="font-size:28px">${e}</button>`).join('')}</div><p style="margin-top:20px">Biografía:</p><input id="ir3BioInput" value="${S.bio.replace(/"/g,'&quot;')}" maxlength="120" style="width:100%;padding:12px;border-radius:12px;background:#050b1d;color:#fff;border:1px solid #20355f"><button class="ir3-primary" style="margin-top:12px" onclick="ir3SaveProfile()">Guardar</button>`);
+window.ir3SetEmoji=e=>{S.profileEmoji=e;save();renderProfile();toast('✨ Avatar actualizado')};window.ir3SaveProfile=()=>{S.bio=document.getElementById('ir3BioInput').value||S.bio;save();closeModal();renderProfile();toast('👤 Perfil actualizado')};
+async function eventLoad(){let progress=S.eventLocal,goal=10000,desc='Cada tirada y descubrimiento empuja el caos un poco más.';try{if(typeof supabaseClient!=='undefined'&&supabaseClient){let r=await supabaseClient.from('social_global_events').select('title,description,goal,progress,ends_at').eq('active',true).order('id',{ascending:false}).limit(1).maybeSingle();if(r.data){progress=Number(r.data.progress||0);goal=Number(r.data.goal||10000);desc=r.data.description||desc;document.getElementById('ir3EventTime').textContent=r.data.ends_at?new Date(r.data.ends_at).toLocaleDateString():'ACTIVO'}}}catch(e){}let pct=Math.min(100,progress/goal*100);document.getElementById('ir3EventDesc').textContent=desc;document.getElementById('ir3EventNumber').textContent=progress.toLocaleString()+' / '+goal.toLocaleString();document.getElementById('ir3EventPercent').textContent=pct.toFixed(1)+'%';document.getElementById('ir3EventBar').style.width=pct+'%'}
+window.ir3SyncAfterMainRoll=()=>{try{surprise()}catch(e){};};
+function render(){ensureDaily();sync();let L=lvl(),E=xp(),C=coins(),pct=Math.min(100,(E%xpNeed())/xpNeed()*100);document.getElementById('ir3HudLevel').textContent=L;document.getElementById('ir3HudCoins').textContent=C.toLocaleString();document.getElementById('ir3LevelBig').textContent=L;document.getElementById('ir3CoinsBig').textContent=C.toLocaleString();document.getElementById('ir3StreakBig').textContent=S.streak;document.getElementById('ir3XpBar').style.width=pct+'%';document.getElementById('ir3XpText').textContent=E.toLocaleString()+' XP';document.getElementById('ir3ExploreBig').textContent=Math.round(Math.min(100,discoveredCount()/zones.length*100))+'%';document.getElementById('ir3DailyObjective').textContent='Consigue '+Math.min(5,S.rolls%6)+'/5 tiradas · '+Math.min(100,Math.round(S.rolls%6/5*100))+'%';document.getElementById('ir3DailyBar').style.width=Math.min(100,(S.rolls%6)/5*100)+'%';document.getElementById('ir3Feed').textContent=itemCount()?`Último estado: ${itemCount()} objetos en inventario · ${discoveredCount()} regiones descubiertas.`:'El Nexus está esperando tu primera exploración.';renderWorld();renderInventory();renderCollection();renderMissions();renderProfile();eventLoad()}
+window.addEventListener('DOMContentLoaded',()=>{document.body.classList.add('ir3-active');render();setInterval(()=>{render()},12000)});
+})();
 </script>
 
 </body>
